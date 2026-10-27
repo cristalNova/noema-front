@@ -1,0 +1,2 @@
+// /communities/:communityId/members
+export {}

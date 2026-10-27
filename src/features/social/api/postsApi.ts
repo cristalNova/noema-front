@@ -1,0 +1,2 @@
+// /posts (con /replies)
+export {}

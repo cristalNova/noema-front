@@ -1,0 +1,2 @@
+// /reactions/:targetType/:targetId
+export {}

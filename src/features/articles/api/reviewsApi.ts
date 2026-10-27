@@ -1,0 +1,2 @@
+// /reviews (por artículo)
+export {}
