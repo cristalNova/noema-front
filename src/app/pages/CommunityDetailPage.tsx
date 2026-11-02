@@ -4,6 +4,7 @@ import { listArticles } from '../../features/articles/api/articlesApi';
 import type { Article } from '../../features/articles/model/article.types';
 import { getCommunity } from '../../features/communities/api/communitiesApi';
 import { CommunityPagination } from '../../features/communities/components/CommunityPagination';
+import { CommunityMembershipAction } from '../../features/communities/components/CommunityMembershipAction';
 import {
   joinCommunity,
   leaveCommunity,

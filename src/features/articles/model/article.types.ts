@@ -5,16 +5,14 @@ export interface ArticleTag {
   tag: string
 }
 
-export interface Article {
+export interface Article extends DraftInput {
   id: number
   authorId: number
   author: Profile
   communityId: number | null
   community: Community | null
-  title: string
-  description?: string
-  content: string
-  isPremium: boolean
+  status: ArticleStatus
+  updatedAt: string
   publishedAt: string | null
   articleTags: ArticleTag[]
 }
@@ -27,13 +25,6 @@ export interface DraftInput {
 }
 
 export type ArticleStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
-
-export interface Article extends DraftInput {
-  id: number
-  authorId: number
-  status: ArticleStatus
-  updatedAt: string
-}
 
 // Los listados no incluyen content (select: false en el backend).
 export type ArticleSummary = Omit<Article, 'content'>

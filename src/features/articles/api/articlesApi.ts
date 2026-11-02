@@ -1,7 +1,6 @@
-import { httpClient } from '../../../shared/api';
-import type { Paginated } from '../../../shared/types/Paginated';
-import { toPageQuery } from '../../../shared/utils/pagination';
-import type { Article } from '../model/article.types';
+import { httpClient } from '../../../shared/api'
+import type { Paginated } from '../../../shared/types/Paginated'
+import type { Article, ArticleStatus, ArticleSummary, DraftInput } from '../model/article.types'
 
 export interface ArticleListParams {
   communityId?: number;
@@ -10,18 +9,17 @@ export interface ArticleListParams {
 }
 
 export async function listArticles(params: ArticleListParams = {}) {
-  const { page, limit } = toPageQuery(params);
+  const page = Math.max(1, params.page ?? 1)
+  const limit = Math.min(Math.max(1, params.limit ?? 20), 100)
   const response = await httpClient.get<Paginated<Article>>('/articles', {
     params: {
       page,
       limit,
       ...(params.communityId ? { communityId: params.communityId } : {}),
     },
-  });
-  return response.data;
-import { httpClient } from '../../../shared/api'
-import type { Article, ArticleStatus, ArticleSummary, DraftInput } from '../model/article.types'
-import type { Paginated } from '../../../shared/types/Paginated'
+  })
+  return response.data
+}
 
 // El servidor asigna DRAFT y el autor a partir del JWT. No enviar status.
 export async function createDraft(input: DraftInput): Promise<Article> {
