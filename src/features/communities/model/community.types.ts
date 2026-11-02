@@ -84,3 +84,11 @@ export interface Membership {
   profile: Profile;
   community: Community;
 }
+
+export interface CreateCommunityDto {
+  name: string
+  topic: string
+  description?: string
+  isPremium?: boolean
+  tags?: string[]
+}

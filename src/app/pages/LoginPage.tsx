@@ -1,10 +1,12 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { getReturnTo } from '@/shared/utils/navigation'
 import { LoginForm, useAuth } from '@/features/auth'
 import { AuthLayout } from '../layout/AuthLayout'
 import './LoginPage.css'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { sessionExpired } = useAuth()
 
   return (
@@ -13,7 +15,7 @@ export default function LoginPage() {
       title="Inicia sesión"
       footer={
         <>
-          ¿Aún no tienes cuenta? <Link to="/register">Regístrate</Link>
+          ¿Aún no tienes cuenta? <Link to="/register" state={location.state}>Regístrate</Link>
         </>
       }
     >
@@ -22,7 +24,7 @@ export default function LoginPage() {
           Tu sesión expiró. Inicia sesión de nuevo para continuar.
         </p>
       )}
-      <LoginForm onSuccess={() => navigate('/', { replace: true })} />
+      <LoginForm onSuccess={() => navigate(getReturnTo(location.state), { replace: true })} />
     </AuthLayout>
   )
 }

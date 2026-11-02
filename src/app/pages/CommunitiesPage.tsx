@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { CommunityFilters } from '../../features/communities/components/CommunityFilters'
 import { CommunityList } from '../../features/communities/components/CommunityList'
 import { CommunityPagination } from '../../features/communities/components/CommunityPagination'
@@ -33,7 +34,12 @@ export function CommunitiesPage() {
         <p className="eyebrow">Noema · Comunidades</p>
         <h1>Explora comunidades</h1>
         <p>Encuentra espacios para compartir tus intereses, lecturas e ideas.</p>
+        <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
+        {' '}<Link className="button button--secondary" to="/app/articles">Mis ensayos</Link>
         <CommunityFilters value={searchInput} onChange={setSearchInput} onSubmit={submitSearch} />
+        <Link className="button button--primary communities-page__create-link" to="/communities/new">
+          Crear comunidad
+        </Link>
       </header>
 
       {isLoading && <p className="status-message" role="status">Cargando comunidades…</p>}

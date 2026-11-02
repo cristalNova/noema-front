@@ -1,7 +1,7 @@
-import { httpClient } from '../../../shared/api';
-import type { Paginated } from '../../../shared/types/Paginated';
-import { toPageQuery } from '../../../shared/utils/pagination';
-import type { Community, CommunityDetail } from '../model/community.types';
+import { httpClient } from '../../../shared/api'
+import type { Paginated } from '../../../shared/types/Paginated'
+import { toPageQuery } from '../../../shared/utils/pagination'
+import type { Community, CreateCommunityDto } from '../model/community.types'
 
 export interface CommunityListParams {
   page?: number;

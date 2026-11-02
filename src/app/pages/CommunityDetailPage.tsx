@@ -604,6 +604,7 @@ export function CommunityDetailPage() {
             />
           )}
         </section>
+        <CommunityMembershipAction community={community} />
       </article>
     </main>
   );

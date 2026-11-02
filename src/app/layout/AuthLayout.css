@@ -11,6 +11,8 @@
 }
 
 .auth-layout__brand {
+  display: inline-block;
+  text-decoration: none;
   margin: 0 0 24px;
   font-family: var(--font-serif);
   font-size: 1.5rem;
