@@ -1,3 +1,17 @@
+:root {
+  --color-bg: #c5c5fa;
+  --color-surface: #ffffff;
+  --color-ink: #14142b;
+  --color-muted: #6b6b85;
+  --color-field: #f3f3f8;
+  --color-accent: #5b5bd6;
+  --color-danger: #c62f3f;
+  --radius-sheet: 32px;
+  --radius-pill: 999px;
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+}
+
 *,
 *::before,
 *::after {
@@ -6,9 +20,10 @@
 
 body {
   margin: 0;
-  color: #25211f;
-  background: #f7f3ed;
-  font-family: Georgia, 'Times New Roman', serif;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   line-height: 1.5;
 }
 
@@ -129,16 +144,14 @@ a {
   display: flex;
   min-height: 18rem;
   flex-direction: column;
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease;
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .community-card:hover,
-  .community-card:focus-within {
-    transform: translateY(-0.2rem);
-    box-shadow: 0 0.8rem 2rem rgb(82 55 35 / 12%);
+.community-card:hover,
+.community-card:focus-within {
+  transform: translateY(-0.2rem);
+  box-shadow: 0 0.8rem 2rem rgb(82 55 35 / 12%);
   }
 }
 
