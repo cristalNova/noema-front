@@ -14,10 +14,16 @@ import RegisterPage from './pages/RegisterPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
 
-// Rutas privadas: colgar de <RequireAuth /> (redirige al login si no hay sesión).
-// Las que además necesitan perfil van dentro de <RequireProfile /> (redirige a /profile/new).
+// Esqueleto: rutas públicas y privadas. Los guards (feature auth) se agregan después.
 export const router = createBrowserRouter([
+  { path: '/', element: <p>Noema</p> },
+  { path: '/login', element: <p>Login (pendiente)</p> },
+  { path: '/communities', element: <CommunitiesPage /> },
+  { path: '/communities/:id', element: <CommunityDetailPage /> },
   {
+    // Privadas: envolver con RequireAuth cuando exista.
+    path: '/app',
+    element: <p>Área privada (pendiente)</p>,
     element: <AppLayout />,
     children: [
       { path: '/', element: <HomePage /> },
@@ -41,10 +47,5 @@ export const router = createBrowserRouter([
       { path: '*', element: <NotFoundPage /> },
     ],
   },
-  {
-    element: <RequireAuth />,
-    children: [{ path: '/profile/new', element: <ProfileNewPage /> }],
-  },
-  { path: '/login', element: <LoginPage /> },
-  { path: '/register', element: <RegisterPage /> },
+  { path: '*', element: <p>No encontrado</p> },
 ])

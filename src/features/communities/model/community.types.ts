@@ -68,3 +68,11 @@ export interface Community {
   createdAt: string
   tags: CommunityTag[]
 }
+
+export interface CreateCommunityDto {
+  name: string
+  topic: string
+  description?: string
+  isPremium?: boolean
+  tags?: string[]
+}

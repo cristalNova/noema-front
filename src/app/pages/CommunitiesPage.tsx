@@ -37,6 +37,9 @@ export function CommunitiesPage() {
         <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
         {' '}<Link className="button button--secondary" to="/app/articles">Mis ensayos</Link>
         <CommunityFilters value={searchInput} onChange={setSearchInput} onSubmit={submitSearch} />
+        <Link className="button button--primary communities-page__create-link" to="/communities/new">
+          Crear comunidad
+        </Link>
       </header>
 
       {isLoading && <p className="status-message" role="status">Cargando comunidades…</p>}
