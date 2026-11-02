@@ -1,0 +1,6713 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sesión iniciada"
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Credenciales inválidas o usuario inactivo"
+          }
+        },
+        "summary": "Iniciar sesión y obtener un token JWT",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Sesión cerrada"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cerrar sesión y revocar el token actual",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario creado"
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "409": {
+            "description": "El correo ya está registrado"
+          }
+        },
+        "summary": "Registrar un usuario",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "operationId": "UsersController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Listado de usuarios"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_users"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar los usuarios",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario encontrado"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_users"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener un usuario por id",
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuario actualizado"
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_users"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          },
+          "409": {
+            "description": "El correo ya está registrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar un usuario",
+        "tags": [
+          "Users"
+        ]
+      },
+      "delete": {
+        "operationId": "UsersController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Usuario eliminado"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_users"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un usuario",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/roles": {
+      "post": {
+        "operationId": "RolesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Rol creado"
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          },
+          "409": {
+            "description": "El nombre ya existe"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear un rol",
+        "tags": [
+          "Roles"
+        ]
+      },
+      "get": {
+        "operationId": "RolesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Listado de roles"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar los roles",
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/roles/{id}": {
+      "get": {
+        "operationId": "RolesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rol encontrado"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          },
+          "404": {
+            "description": "Rol no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener un rol por id",
+        "tags": [
+          "Roles"
+        ]
+      },
+      "patch": {
+        "operationId": "RolesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rol actualizado"
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          },
+          "404": {
+            "description": "Rol no encontrado"
+          },
+          "409": {
+            "description": "El nombre ya existe"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar un rol",
+        "tags": [
+          "Roles"
+        ]
+      },
+      "delete": {
+        "operationId": "RolesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Rol eliminado"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          },
+          "404": {
+            "description": "Rol no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un rol",
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/permissions": {
+      "post": {
+        "operationId": "PermissionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePermissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Permiso creado"
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          },
+          "409": {
+            "description": "El nombre ya existe"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear un permiso",
+        "tags": [
+          "Permissions"
+        ]
+      },
+      "get": {
+        "operationId": "PermissionsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Listado de permisos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar los permisos",
+        "tags": [
+          "Permissions"
+        ]
+      }
+    },
+    "/permissions/{id}": {
+      "get": {
+        "operationId": "PermissionsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Permiso encontrado"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          },
+          "404": {
+            "description": "Permiso no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener un permiso por id",
+        "tags": [
+          "Permissions"
+        ]
+      },
+      "patch": {
+        "operationId": "PermissionsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePermissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Permiso actualizado"
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          },
+          "404": {
+            "description": "Permiso no encontrado"
+          },
+          "409": {
+            "description": "El nombre ya existe"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar un permiso",
+        "tags": [
+          "Permissions"
+        ]
+      },
+      "delete": {
+        "operationId": "PermissionsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Permiso eliminado"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "403": {
+            "description": "Sin el permiso manage_roles"
+          },
+          "404": {
+            "description": "Permiso no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un permiso",
+        "tags": [
+          "Permissions"
+        ]
+      }
+    },
+    "/reading-lists": {
+      "post": {
+        "operationId": "ReadingListsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReadingListDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear una lista de lectura",
+        "tags": [
+          "Listas de lectura"
+        ]
+      }
+    },
+    "/reading-lists/mine": {
+      "get": {
+        "operationId": "ReadingListsController_findMine",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadingList"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar mis listas de lectura",
+        "tags": [
+          "Listas de lectura"
+        ]
+      }
+    },
+    "/reading-lists/profile/{profileId}": {
+      "get": {
+        "operationId": "ReadingListsController_findPublicByProfile",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadingList"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Perfil no encontrado"
+          }
+        },
+        "summary": "Listar las listas públicas de un perfil",
+        "tags": [
+          "Listas de lectura"
+        ]
+      }
+    },
+    "/reading-lists/{id}": {
+      "get": {
+        "operationId": "ReadingListsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lista no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver una lista con sus artículos en orden (las privadas, solo su dueño)",
+        "tags": [
+          "Listas de lectura"
+        ]
+      },
+      "patch": {
+        "operationId": "ReadingListsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReadingListDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingList"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La lista es de otro perfil"
+          },
+          "404": {
+            "description": "Lista no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar una lista propia",
+        "tags": [
+          "Listas de lectura"
+        ]
+      },
+      "delete": {
+        "operationId": "ReadingListsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "La lista es de otro perfil"
+          },
+          "404": {
+            "description": "Lista no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una lista propia",
+        "tags": [
+          "Listas de lectura"
+        ]
+      }
+    },
+    "/reading-lists/{id}/items": {
+      "post": {
+        "operationId": "ReadingListsController_addItem",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddReadingListItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingListItem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La lista es de otro perfil"
+          },
+          "404": {
+            "description": "Lista o artículo no disponible"
+          },
+          "409": {
+            "description": "El artículo ya está en la lista"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Agregar un artículo al final de la lista",
+        "tags": [
+          "Listas de lectura"
+        ]
+      }
+    },
+    "/reading-lists/{id}/items/order": {
+      "put": {
+        "operationId": "ReadingListsController_reorderItems",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderReadingListItemsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadingListItem"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La lista es de otro perfil"
+          },
+          "404": {
+            "description": "Lista no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reordenar los artículos de la lista",
+        "tags": [
+          "Listas de lectura"
+        ]
+      }
+    },
+    "/reading-lists/{id}/items/{articleId}": {
+      "delete": {
+        "operationId": "ReadingListsController_removeItem",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "La lista es de otro perfil"
+          },
+          "404": {
+            "description": "Lista o artículo no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Quitar un artículo de la lista",
+        "tags": [
+          "Listas de lectura"
+        ]
+      }
+    },
+    "/profiles": {
+      "post": {
+        "description": "Cada usuario puede tener un único perfil y el username debe ser único.",
+        "operationId": "ProfilesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Perfil creado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "409": {
+            "description": "El usuario ya tiene un perfil o el username ya está en uso"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear el perfil del usuario autenticado",
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "get": {
+        "operationId": "ProfilesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Listado de perfiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Profile"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Listar todos los perfiles",
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/profiles/me": {
+      "get": {
+        "operationId": "ProfilesController_findMine",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Perfil del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "El usuario aún no tiene un perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener el perfil del usuario autenticado",
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "patch": {
+        "description": "Todos los campos son opcionales; solo se modifican los enviados.",
+        "operationId": "ProfilesController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Perfil actualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "El usuario aún no tiene un perfil"
+          },
+          "409": {
+            "description": "El username ya está en uso"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar el perfil del usuario autenticado",
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "delete": {
+        "operationId": "ProfilesController_remove",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Perfil eliminado"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "El usuario aún no tiene un perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar el perfil del usuario autenticado",
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/profiles/{id}": {
+      "get": {
+        "operationId": "ProfilesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identificador del perfil",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "404": {
+            "description": "Perfil no encontrado"
+          }
+        },
+        "summary": "Obtener un perfil por su identificador",
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/follows/{profileId}": {
+      "post": {
+        "description": "El perfil del usuario autenticado empieza a seguir al perfil indicado.",
+        "operationId": "FollowsController_follow",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "path",
+            "description": "Identificador del perfil a seguir",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Seguimiento creado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Follow"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "El id no es un entero positivo o se intentó seguir al propio perfil"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "El usuario autenticado no tiene perfil o el perfil a seguir no existe"
+          },
+          "409": {
+            "description": "Ya se sigue a este perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Seguir a un perfil",
+        "tags": [
+          "Follows"
+        ]
+      },
+      "delete": {
+        "operationId": "FollowsController_unfollow",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "path",
+            "description": "Identificador del perfil a dejar de seguir",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Seguimiento eliminado"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "El usuario autenticado no tiene perfil o no sigue al perfil indicado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Dejar de seguir a un perfil",
+        "tags": [
+          "Follows"
+        ]
+      }
+    },
+    "/follows/followers/{profileId}": {
+      "get": {
+        "operationId": "FollowsController_findFollowers",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "path",
+            "description": "Identificador del perfil",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfiles que siguen al perfil indicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Profile"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "404": {
+            "description": "Perfil no encontrado"
+          }
+        },
+        "summary": "Listar los seguidores de un perfil",
+        "tags": [
+          "Follows"
+        ]
+      }
+    },
+    "/follows/following/{profileId}": {
+      "get": {
+        "operationId": "FollowsController_findFollowing",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "path",
+            "description": "Identificador del perfil",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfiles seguidos por el perfil indicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Profile"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "404": {
+            "description": "Perfil no encontrado"
+          }
+        },
+        "summary": "Listar los perfiles que sigue un perfil",
+        "tags": [
+          "Follows"
+        ]
+      }
+    },
+    "/preferences": {
+      "get": {
+        "description": "Devuelve los tags de preferencia ordenados alfabéticamente.",
+        "operationId": "PreferencesController_findMine",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Tags de preferencia",
+            "schema": {
+              "example": [
+                "ciencia ficción",
+                "nodejs",
+                "poesía"
+              ]
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "El usuario aún no tiene un perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener las preferencias del usuario autenticado",
+        "tags": [
+          "Preferences"
+        ]
+      },
+      "put": {
+        "description": "Sustituye todas las preferencias por la lista enviada. Los tags se normalizan a minúsculas y se eliminan duplicados.",
+        "operationId": "PreferencesController_replaceMine",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePreferenceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tags de preferencia resultantes",
+            "schema": {
+              "example": [
+                "ciencia ficción",
+                "nodejs",
+                "poesía"
+              ]
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "El usuario aún no tiene un perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reemplazar las preferencias del usuario autenticado",
+        "tags": [
+          "Preferences"
+        ]
+      }
+    },
+    "/articles": {
+      "post": {
+        "operationId": "ArticlesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateArticleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La colección es de otro autor"
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear un artículo en borrador",
+        "tags": [
+          "Artículos"
+        ]
+      },
+      "get": {
+        "operationId": "ArticlesController_findPublished",
+        "parameters": [
+          {
+            "name": "authorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "collectionId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "communityId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "tag",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 50,
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar artículos publicados, con filtros y paginación",
+        "tags": [
+          "Artículos"
+        ]
+      }
+    },
+    "/articles/mine": {
+      "get": {
+        "operationId": "ArticlesController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar mis artículos en cualquier estado",
+        "tags": [
+          "Artículos"
+        ]
+      }
+    },
+    "/articles/mine/{id}": {
+      "get": {
+        "operationId": "ArticlesController_findMineOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El artículo es de otro autor"
+          },
+          "404": {
+            "description": "Artículo no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver uno de mis artículos con su contenido",
+        "tags": [
+          "Artículos"
+        ]
+      }
+    },
+    "/articles/{id}": {
+      "get": {
+        "operationId": "ArticlesController_findPublishedOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Artículo no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver un artículo publicado (premium: adelanto si no hay acceso)",
+        "tags": [
+          "Artículos"
+        ]
+      },
+      "patch": {
+        "operationId": "ArticlesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateArticleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El artículo es de otro autor"
+          },
+          "404": {
+            "description": "Artículo no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar un artículo propio",
+        "tags": [
+          "Artículos"
+        ]
+      },
+      "delete": {
+        "operationId": "ArticlesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "El artículo es de otro autor"
+          },
+          "404": {
+            "description": "Artículo no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un artículo propio",
+        "tags": [
+          "Artículos"
+        ]
+      }
+    },
+    "/articles/{id}/status": {
+      "patch": {
+        "operationId": "ArticlesController_changeStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateArticleStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El artículo es de otro autor"
+          },
+          "404": {
+            "description": "Artículo no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cambiar el estado: publicar, archivar o reactivar",
+        "tags": [
+          "Artículos"
+        ]
+      }
+    },
+    "/collections": {
+      "post": {
+        "operationId": "CollectionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear una colección de artículos",
+        "tags": [
+          "Colecciones"
+        ]
+      },
+      "get": {
+        "operationId": "CollectionsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Collection"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Listar colecciones, con filtro por autor",
+        "tags": [
+          "Colecciones"
+        ]
+      }
+    },
+    "/collections/{id}": {
+      "get": {
+        "operationId": "CollectionsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Colección no encontrada"
+          }
+        },
+        "summary": "Ver una colección",
+        "tags": [
+          "Colecciones"
+        ]
+      },
+      "patch": {
+        "operationId": "CollectionsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La colección es de otro autor"
+          },
+          "404": {
+            "description": "Colección no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar una colección propia",
+        "tags": [
+          "Colecciones"
+        ]
+      },
+      "delete": {
+        "operationId": "CollectionsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "La colección es de otro autor"
+          },
+          "404": {
+            "description": "Colección no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una colección propia (sus artículos quedan sin colección)",
+        "tags": [
+          "Colecciones"
+        ]
+      }
+    },
+    "/communities/{communityId}/members": {
+      "post": {
+        "operationId": "MembershipsController_join",
+        "parameters": [
+          {
+            "name": "communityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Estás vetado de la comunidad"
+          },
+          "404": {
+            "description": "Comunidad no encontrada"
+          },
+          "409": {
+            "description": "Ya eres miembro o tienes solicitud"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unirse a una comunidad (premium: queda pendiente de aprobación)",
+        "tags": [
+          "Membresías"
+        ]
+      },
+      "get": {
+        "operationId": "MembershipsController_findMembers",
+        "parameters": [
+          {
+            "name": "communityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "PENDING",
+                "BANNED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Solo propietario y moderadores"
+          },
+          "404": {
+            "description": "Comunidad no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar miembros (pendientes y vetados: solo moderación)",
+        "tags": [
+          "Membresías"
+        ]
+      }
+    },
+    "/communities/{communityId}/members/me": {
+      "delete": {
+        "operationId": "MembershipsController_leave",
+        "parameters": [
+          {
+            "name": "communityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "Un vetado no puede abandonarla"
+          },
+          "404": {
+            "description": "No eres miembro"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Abandonar la comunidad",
+        "tags": [
+          "Membresías"
+        ]
+      }
+    },
+    "/communities/{communityId}/members/{profileId}": {
+      "patch": {
+        "operationId": "MembershipsController_update",
+        "parameters": [
+          {
+            "name": "communityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMembershipDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Sin permiso sobre ese miembro"
+          },
+          "404": {
+            "description": "Miembro no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Aprobar, vetar o cambiar el rol de un miembro",
+        "tags": [
+          "Membresías"
+        ]
+      },
+      "delete": {
+        "operationId": "MembershipsController_kick",
+        "parameters": [
+          {
+            "name": "communityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "Sin permiso sobre ese miembro"
+          },
+          "404": {
+            "description": "Miembro no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Expulsar a un miembro",
+        "tags": [
+          "Membresías"
+        ]
+      }
+    },
+    "/communities": {
+      "post": {
+        "operationId": "CommunitiesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommunityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          },
+          "409": {
+            "description": "Ya existe una comunidad con ese nombre"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear una comunidad (quien la crea queda como propietario)",
+        "tags": [
+          "Comunidades"
+        ]
+      },
+      "get": {
+        "operationId": "CommunitiesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "topic",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tag",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Listar comunidades, con filtros por tema, etiqueta y nombre",
+        "tags": [
+          "Comunidades"
+        ]
+      }
+    },
+    "/communities/mine": {
+      "get": {
+        "operationId": "CommunitiesController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar las comunidades en las que soy miembro",
+        "tags": [
+          "Comunidades"
+        ]
+      }
+    },
+    "/communities/{id}": {
+      "get": {
+        "operationId": "CommunitiesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comunidad no encontrada"
+          }
+        },
+        "summary": "Ver una comunidad con su número de miembros",
+        "tags": [
+          "Comunidades"
+        ]
+      },
+      "patch": {
+        "operationId": "CommunitiesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCommunityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Solo el propietario puede"
+          },
+          "404": {
+            "description": "Comunidad no encontrada"
+          },
+          "409": {
+            "description": "Ya existe ese nombre"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar una comunidad propia",
+        "tags": [
+          "Comunidades"
+        ]
+      },
+      "delete": {
+        "operationId": "CommunitiesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "Solo el propietario puede"
+          },
+          "404": {
+            "description": "Comunidad no encontrada"
+          },
+          "409": {
+            "description": "Tiene artículos exclusivos"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una comunidad propia",
+        "tags": [
+          "Comunidades"
+        ]
+      }
+    },
+    "/communities/{id}/tags": {
+      "put": {
+        "operationId": "CommunitiesController_replaceTags",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplaceCommunityTagsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Solo el propietario puede"
+          },
+          "404": {
+            "description": "Comunidad no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reemplazar las etiquetas de una comunidad propia",
+        "tags": [
+          "Comunidades"
+        ]
+      }
+    },
+    "/subscriptions": {
+      "post": {
+        "operationId": "SubscriptionsController_subscribe",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubscriptionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Pago rechazado por la pasarela"
+          },
+          "403": {
+            "description": "Estás vetado de la comunidad"
+          },
+          "404": {
+            "description": "Plan no encontrado"
+          },
+          "409": {
+            "description": "Ya tienes una suscripción vigente"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Suscribirse a un plan y cobrar el primer periodo",
+        "tags": [
+          "Suscripciones"
+        ]
+      },
+      "get": {
+        "operationId": "SubscriptionsController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar mis suscripciones",
+        "tags": [
+          "Suscripciones"
+        ]
+      }
+    },
+    "/subscriptions/{id}": {
+      "get": {
+        "operationId": "SubscriptionsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La suscripción es de otro perfil"
+          },
+          "404": {
+            "description": "Suscripción no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver una suscripción propia",
+        "tags": [
+          "Suscripciones"
+        ]
+      }
+    },
+    "/subscriptions/{id}/renew": {
+      "post": {
+        "operationId": "SubscriptionsController_renew",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenewSubscriptionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Pago rechazado por la pasarela"
+          },
+          "403": {
+            "description": "La suscripción es de otro perfil"
+          },
+          "404": {
+            "description": "Suscripción no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Renovar la suscripción cobrando otro periodo",
+        "tags": [
+          "Suscripciones"
+        ]
+      }
+    },
+    "/subscriptions/{id}/cancel": {
+      "post": {
+        "operationId": "SubscriptionsController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La suscripción es de otro perfil"
+          },
+          "404": {
+            "description": "Suscripción no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cancelar la renovación (el acceso sigue hasta el fin del periodo)",
+        "tags": [
+          "Suscripciones"
+        ]
+      }
+    },
+    "/plans": {
+      "post": {
+        "operationId": "PlansController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlanDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plan"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No eres propietario de la comunidad"
+          },
+          "404": {
+            "description": "Comunidad o perfil no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear un plan de autor o de comunidad",
+        "tags": [
+          "Planes"
+        ]
+      },
+      "get": {
+        "operationId": "PlansController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "authorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "communityId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Catálogo público de planes activos",
+        "tags": [
+          "Planes"
+        ]
+      }
+    },
+    "/plans/mine": {
+      "get": {
+        "operationId": "PlansController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar los planes que administro",
+        "tags": [
+          "Planes"
+        ]
+      }
+    },
+    "/plans/{id}": {
+      "get": {
+        "operationId": "PlansController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plan"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Plan no encontrado"
+          }
+        },
+        "summary": "Ver un plan",
+        "tags": [
+          "Planes"
+        ]
+      },
+      "patch": {
+        "operationId": "PlansController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlanDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plan"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El plan es de otro titular"
+          },
+          "404": {
+            "description": "Plan no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar nombre, precio o activación de un plan propio",
+        "tags": [
+          "Planes"
+        ]
+      },
+      "delete": {
+        "operationId": "PlansController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "El plan es de otro titular"
+          },
+          "404": {
+            "description": "Plan no encontrado"
+          },
+          "409": {
+            "description": "Tiene suscripciones: desactívalo"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Borrar un plan sin suscripciones",
+        "tags": [
+          "Planes"
+        ]
+      }
+    },
+    "/reviews": {
+      "post": {
+        "operationId": "ReviewsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Artículo no disponible"
+          },
+          "409": {
+            "description": "Ya reseñaste este artículo"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reseñar un artículo publicado y ajeno",
+        "tags": [
+          "Reseñas"
+        ]
+      }
+    },
+    "/reviews/article/{articleId}": {
+      "get": {
+        "operationId": "ReviewsController_findByArticle",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Artículo no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar las reseñas de un artículo",
+        "tags": [
+          "Reseñas"
+        ]
+      }
+    },
+    "/reviews/{id}": {
+      "patch": {
+        "operationId": "ReviewsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "La reseña es de otro perfil"
+          },
+          "404": {
+            "description": "Reseña no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar una reseña propia",
+        "tags": [
+          "Reseñas"
+        ]
+      },
+      "delete": {
+        "operationId": "ReviewsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "La reseña es de otro perfil"
+          },
+          "404": {
+            "description": "Reseña no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una reseña propia",
+        "tags": [
+          "Reseñas"
+        ]
+      }
+    },
+    "/article-tags": {
+      "get": {
+        "operationId": "TagsController_findAllInUse",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Tags"
+        ]
+      }
+    },
+    "/article-tags/article/{articleId}": {
+      "get": {
+        "operationId": "TagsController_findByArticle",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tags"
+        ]
+      },
+      "put": {
+        "operationId": "TagsController_replaceForArticle",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplaceArticleTagsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tags"
+        ]
+      }
+    },
+    "/progress": {
+      "get": {
+        "operationId": "ProgressController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Progress"
+        ]
+      }
+    },
+    "/progress/{articleId}": {
+      "get": {
+        "operationId": "ProgressController_findOne",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingProgress"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Progress"
+        ]
+      },
+      "put": {
+        "operationId": "ProgressController_save",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveProgressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingProgress"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Progress"
+        ]
+      },
+      "delete": {
+        "operationId": "ProgressController_remove",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Progress"
+        ]
+      }
+    },
+    "/bookmarks": {
+      "post": {
+        "operationId": "BookmarksController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookmarkDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmark"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Bookmarks"
+        ]
+      },
+      "get": {
+        "operationId": "BookmarksController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "articleId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Bookmarks"
+        ]
+      }
+    },
+    "/bookmarks/{id}": {
+      "get": {
+        "operationId": "BookmarksController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmark"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Bookmarks"
+        ]
+      },
+      "patch": {
+        "operationId": "BookmarksController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookmarkDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmark"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Bookmarks"
+        ]
+      },
+      "delete": {
+        "operationId": "BookmarksController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Bookmarks"
+        ]
+      }
+    },
+    "/favorites": {
+      "get": {
+        "operationId": "FavoritesController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Favorites"
+        ]
+      }
+    },
+    "/favorites/{articleId}": {
+      "post": {
+        "operationId": "FavoritesController_add",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Favorite"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Favorites"
+        ]
+      },
+      "delete": {
+        "operationId": "FavoritesController_remove",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Favorites"
+        ]
+      }
+    },
+    "/posts": {
+      "post": {
+        "operationId": "PostsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePostDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No se puede republicar ese post"
+          },
+          "404": {
+            "description": "Post o artículo no disponible"
+          },
+          "409": {
+            "description": "Ya republicaste ese post"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Publicar: original, respuesta, repost o cita",
+        "tags": [
+          "Publicaciones"
+        ]
+      },
+      "get": {
+        "operationId": "PostsController_findFeed",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "authorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "communityId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Feed de publicaciones visibles para el lector",
+        "tags": [
+          "Publicaciones"
+        ]
+      }
+    },
+    "/posts/mine": {
+      "get": {
+        "operationId": "PostsController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar mis publicaciones",
+        "tags": [
+          "Publicaciones"
+        ]
+      }
+    },
+    "/posts/{id}": {
+      "get": {
+        "operationId": "PostsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Publicación no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver una publicación",
+        "tags": [
+          "Publicaciones"
+        ]
+      },
+      "delete": {
+        "operationId": "PostsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "La publicación es de otro perfil"
+          },
+          "404": {
+            "description": "Publicación no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una publicación propia",
+        "tags": [
+          "Publicaciones"
+        ]
+      }
+    },
+    "/posts/{id}/replies": {
+      "get": {
+        "operationId": "PostsController_findReplies",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "Publicación no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar las respuestas de una publicación",
+        "tags": [
+          "Publicaciones"
+        ]
+      }
+    },
+    "/comments": {
+      "post": {
+        "operationId": "CommentsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Comentar un artículo o post, o responder a un comentario",
+        "tags": [
+          "Comentarios"
+        ]
+      }
+    },
+    "/comments/article/{articleId}": {
+      "get": {
+        "operationId": "CommentsController_findByArticle",
+        "parameters": [
+          {
+            "name": "articleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "Artículo no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar los comentarios de un artículo",
+        "tags": [
+          "Comentarios"
+        ]
+      }
+    },
+    "/comments/post/{postId}": {
+      "get": {
+        "operationId": "CommentsController_findByPost",
+        "parameters": [
+          {
+            "name": "postId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "Publicación no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar los comentarios de una publicación",
+        "tags": [
+          "Comentarios"
+        ]
+      }
+    },
+    "/comments/{id}": {
+      "patch": {
+        "operationId": "CommentsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCommentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El comentario es de otro perfil"
+          },
+          "404": {
+            "description": "Comentario no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar un comentario propio",
+        "tags": [
+          "Comentarios"
+        ]
+      },
+      "delete": {
+        "operationId": "CommentsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "403": {
+            "description": "El comentario es de otro perfil"
+          },
+          "404": {
+            "description": "Comentario no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un comentario propio, con sus respuestas",
+        "tags": [
+          "Comentarios"
+        ]
+      }
+    },
+    "/reactions/{targetType}/{targetId}": {
+      "get": {
+        "operationId": "ReactionsController_summary",
+        "parameters": [
+          {
+            "name": "targetType",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Resumen de reacciones de un artículo, post o comentario",
+        "tags": [
+          "Reacciones"
+        ]
+      },
+      "put": {
+        "operationId": "ReactionsController_set",
+        "parameters": [
+          {
+            "name": "targetType",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetReactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reaction"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso no disponible"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reaccionar a un recurso, o cambiar el tipo de reacción",
+        "tags": [
+          "Reacciones"
+        ]
+      },
+      "delete": {
+        "operationId": "ReactionsController_remove",
+        "parameters": [
+          {
+            "name": "targetType",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "No habías reaccionado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Quitar mi reacción a un recurso",
+        "tags": [
+          "Reacciones"
+        ]
+      }
+    },
+    "/payments": {
+      "get": {
+        "operationId": "PaymentsController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "subscriptionId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "El usuario no tiene perfil"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Historial de mis pagos, con filtro por suscripción",
+        "tags": [
+          "Pagos"
+        ]
+      }
+    },
+    "/payments/{id}": {
+      "get": {
+        "operationId": "PaymentsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El pago es de otro perfil"
+          },
+          "404": {
+            "description": "Pago no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ver un pago propio",
+        "tags": [
+          "Pagos"
+        ]
+      }
+    },
+    "/payments/{id}/refund": {
+      "post": {
+        "operationId": "PaymentsController_refund",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Falta el permiso manage_payments"
+          },
+          "404": {
+            "description": "Pago no encontrado"
+          },
+          "409": {
+            "description": "El pago no está en estado PAID"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reembolsar un pago (solo administración)",
+        "tags": [
+          "Pagos"
+        ]
+      }
+    },
+    "/notifications": {
+      "get": {
+        "operationId": "NotificationsController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "unread",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FOLLOW",
+                "COMMENT",
+                "REACTION",
+                "POST_IN_COMMUNITY",
+                "MEMBERSHIP"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notificaciones paginadas"
+          },
+          "400": {
+            "description": "Parámetros de consulta inválidos"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar las notificaciones del usuario autenticado",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/notifications/unread-count": {
+      "get": {
+        "operationId": "NotificationsController_countUnread",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Cantidad de notificaciones sin leer"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Contar las notificaciones sin leer",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/notifications/read-all": {
+      "post": {
+        "operationId": "NotificationsController_markAllAsRead",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Cantidad de notificaciones actualizadas"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Marcar todas las notificaciones como leídas",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/notifications/{id}/read": {
+      "patch": {
+        "operationId": "NotificationsController_markAsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notificación actualizada"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "Notificación no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Marcar una notificación como leída",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/notifications/{id}": {
+      "delete": {
+        "operationId": "NotificationsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Notificación eliminada"
+          },
+          "400": {
+            "description": "El id debe ser un entero positivo"
+          },
+          "401": {
+            "description": "Token JWT ausente o inválido"
+          },
+          "404": {
+            "description": "Notificación no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una notificación",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Noema API",
+    "description": "Documentación de la API",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "UserLoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8
+          },
+          "phoneNumber": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "roleIds": {
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "roleIds"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateRoleDto": {
+        "type": "object",
+        "properties": {
+          "roleName": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "permissionIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "roleName"
+        ]
+      },
+      "UpdateRoleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreatePermissionDto": {
+        "type": "object",
+        "properties": {
+          "permissionName": {
+            "type": "string",
+            "maxLength": 50
+          }
+        },
+        "required": [
+          "permissionName"
+        ]
+      },
+      "UpdatePermissionDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateReadingListDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "WANT_TO_READ",
+              "READING",
+              "READ",
+              "CUSTOM"
+            ]
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "PUBLIC",
+              "PRIVATE"
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Permission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "permissionName": {
+            "type": "string"
+          },
+          "rolePermissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RolePermission"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "permissionName",
+          "rolePermissions"
+        ]
+      },
+      "RolePermission": {
+        "type": "object",
+        "properties": {
+          "roleId": {
+            "type": "number"
+          },
+          "permissionId": {
+            "type": "number"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "permission": {
+            "$ref": "#/components/schemas/Permission"
+          }
+        },
+        "required": [
+          "roleId",
+          "permissionId",
+          "role",
+          "permission"
+        ]
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "roleName": {
+            "type": "string"
+          },
+          "rolePermissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RolePermission"
+            }
+          },
+          "userRoles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserRole"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "roleName",
+          "rolePermissions",
+          "userRoles"
+        ]
+      },
+      "UserRole": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "number"
+          },
+          "roleId": {
+            "type": "number"
+          },
+          "assignedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": [
+          "userId",
+          "roleId",
+          "assignedAt",
+          "user",
+          "role"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "userRoles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserRole"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "password",
+          "isActive",
+          "createdAt",
+          "userRoles"
+        ]
+      },
+      "Profile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Identificador del perfil",
+            "example": 1
+          },
+          "userId": {
+            "type": "number",
+            "description": "Identificador del usuario dueño del perfil",
+            "example": 7
+          },
+          "username": {
+            "type": "string",
+            "description": "Nombre de usuario único",
+            "example": "maria.lopez"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre visible del perfil",
+            "example": "María López"
+          },
+          "profilePhoto": {
+            "type": "string",
+            "description": "URL de la foto de perfil",
+            "example": "https://example.com/avatars/maria.png"
+          },
+          "bio": {
+            "type": "string",
+            "description": "Biografía del perfil",
+            "example": "Escritora y lectora apasionada de ciencia ficción"
+          },
+          "website": {
+            "type": "string",
+            "description": "URL del sitio web personal",
+            "example": "https://maria-lopez.dev"
+          },
+          "socialLinks": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Enlaces a redes sociales con el formato { red: url }",
+            "example": {
+              "twitter": "https://twitter.com/marialopez"
+            }
+          },
+          "isVerified": {
+            "type": "boolean",
+            "description": "Indica si el perfil está verificado",
+            "example": false
+          },
+          "followersCount": {
+            "type": "number",
+            "description": "Cantidad de seguidores del perfil",
+            "example": 42
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Fecha de creación del perfil",
+            "example": "2026-10-10T22:30:58.000Z"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "username",
+          "name",
+          "isVerified",
+          "followersCount",
+          "createdAt",
+          "user"
+        ]
+      },
+      "ReadingList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "profileId": {
+            "type": "number"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "WANT_TO_READ",
+              "READING",
+              "READ",
+              "CUSTOM"
+            ],
+            "type": "string"
+          },
+          "visibility": {
+            "enum": [
+              "PUBLIC",
+              "PRIVATE"
+            ],
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadingListItem"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "profileId",
+          "profile",
+          "name",
+          "status",
+          "visibility",
+          "createdAt",
+          "items"
+        ]
+      },
+      "Collection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "authorId": {
+            "type": "number"
+          },
+          "author": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "articles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Article"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "authorId",
+          "author",
+          "title",
+          "createdAt",
+          "articles"
+        ]
+      },
+      "CommunityTag": {
+        "type": "object",
+        "properties": {
+          "communityId": {
+            "type": "number"
+          },
+          "tag": {
+            "type": "string"
+          },
+          "community": {
+            "$ref": "#/components/schemas/Community"
+          }
+        },
+        "required": [
+          "communityId",
+          "tag",
+          "community"
+        ]
+      },
+      "Community": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "ownerId": {
+            "type": "number"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "name": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isPremium": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommunityTag"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "ownerId",
+          "owner",
+          "name",
+          "topic",
+          "isPremium",
+          "createdAt",
+          "tags"
+        ]
+      },
+      "ArticleTag": {
+        "type": "object",
+        "properties": {
+          "articleId": {
+            "type": "number"
+          },
+          "tag": {
+            "type": "string"
+          },
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          }
+        },
+        "required": [
+          "articleId",
+          "tag",
+          "article"
+        ]
+      },
+      "Article": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "authorId": {
+            "type": "number"
+          },
+          "author": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "collectionId": {
+            "type": "number",
+            "nullable": true
+          },
+          "collection": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Collection"
+              }
+            ]
+          },
+          "communityId": {
+            "type": "number",
+            "nullable": true
+          },
+          "community": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Community"
+              }
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED"
+            ],
+            "type": "string"
+          },
+          "isPremium": {
+            "type": "boolean"
+          },
+          "publishedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "articleTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArticleTag"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "authorId",
+          "author",
+          "collectionId",
+          "communityId",
+          "title",
+          "content",
+          "status",
+          "isPremium",
+          "publishedAt",
+          "updatedAt",
+          "articleTags"
+        ]
+      },
+      "ReadingListItem": {
+        "type": "object",
+        "properties": {
+          "readingListId": {
+            "type": "number"
+          },
+          "articleId": {
+            "type": "number"
+          },
+          "orderIndex": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "readingList": {
+            "$ref": "#/components/schemas/ReadingList"
+          },
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          }
+        },
+        "required": [
+          "readingListId",
+          "articleId",
+          "orderIndex",
+          "createdAt",
+          "readingList",
+          "article"
+        ]
+      },
+      "UpdateReadingListDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "status": {
+            "enum": [
+              "WANT_TO_READ",
+              "READING",
+              "READ",
+              "CUSTOM"
+            ],
+            "type": "string"
+          },
+          "visibility": {
+            "enum": [
+              "PUBLIC",
+              "PRIVATE"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "AddReadingListItemDto": {
+        "type": "object",
+        "properties": {
+          "articleId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "articleId"
+        ]
+      },
+      "ReorderReadingListItemsDto": {
+        "type": "object",
+        "properties": {
+          "articleIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "articleIds"
+        ]
+      },
+      "CreateProfileDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9_.]+$",
+            "description": "Nombre de usuario único. Solo admite letras, números, guion bajo y punto",
+            "example": "maria.lopez"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Nombre visible del perfil",
+            "example": "María López"
+          },
+          "profilePhoto": {
+            "type": "string",
+            "maxLength": 500,
+            "format": "uri",
+            "description": "URL de la foto de perfil",
+            "example": "https://example.com/avatars/maria.png"
+          },
+          "bio": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Biografía del perfil",
+            "example": "Escritora y lectora apasionada de ciencia ficción"
+          },
+          "website": {
+            "type": "string",
+            "maxLength": 255,
+            "format": "uri",
+            "description": "URL del sitio web personal",
+            "example": "https://maria-lopez.dev"
+          },
+          "socialLinks": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Enlaces a redes sociales con el formato { red: url }",
+            "example": {
+              "twitter": "https://twitter.com/marialopez",
+              "github": "https://github.com/marialopez"
+            }
+          }
+        },
+        "required": [
+          "username",
+          "name"
+        ]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9_.]+$",
+            "description": "Nombre de usuario único. Solo admite letras, números, guion bajo y punto",
+            "example": "maria.lopez"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Nombre visible del perfil",
+            "example": "María López"
+          },
+          "profilePhoto": {
+            "type": "string",
+            "maxLength": 500,
+            "format": "uri",
+            "description": "URL de la foto de perfil",
+            "example": "https://example.com/avatars/maria.png"
+          },
+          "bio": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Biografía del perfil",
+            "example": "Escritora y lectora apasionada de ciencia ficción"
+          },
+          "website": {
+            "type": "string",
+            "maxLength": 255,
+            "format": "uri",
+            "description": "URL del sitio web personal",
+            "example": "https://maria-lopez.dev"
+          },
+          "socialLinks": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Enlaces a redes sociales con el formato { red: url }",
+            "example": {
+              "twitter": "https://twitter.com/marialopez",
+              "github": "https://github.com/marialopez"
+            }
+          }
+        }
+      },
+      "Follow": {
+        "type": "object",
+        "properties": {
+          "followerId": {
+            "type": "number",
+            "description": "Identificador del perfil seguidor",
+            "example": 1
+          },
+          "followedId": {
+            "type": "number",
+            "description": "Identificador del perfil seguido",
+            "example": 2
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Fecha en que se empezó a seguir al perfil",
+            "example": "2026-10-10T22:30:58.000Z"
+          },
+          "follower": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "followed": {
+            "$ref": "#/components/schemas/Profile"
+          }
+        },
+        "required": [
+          "followerId",
+          "followedId",
+          "createdAt",
+          "follower",
+          "followed"
+        ]
+      },
+      "CreatePreferenceDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "uniqueItems": true,
+            "maxItems": 30,
+            "description": "Lista completa de tags de preferencia. Reemplaza las anteriores y se normaliza a minúsculas sin espacios sobrantes",
+            "example": [
+              "nodejs",
+              "ciencia ficción",
+              "poesía"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 50
+            }
+          }
+        },
+        "required": [
+          "tags"
+        ]
+      },
+      "CreateArticleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "content": {
+            "type": "string"
+          },
+          "isPremium": {
+            "type": "boolean"
+          },
+          "collectionId": {
+            "type": "number",
+            "nullable": true
+          },
+          "communityId": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "title",
+          "content"
+        ]
+      },
+      "UpdateArticleDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "content": {
+            "type": "string"
+          },
+          "isPremium": {
+            "type": "boolean"
+          },
+          "collectionId": {
+            "type": "number",
+            "nullable": true
+          },
+          "communityId": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateArticleStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "CreateCollectionDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "UpdateCollectionDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Membership": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "number"
+          },
+          "communityId": {
+            "type": "number"
+          },
+          "role": {
+            "enum": [
+              "MEMBER",
+              "MODERATOR",
+              "OWNER"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ACTIVE",
+              "PENDING",
+              "BANNED"
+            ],
+            "type": "string"
+          },
+          "joinedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "community": {
+            "$ref": "#/components/schemas/Community"
+          }
+        },
+        "required": [
+          "profileId",
+          "communityId",
+          "role",
+          "status",
+          "joinedAt",
+          "profile",
+          "community"
+        ]
+      },
+      "UpdateMembershipDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "MEMBER",
+              "MODERATOR"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "BANNED"
+            ]
+          }
+        }
+      },
+      "CreateCommunityDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "topic": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string"
+          },
+          "isPremium": {
+            "type": "boolean"
+          },
+          "tags": {
+            "uniqueItems": true,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 50
+            }
+          }
+        },
+        "required": [
+          "name",
+          "topic"
+        ]
+      },
+      "UpdateCommunityDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "topic": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string"
+          },
+          "isPremium": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ReplaceCommunityTagsDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "uniqueItems": true,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 50
+            }
+          }
+        },
+        "required": [
+          "tags"
+        ]
+      },
+      "CreateSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "number"
+          },
+          "autoRenew": {
+            "type": "boolean"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "CARD",
+              "PAYPAL",
+              "BANK_TRANSFER"
+            ]
+          },
+          "paymentToken": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "planId",
+          "paymentMethod"
+        ]
+      },
+      "Plan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "authorId": {
+            "type": "number",
+            "nullable": true
+          },
+          "author": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              }
+            ]
+          },
+          "communityId": {
+            "type": "number",
+            "nullable": true
+          },
+          "community": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Community"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "billingPeriod": {
+            "enum": [
+              "MONTHLY",
+              "YEARLY"
+            ],
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "authorId",
+          "communityId",
+          "name",
+          "price",
+          "currency",
+          "billingPeriod",
+          "isActive"
+        ]
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "profileId": {
+            "type": "number"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "planId": {
+            "type": "number"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "status": {
+            "enum": [
+              "ACTIVE",
+              "CANCELLED",
+              "EXPIRED"
+            ],
+            "type": "string"
+          },
+          "startDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "autoRenew": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "profileId",
+          "profile",
+          "planId",
+          "plan",
+          "status",
+          "startDate",
+          "endDate",
+          "autoRenew"
+        ]
+      },
+      "RenewSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "CARD",
+              "PAYPAL",
+              "BANK_TRANSFER"
+            ]
+          },
+          "paymentToken": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "paymentMethod"
+        ]
+      },
+      "CreatePlanDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0.01
+          },
+          "currency": {
+            "type": "string"
+          },
+          "billingPeriod": {
+            "type": "string",
+            "enum": [
+              "MONTHLY",
+              "YEARLY"
+            ]
+          },
+          "communityId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "price",
+          "currency",
+          "billingPeriod"
+        ]
+      },
+      "UpdatePlanDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0.01
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateReviewDto": {
+        "type": "object",
+        "properties": {
+          "articleId": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "reviewText": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "articleId",
+          "rating"
+        ]
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "profileId": {
+            "type": "number"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "articleId": {
+            "type": "number"
+          },
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "reviewText": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "profileId",
+          "profile",
+          "articleId",
+          "article",
+          "rating",
+          "createdAt"
+        ]
+      },
+      "UpdateReviewDto": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "reviewText": {
+            "type": "string"
+          }
+        }
+      },
+      "ReplaceArticleTagsDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "uniqueItems": true,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 50
+            }
+          }
+        },
+        "required": [
+          "tags"
+        ]
+      },
+      "ReadingProgress": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "number"
+          },
+          "articleId": {
+            "type": "number"
+          },
+          "percentage": {
+            "type": "number"
+          },
+          "isCompleted": {
+            "type": "boolean"
+          },
+          "lastReadAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          }
+        },
+        "required": [
+          "profileId",
+          "articleId",
+          "percentage",
+          "isCompleted",
+          "lastReadAt",
+          "profile",
+          "article"
+        ]
+      },
+      "SaveProgressDto": {
+        "type": "object",
+        "properties": {
+          "percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "percentage"
+        ]
+      },
+      "CreateBookmarkDto": {
+        "type": "object",
+        "properties": {
+          "articleId": {
+            "type": "number"
+          },
+          "highlightedText": {
+            "type": "string"
+          },
+          "startPosition": {
+            "type": "number",
+            "minimum": 0
+          },
+          "endPosition": {
+            "type": "number",
+            "minimum": 1
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "articleId",
+          "highlightedText",
+          "startPosition",
+          "endPosition"
+        ]
+      },
+      "Bookmark": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "profileId": {
+            "type": "number"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "articleId": {
+            "type": "number"
+          },
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          },
+          "highlightedText": {
+            "type": "string"
+          },
+          "startPosition": {
+            "type": "number"
+          },
+          "endPosition": {
+            "type": "number"
+          },
+          "note": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "profileId",
+          "profile",
+          "articleId",
+          "article",
+          "highlightedText",
+          "startPosition",
+          "endPosition",
+          "createdAt"
+        ]
+      },
+      "UpdateBookmarkDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "Favorite": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "number"
+          },
+          "articleId": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "article": {
+            "$ref": "#/components/schemas/Article"
+          }
+        },
+        "required": [
+          "profileId",
+          "articleId",
+          "createdAt",
+          "profile",
+          "article"
+        ]
+      },
+      "CreatePostDto": {
+        "type": "object",
+        "properties": {
+          "postType": {
+            "type": "string",
+            "enum": [
+              "ORIGINAL",
+              "REPLY",
+              "REPOST",
+              "QUOTE"
+            ]
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "articleId": {
+            "type": "number"
+          },
+          "parentPostId": {
+            "type": "number"
+          },
+          "communityId": {
+            "type": "number"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "PUBLIC",
+              "FOLLOWERS",
+              "COMMUNITY"
+            ]
+          }
+        }
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "ownerId": {
+            "type": "number"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "communityId": {
+            "type": "number",
+            "nullable": true
+          },
+          "community": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Community"
+              }
+            ]
+          },
+          "articleId": {
+            "type": "number",
+            "nullable": true
+          },
+          "article": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Article"
+              }
+            ]
+          },
+          "parentPostId": {
+            "type": "number",
+            "nullable": true
+          },
+          "parentPost": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Post"
+              }
+            ]
+          },
+          "postType": {
+            "enum": [
+              "ORIGINAL",
+              "REPLY",
+              "REPOST",
+              "QUOTE"
+            ],
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "visibility": {
+            "enum": [
+              "PUBLIC",
+              "FOLLOWERS",
+              "COMMUNITY"
+            ],
+            "type": "string"
+          },
+          "likes": {
+            "type": "number"
+          },
+          "repostCount": {
+            "type": "number"
+          },
+          "commentCount": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ownerId",
+          "owner",
+          "communityId",
+          "articleId",
+          "parentPostId",
+          "postType",
+          "content",
+          "visibility",
+          "likes",
+          "repostCount",
+          "commentCount",
+          "createdAt"
+        ]
+      },
+      "CreateCommentDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "articleId": {
+            "type": "number"
+          },
+          "postId": {
+            "type": "number"
+          },
+          "parentCommentId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "content"
+        ]
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "authorId": {
+            "type": "number"
+          },
+          "author": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "articleId": {
+            "type": "number",
+            "nullable": true
+          },
+          "article": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Article"
+              }
+            ]
+          },
+          "postId": {
+            "type": "number",
+            "nullable": true
+          },
+          "post": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Post"
+              }
+            ]
+          },
+          "parentCommentId": {
+            "type": "number",
+            "nullable": true
+          },
+          "parentComment": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Comment"
+              }
+            ]
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "authorId",
+          "author",
+          "articleId",
+          "postId",
+          "parentCommentId",
+          "content",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateCommentDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SetReactionDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "LIKE",
+              "LOVE",
+              "INSIGHTFUL"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "Reaction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "profileId": {
+            "type": "number"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "articleId": {
+            "type": "number",
+            "nullable": true
+          },
+          "article": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Article"
+              }
+            ]
+          },
+          "postId": {
+            "type": "number",
+            "nullable": true
+          },
+          "post": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Post"
+              }
+            ]
+          },
+          "commentId": {
+            "type": "number",
+            "nullable": true
+          },
+          "comment": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Comment"
+              }
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "LIKE",
+              "LOVE",
+              "INSIGHTFUL"
+            ]
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "profileId",
+          "profile",
+          "articleId",
+          "postId",
+          "commentId",
+          "type",
+          "createdAt"
+        ]
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "subscriptionId": {
+            "type": "number"
+          },
+          "subscription": {
+            "$ref": "#/components/schemas/Subscription"
+          },
+          "profileId": {
+            "type": "number"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "paymentMethod": {
+            "enum": [
+              "CARD",
+              "PAYPAL",
+              "BANK_TRANSFER"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "PAID",
+              "FAILED",
+              "REFUNDED"
+            ],
+            "type": "string"
+          },
+          "externalReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "paidAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "subscriptionId",
+          "subscription",
+          "profileId",
+          "profile",
+          "amount",
+          "currency",
+          "paymentMethod",
+          "status",
+          "externalReference",
+          "paidAt"
+        ]
+      }
+    }
+  }
+}
