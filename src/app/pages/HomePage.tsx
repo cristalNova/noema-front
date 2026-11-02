@@ -13,6 +13,7 @@ export default function HomePage() {
         <h1>Lee, escribe y comparte ideas</h1>
         <p className="home__description">Encuentra una comunidad, retoma un ensayo o empieza con esa idea que tienes en mente.</p>
         <Link className="home__primary" to="/app/articles/new">Empezar a escribir <span aria-hidden="true">↗</span></Link>
+        <Link className="home__read" to="/articles">Leer ensayos publicados →</Link>
       </header>
 
       {isAuthenticated && status === 'missing' && <aside className="home__profile"><div><strong>Tu espacio está casi listo.</strong><p>Crea tu perfil para guardar ensayos y participar con tu identidad de escritor.</p></div><Link to="/profile/new">Crear mi perfil →</Link></aside>}

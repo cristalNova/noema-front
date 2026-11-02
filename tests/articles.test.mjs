@@ -57,7 +57,7 @@ test('un cambio de estado retira el ensayo del filtro anterior', () => {
 
 test('las transiciones coinciden con las permitidas por el backend', () => {
   assert.deepEqual(STATUS_TRANSITIONS, {
-    DRAFT: ['PUBLISHED', 'ARCHIVED'], PUBLISHED: ['ARCHIVED'], ARCHIVED: ['PUBLISHED'],
+    DRAFT: ['PUBLISHED', 'ARCHIVED'], PUBLISHED: ['ARCHIVED', 'DRAFT'], ARCHIVED: ['PUBLISHED', 'DRAFT'],
   })
 })
 
@@ -79,9 +79,15 @@ test('la API recorre todas las páginas y usa las rutas privadas y los cuerpos c
   assert.ok(calls.every((call) => call.url === '/articles/mine' && call.options.signal === controller.signal && call.options.params.limit === 100))
   assert.equal((await api.getMyArticle(1)).content, 'Texto privado')
   assert.equal(calls.at(-1).url, '/articles/mine/1')
+  await api.listPublishedArticles(2, controller.signal)
+  assert.deepEqual(calls.at(-1), { url: '/articles', options: { params: { page: 2, limit: 10 }, signal: controller.signal } })
   httpClient.patch = async (url, body) => { calls.push({ url, body }); return { data: { ...fixtures[0], ...body } } }
   await api.changeArticleStatus(1, 'ARCHIVED')
   assert.deepEqual(calls.at(-1), { url: '/articles/1/status', body: { status: 'ARCHIVED' } })
+  await api.changeArticleStatus(1, 'DRAFT')
+  assert.deepEqual(calls.at(-1), { url: '/articles/1/status', body: { status: 'DRAFT' } })
+  httpClient.patch = async () => { throw new Error('No se puede cambiar el estado') }
+  await assert.rejects(api.changeArticleStatus(1, 'PUBLISHED'), /No se puede cambiar el estado/)
   httpClient.delete = async (url) => { calls.push({ url }); return { status: 204 } }
   assert.equal(await api.deleteArticle(1), undefined)
   assert.equal(calls.at(-1).url, '/articles/1')

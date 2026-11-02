@@ -28,6 +28,9 @@
 .draft-privacy p { color: #6b625b; margin: 0.5rem 0 0; }
 .draft-save { width: 100%; min-height: 44px; }
 .draft-save-status { margin-bottom: 0; }
+.draft-status-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e1d6c9; }
+.draft-status-section h3 { margin: 0 0 0.75rem; font-size: 1rem; }
+.draft-status-section .back-link { font-size: 0.85rem; margin: 1rem 0 0; }
 .draft-error { color: #9c3d2c; font-size: 0.9rem; overflow-wrap: anywhere; }
 .draft-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 @media (max-width: 800px) { .draft-layout { grid-template-columns: 1fr; } }

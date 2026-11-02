@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ArticleStatus, ArticleSummary } from '../model/article.types'
-import { STATUS_LABELS, STATUS_TRANSITIONS } from '../model/myArticles'
+import { STATUS_ACTIONS, STATUS_CONFIRMATIONS } from '../model/myArticles'
+import { ArticleStatusBadge } from './ArticleStatusBadge'
+import './ArticleState.css'
 
 interface Props {
-  article: ArticleSummary
-  action: 'delete' | 'status'
+  article: Pick<ArticleSummary, 'title' | 'status'>
+  action: 'delete' | ArticleStatus
   pending: boolean
   onClose: () => void
   onConfirm: (status?: ArticleStatus) => Promise<string | null>
@@ -13,7 +15,6 @@ interface Props {
 export function ArticleActionDialog({ article, action, pending, onClose, onConfirm }: Props) {
   const dialog = useRef<HTMLDialogElement>(null)
   const cancel = useRef<HTMLButtonElement>(null)
-  const [status, setStatus] = useState(STATUS_TRANSITIONS[article.status][0])
   const [error, setError] = useState('')
   const deleting = action === 'delete'
 
@@ -26,21 +27,21 @@ export function ArticleActionDialog({ article, action, pending, onClose, onConfi
 
   async function confirm() {
     setError('')
-    const message = await onConfirm(deleting ? undefined : status)
+    const message = await onConfirm(action === 'delete' ? undefined : action)
     if (message) setError(message)
     else onClose()
   }
 
   return (
-    <dialog ref={dialog} className="article-dialog" aria-labelledby="action-title" aria-describedby="action-description" onCancel={(event) => { event.preventDefault(); if (!pending) onClose() }}>
-      <h2 id="action-title">{deleting ? '¿Eliminar ensayo?' : 'Cambiar estado'}</h2>
+    <dialog ref={dialog} className="article-dialog" aria-busy={pending} aria-labelledby="action-title" aria-describedby="action-description" onCancel={(event) => { event.preventDefault(); if (!pending) onClose() }}>
+      <h2 id="action-title">{action === 'delete' ? '¿Eliminar ensayo?' : `¿${STATUS_ACTIONS[action]}?`}</h2>
       <p className="article-dialog__title">{article.title}</p>
-      <p id="action-description">{deleting ? 'Esta acción es definitiva. Se eliminará el ensayo y no podrás recuperarlo.' : 'Elige el nuevo estado de tu ensayo.'}</p>
-      {!deleting && <><label htmlFor="next-status">Nuevo estado</label><select id="next-status" value={status} disabled={pending} onChange={(event) => setStatus(event.target.value as ArticleStatus)}>{STATUS_TRANSITIONS[article.status].map((next) => <option value={next} key={next}>{STATUS_LABELS[next]}</option>)}</select>{status === 'PUBLISHED' && <p>Al publicarlo, estará disponible para los lectores con acceso.</p>}</>}
+      <p id="action-description">{action === 'delete' ? 'Esta acción es definitiva. Se eliminará el ensayo y no podrás recuperarlo.' : STATUS_CONFIRMATIONS[action]}</p>
+      {action !== 'delete' && <><p>Estado actual: <ArticleStatusBadge status={article.status} /></p><p>Estado al confirmar: <ArticleStatusBadge status={action} /></p></>}
       {error && <p className="status-message--error" role="alert">{error}</p>}
       <div className="article-dialog__actions">
         <button ref={cancel} className="button button--secondary" type="button" disabled={pending} onClick={onClose}>Cancelar</button>
-        <button className={`button ${deleting ? 'article-delete-button' : 'button--primary'}`} type="button" disabled={pending} onClick={() => void confirm()}>{pending ? 'Procesando…' : deleting ? 'Eliminar definitivamente' : 'Guardar estado'}</button>
+        <button className={`button ${deleting ? 'article-delete-button' : 'button--primary'}`} type="button" disabled={pending} onClick={() => void confirm()}>{pending ? 'Procesando…' : action === 'delete' ? 'Eliminar definitivamente' : STATUS_ACTIONS[action]}</button>
       </div>
     </dialog>
   )
