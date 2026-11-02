@@ -1,0 +1,49 @@
+.auth-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.auth-layout__hero {
+  padding: 40px 24px 32px;
+}
+
+.auth-layout__brand {
+  display: inline-block;
+  text-decoration: none;
+  margin: 0 0 24px;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+}
+
+.auth-layout__hero h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 9vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.auth-layout__sheet {
+  flex: 1;
+  padding: 32px 24px 40px;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: var(--color-surface);
+}
+
+.auth-layout__sheet h2 {
+  margin: 0 0 24px;
+  font-size: 1.5rem;
+}
+
+.auth-layout__alt {
+  margin: 24px 0 0;
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.auth-layout__alt a {
+  color: var(--color-ink);
+  font-weight: 600;
+}

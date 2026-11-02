@@ -29,8 +29,3 @@ export async function getCommunity(id: number) {
   const response = await httpClient.get<Community>(`/communities/${id}`)
   return response.data
 }
-
-export async function createCommunity(payload: CreateCommunityDto) {
-  const response = await httpClient.post<Community>('/communities', payload)
-  return response.data
-}

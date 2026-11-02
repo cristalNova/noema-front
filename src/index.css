@@ -1,3 +1,17 @@
+:root {
+  --color-bg: #c5c5fa;
+  --color-surface: #ffffff;
+  --color-ink: #14142b;
+  --color-muted: #6b6b85;
+  --color-field: #f3f3f8;
+  --color-accent: #5b5bd6;
+  --color-danger: #c62f3f;
+  --radius-sheet: 32px;
+  --radius-pill: 999px;
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+}
+
 *,
 *::before,
 *::after {
@@ -6,62 +20,22 @@
 
 body {
   margin: 0;
-  color: #25211f;
-  background: #f7f3ed;
-  font-family: Georgia, 'Times New Roman', serif;
+  min-height: 100svh;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   line-height: 1.5;
 }
 
-button,
-input {
-  font: inherit;
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
 }
 
 button,
 a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.page-shell {
-  width: min(1120px, calc(100% - 2rem));
-  margin: 0 auto;
-  padding: 4rem 0;
-}
-
-.page-header {
-  max-width: 720px;
-  margin-bottom: 2rem;
-}
-
-.page-header h1,
-.community-detail h1 {
-  margin: 0.25rem 0 0.75rem;
-  font-size: clamp(2.25rem, 6vw, 4.5rem);
-  line-height: 1;
-}
-
-.page-header > p:not(.eyebrow) {
-  color: #6b625b;
-  font-size: 1.15rem;
-}
-
-.eyebrow,
-.community-card__topic {
-  color: #8c4f2f;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.community-filters {
-  margin-top: 2rem;
-}
-
-.community-filters label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
+  touch-action: manipulation;
 }
 
 .community-filters__row {
