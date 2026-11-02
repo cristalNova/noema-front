@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { changeArticleStatus, deleteArticle, listMyArticles } from '../api/articlesApi'
 import type { ArticleStatus, ArticleSummary } from '../model/article.types'
-import { selectArticles } from '../model/myArticles'
+import { selectArticles, STATUS_LABELS } from '../model/myArticles'
 import { toApiError } from '../../../shared/api/apiError'
 
 function errorMessage(error: unknown) {
@@ -42,7 +42,7 @@ export function useMyArticles() {
       if (nextStatus) {
         const updated = await changeArticleStatus(article.id, nextStatus)
         setArticles((previous) => previous.map((item) => item.id === article.id ? { ...item, ...updated } : item))
-        setNotice(`Se actualizó el estado de “${article.title}”.`)
+        setNotice(`“${article.title}” ahora está en estado ${STATUS_LABELS[updated.status].toLowerCase()}.`)
       } else {
         await deleteArticle(article.id)
         setArticles((previous) => previous.filter((item) => item.id !== article.id))

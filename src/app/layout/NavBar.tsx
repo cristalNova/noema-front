@@ -22,6 +22,7 @@ export function NavBar() {
 
       <nav className="navbar__main" aria-label="Navegación principal">
         <NavLink to="/" end>Inicio</NavLink>
+        <NavLink to="/articles">Leer ensayos</NavLink>
         <NavLink to="/communities">Comunidades</NavLink>
         <NavLink to="/app/articles" end>Mis ensayos</NavLink>
         <NavLink to="/app/articles/new">Escribir</NavLink>
