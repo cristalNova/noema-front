@@ -1,0 +1,40 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.field__input {
+  min-height: 52px;
+  padding: 0 20px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--color-field);
+  color: var(--color-ink);
+  font: inherit;
+}
+
+.field__input:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  background: #fff;
+}
+
+.field__input[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.field__msg {
+  margin: 0 0 0 20px;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+}
+
+.field__msg--error {
+  color: var(--color-danger);
+}
