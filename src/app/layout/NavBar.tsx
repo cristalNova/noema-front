@@ -1,9 +1,18 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import './NavBar.css'
 
 export function NavBar() {
-  const { session, isAuthenticated } = useAuth()
+  const { session, isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
+  const [loggingOut, setLoggingOut] = useState(false)
+
+  async function handleLogout() {
+    setLoggingOut(true)
+    await logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <header className="navbar">
@@ -22,6 +31,9 @@ export function NavBar() {
           <span className="navbar__avatar" role="img" aria-label={`Cuenta de ${session.user.email}`}>
             {session.user.email.charAt(0).toUpperCase()}
           </span>
+          <button type="button" className="navbar__link" onClick={handleLogout} disabled={loggingOut}>
+            Cerrar sesión
+          </button>
         </nav>
       ) : (
         <nav className="navbar__actions" aria-label="Acceso">

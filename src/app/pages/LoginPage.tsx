@@ -1,9 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { LoginForm } from '@/features/auth'
+import { LoginForm, useAuth } from '@/features/auth'
 import { AuthLayout } from '../layout/AuthLayout'
+import './LoginPage.css'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const { sessionExpired } = useAuth()
 
   return (
     <AuthLayout
@@ -15,6 +17,11 @@ export default function LoginPage() {
         </>
       }
     >
+      {sessionExpired && (
+        <p className="login-notice" role="status">
+          Tu sesión expiró. Inicia sesión de nuevo para continuar.
+        </p>
+      )}
       <LoginForm onSuccess={() => navigate('/', { replace: true })} />
     </AuthLayout>
   )

@@ -4,21 +4,38 @@ import type { Session } from '../model/Session'
 
 export interface AuthState {
   session: Session | null
+  /** La sesión terminó por vencimiento (no por cierre voluntario): la UI muestra un aviso. */
+  expired: boolean
 }
 
-export type AuthAction = { type: 'signedIn'; session: Session } | { type: 'signedOut' }
+export type AuthAction =
+  | { type: 'signedIn'; session: Session }
+  | { type: 'signedOut' }
+  | { type: 'expired' }
+  | { type: 'synced'; state: AuthState }
 
 export function authReducer(_state: AuthState, action: AuthAction): AuthState {
-  return { session: action.type === 'signedIn' ? action.session : null }
+  switch (action.type) {
+    case 'signedIn':
+      return { session: action.session, expired: false }
+    case 'signedOut':
+      return { session: null, expired: false }
+    case 'expired':
+      return { session: null, expired: true }
+    case 'synced':
+      return action.state
+  }
 }
 
 /** Restaura la sesión guardada; descarta tokens inválidos o vencidos. */
 export function loadInitialState(): AuthState {
   const token = tokenStorage.get()
-  const session = token ? sessionFromToken(token) : null
+  if (!token) return { session: null, expired: false }
+
+  const session = sessionFromToken(token)
   if (!session || isExpired(session)) {
-    if (token) tokenStorage.clear()
-    return { session: null }
+    tokenStorage.clear()
+    return { session: null, expired: session !== null }
   }
-  return { session }
+  return { session, expired: false }
 }

@@ -1,5 +1,6 @@
 export { LoginForm } from './components/LoginForm'
 export { RegisterForm } from './components/RegisterForm'
+export { RequireAuth } from './components/RouteGuards'
 export { AuthContext, type AuthContextValue } from './hooks/AuthContext'
 export { authReducer, loadInitialState } from './hooks/authReducer'
 export { useAuth } from './hooks/useAuth'
