@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { LoadingScreen } from '@/shared/components/LoadingScreen'
 import { useMyProfile } from '../hooks/useMyProfile'
 
@@ -8,9 +8,10 @@ import { useMyProfile } from '../hooks/useMyProfile'
  */
 export function RequireProfile() {
   const { status, reload } = useMyProfile()
+  const location = useLocation()
 
   if (status === 'idle' || status === 'loading') return <LoadingScreen />
-  if (status === 'missing') return <Navigate to="/profile/new" replace />
+  if (status === 'missing') return <Navigate to="/profile/new" replace state={{ from: location.pathname + location.search + location.hash }} />
   if (status === 'error') {
     return (
       <div role="alert" style={{ padding: 24 }}>

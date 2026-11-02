@@ -2,10 +2,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 960px;
+  max-width: 1168px;
   margin: 0 auto;
   padding: 20px 24px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
+
+.navbar__main { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 18px; }
+.navbar__main a { text-decoration: none; font-size: 0.9rem; padding: 6px 0; border-bottom: 2px solid transparent; }
+.navbar__main a[aria-current="page"] { border-color: currentColor; font-weight: 700; }
+.navbar__icon:disabled { opacity: 0.45; cursor: default; }
+@media (max-width: 760px) { .navbar__main { order: 3; width: 100%; border-top: 1px solid rgb(20 20 43 / 15%); padding-top: 12px; } .navbar__actions { margin-left: auto; } }
+@media (max-width: 380px) { .navbar { padding-inline: 16px; gap: 12px; } .navbar__actions { gap: 8px; font-size: 0.85rem; } .navbar__cta { padding: 8px 12px; } }
 
 .navbar__brand {
   font-family: var(--font-serif);

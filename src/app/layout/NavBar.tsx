@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import './NavBar.css'
 
@@ -20,9 +20,16 @@ export function NavBar() {
         Noema
       </Link>
 
+      <nav className="navbar__main" aria-label="Navegación principal">
+        <NavLink to="/" end>Inicio</NavLink>
+        <NavLink to="/communities">Comunidades</NavLink>
+        <NavLink to="/app/articles" end>Mis ensayos</NavLink>
+        <NavLink to="/app/articles/new">Escribir</NavLink>
+      </nav>
+
       {isAuthenticated && session ? (
         <nav className="navbar__actions" aria-label="Sesión">
-          <button type="button" className="navbar__icon" aria-label="Notificaciones">
+          <button type="button" className="navbar__icon" disabled aria-label="Notificaciones (próximamente)" title="Notificaciones: próximamente">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8" />
               <path d="M10.3 20a2 2 0 0 0 3.4 0" />
