@@ -1,0 +1,5 @@
+.published-list { display: grid; gap: 1rem; }
+.published-essay { border: 1px solid #e1d6c9; border-radius: 0.8rem; padding: 1.5rem; background: #fffdf9; overflow-wrap: anywhere; }
+.published-essay h2 { margin: 1rem 0 0.5rem; font-size: 1.5rem; }
+.published-essay p { margin: 0; color: #6b625b; white-space: pre-wrap; }
+.published-essay__badges { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }

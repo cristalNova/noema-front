@@ -5,7 +5,15 @@ export const STATUS_LABELS: Record<ArticleStatus, string> = {
   DRAFT: 'Borrador', PUBLISHED: 'Publicado', ARCHIVED: 'Archivado',
 }
 export const STATUS_TRANSITIONS: Record<ArticleStatus, ArticleStatus[]> = {
-  DRAFT: ['PUBLISHED', 'ARCHIVED'], PUBLISHED: ['ARCHIVED'], ARCHIVED: ['PUBLISHED'],
+  DRAFT: ['PUBLISHED', 'ARCHIVED'], PUBLISHED: ['ARCHIVED', 'DRAFT'], ARCHIVED: ['PUBLISHED', 'DRAFT'],
+}
+export const STATUS_ACTIONS: Record<ArticleStatus, string> = {
+  PUBLISHED: 'Publicar', ARCHIVED: 'Archivar', DRAFT: 'Volver a borrador',
+}
+export const STATUS_CONFIRMATIONS: Record<ArticleStatus, string> = {
+  PUBLISHED: 'El ensayo aparecerá en el listado público para los lectores con acceso. Se respetarán las restricciones de comunidad y contenido premium.',
+  ARCHIVED: 'El ensayo dejará de aparecer en el listado público. Podrás seguir editándolo y volver a publicarlo más adelante.',
+  DRAFT: 'El ensayo dejará de aparecer en el listado público y solo tú podrás acceder a él desde Mis ensayos.',
 }
 export const ARTICLES_PAGE_SIZE = 10
 

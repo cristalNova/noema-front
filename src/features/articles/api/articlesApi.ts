@@ -46,3 +46,10 @@ export async function changeArticleStatus(id: number, status: ArticleStatus): Pr
 export async function deleteArticle(id: number): Promise<void> {
   await httpClient.delete(`/articles/${id}`)
 }
+
+export async function listPublishedArticles(page = 1, signal?: AbortSignal): Promise<Paginated<ArticleSummary>> {
+  const response = await httpClient.get<Paginated<ArticleSummary>>('/articles', {
+    params: { page: Math.max(1, page), limit: 10 }, signal,
+  })
+  return response.data
+}

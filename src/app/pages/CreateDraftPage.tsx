@@ -1,10 +1,12 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useDraftEditor } from '../../features/articles/hooks/useDraftEditor'
-import type { DraftField } from '../../features/articles/model/article.types'
+import type { ArticleStatus, DraftField } from '../../features/articles/model/article.types'
 import './CreateDraftPage.css'
-import { STATUS_LABELS } from '../../features/articles/model/myArticles'
+import { STATUS_ACTIONS, STATUS_LABELS, STATUS_TRANSITIONS } from '../../features/articles/model/myArticles'
+import { ArticleActionDialog } from '../../features/articles/components/ArticleActionDialog'
+import { ArticleStatusBadge } from '../../features/articles/components/ArticleStatusBadge'
 
 export function CreateDraftPage() {
   const { id } = useParams()
@@ -17,9 +19,12 @@ export function CreateDraftPage() {
 function ArticleEditor({ articleId }: { articleId?: number }) {
   const editor = useDraftEditor(articleId)
   const form = useRef<HTMLFormElement>(null)
+  const [statusAction, setStatusAction] = useState<ArticleStatus | null>(null)
+  const statusTrigger = useRef<HTMLButtonElement | null>(null)
   const { values, errors, isSaving, saved, isLoadingCommunities } = editor
   const words = values.content.trim() ? values.content.trim().split(/\s+/u).length : 0
   const isDraft = editor.articleStatus === 'DRAFT'
+  const isBusy = isSaving || editor.isChangingStatus
 
   if (editor.isLoadingArticle || editor.articleError) {
     return <main className="page-shell"><Link className="back-link" to="/app/articles">← Mis ensayos</Link>{editor.isLoadingArticle ? <p role="status">Cargando ensayo…</p> : <div role="alert"><p>{editor.articleError}</p><button type="button" className="button button--secondary" onClick={editor.retryArticle}>Reintentar</button></div>}</main>
@@ -46,14 +51,14 @@ function ArticleEditor({ articleId }: { articleId?: number }) {
         <p>{articleId ? 'Retoma tus ideas y guarda los cambios cuando estés listo.' : 'Dale forma a tu próximo ensayo. Puedes guardarlo y seguir escribiendo más tarde.'}</p>
       </header>
 
-      <form ref={form} onSubmit={submit} noValidate aria-busy={isSaving}>
+      <form ref={form} onSubmit={submit} noValidate aria-busy={isBusy}>
         <div className="draft-layout">
           <section className="draft-paper" aria-labelledby="draft-heading">
             <div className="draft-paper__heading">
               <h2 id="draft-heading">{articleId ? 'Editar ensayo' : 'Nuevo ensayo'}</h2>
-              <span className="draft-badge">{STATUS_LABELS[editor.articleStatus]}</span>
+              <ArticleStatusBadge status={editor.articleStatus} />
             </div>
-            <fieldset disabled={isSaving} className="draft-fields">
+            <fieldset disabled={isBusy} className="draft-fields">
               <legend className="draft-sr-only">Texto del ensayo</legend>
               <div className="draft-field">
                 <label htmlFor="title">Título <span aria-hidden="true">*</span></label>
@@ -78,7 +83,7 @@ function ArticleEditor({ articleId }: { articleId?: number }) {
 
           <aside className="draft-settings" aria-labelledby="settings-heading">
             <h2 id="settings-heading">Detalles del ensayo</h2>
-            <fieldset disabled={isSaving} className="draft-fields">
+            <fieldset disabled={isBusy} className="draft-fields">
               <legend className="draft-sr-only">Preferencias de publicación</legend>
               <div className="draft-field">
                 <label htmlFor="communityId">Comunidad <span className="draft-optional">Opcional</span></label>
@@ -101,11 +106,22 @@ function ArticleEditor({ articleId }: { articleId?: number }) {
             </fieldset>
             <div className="draft-privacy"><strong>{isDraft ? 'Solo tú puedes verlo' : `Ensayo ${STATUS_LABELS[editor.articleStatus].toLowerCase()}`}</strong><p>{isDraft ? 'Tu ensayo se guarda como borrador. Nadie más podrá leerlo hasta que decidas publicarlo.' : editor.articleStatus === 'PUBLISHED' ? 'Los cambios se aplicarán a tu ensayo publicado.' : 'Guardar los cambios mantiene tu ensayo archivado.'}</p></div>
             {editor.generalErrors.length > 0 && <div className="draft-error" role="alert">{editor.generalErrors.map((message) => <p key={message}>{message}</p>)}</div>}
-            <button type="submit" className="button button--primary draft-save" disabled={isSaving || saved}>{isSaving ? 'Guardando…' : saved ? 'Cambios guardados' : articleId ? 'Guardar cambios' : 'Guardar borrador'}</button>
+            <button type="submit" className="button button--primary draft-save" disabled={isBusy || saved}>{isSaving ? 'Guardando…' : saved ? 'Cambios guardados' : editor.persistedId ? 'Guardar cambios' : 'Guardar borrador'}</button>
             <p className="draft-save-status" role="status">{saved ? 'Guardado. Puedes seguir escribiendo y volver a guardar los cambios.' : 'Guarda tus cambios antes de salir.'}</p>
+            <div className="draft-status-section">
+              <h3 tabIndex={-1}>Estado y visibilidad</h3>
+              <ArticleStatusBadge status={editor.articleStatus} />
+              <div className="article-status-actions">
+                {STATUS_TRANSITIONS[editor.articleStatus].map((next) => <button key={next} type="button" className={`button ${next === 'PUBLISHED' ? 'button--primary' : 'button--secondary'}`} disabled={isBusy || editor.persistedId === null || editor.hasUnsavedChanges} onClick={(event) => { statusTrigger.current = event.currentTarget; setStatusAction(next) }}>{STATUS_ACTIONS[next]}</button>)}
+              </div>
+              {(editor.persistedId === null || editor.hasUnsavedChanges) && <p className="draft-hint">Guarda tus cambios para habilitar las acciones de estado.</p>}
+              <p className="draft-save-status" role="status">{editor.statusNotice}</p>
+              <Link className="back-link" to="/articles">Ver ensayos publicados →</Link>
+            </div>
           </aside>
         </div>
       </form>
+      {statusAction && editor.persistedId !== null && <ArticleActionDialog article={{ title: values.title, status: editor.articleStatus }} action={statusAction} pending={editor.isChangingStatus} onConfirm={(status) => status ? editor.changeStatus(status) : Promise.resolve('Selecciona un estado.')} onClose={() => { setStatusAction(null); requestAnimationFrame(() => { if (statusTrigger.current?.isConnected && !statusTrigger.current.disabled) statusTrigger.current.focus(); else form.current?.querySelector<HTMLElement>('.draft-status-section h3')?.focus() }) }} />}
     </main>
   )
 }

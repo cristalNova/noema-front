@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { createDraft, getMyArticle, updateDraft } from '../api/articlesApi'
+import { changeArticleStatus, createDraft, getMyArticle, updateDraft } from '../api/articlesApi'
 import { listMyCommunityOptions } from '../../communities/api/communitiesApi'
 import type { Community } from '../../communities/model/community.types'
 import type { ArticleStatus, DraftErrors, DraftField, DraftInput } from '../model/article.types'
 import { getDraftErrors, validateDraft } from '../model/draftValidation'
 import { getErrorMessage } from '../../../shared/api/apiError'
+import { STATUS_LABELS } from '../model/myArticles'
 
 const EMPTY_DRAFT: DraftInput = { title: '', description: '', content: '', isPremium: false, communityId: null }
 
@@ -14,7 +15,10 @@ export function useDraftEditor(articleId?: number) {
   const [generalErrors, setGeneralErrors] = useState<string[]>([])
   const [isSaving, setIsSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  const savedId = useRef<number | null>(null)
+  const [persistedId, setPersistedId] = useState<number | null>(null)
+  const [lastSavedValues, setLastSavedValues] = useState<DraftInput | null>(null)
+  const [isChangingStatus, setIsChangingStatus] = useState(false)
+  const [statusNotice, setStatusNotice] = useState('')
   const saving = useRef(false)
   const [communities, setCommunities] = useState<Community[]>([])
   const [isLoadingCommunities, setIsLoadingCommunities] = useState(true)
@@ -30,9 +34,11 @@ export function useDraftEditor(articleId?: number) {
     const controller = new AbortController()
     getMyArticle(articleId, controller.signal).then((article) => {
       if (controller.signal.aborted) return
-      setValues({ title: article.title, description: article.description ?? '', content: article.content,
-        isPremium: article.isPremium, communityId: article.communityId })
-      savedId.current = article.id
+      const loadedValues = { title: article.title, description: article.description ?? '', content: article.content,
+        isPremium: article.isPremium, communityId: article.communityId }
+      setValues(loadedValues)
+      setLastSavedValues(loadedValues)
+      setPersistedId(article.id)
       setArticleStatus(article.status)
       setArticleError('')
     }).catch((error: unknown) => {
@@ -63,6 +69,28 @@ export function useDraftEditor(articleId?: number) {
     setErrors((previous) => ({ ...previous, [field]: undefined }))
     setGeneralErrors([])
     setSaved(false)
+    setStatusNotice('')
+  }
+
+  const hasUnsavedChanges = lastSavedValues === null || JSON.stringify(values) !== JSON.stringify(lastSavedValues)
+
+  async function changeStatus(nextStatus: ArticleStatus): Promise<string | null> {
+    if (saving.current) return 'Hay otra operación en curso.'
+    if (persistedId === null || hasUnsavedChanges) return 'Guarda tus cambios antes de cambiar el estado.'
+    saving.current = true
+    setIsChangingStatus(true)
+    setStatusNotice('')
+    try {
+      const updated = await changeArticleStatus(persistedId, nextStatus)
+      setArticleStatus(updated.status)
+      setStatusNotice(`El ensayo ahora está en estado ${STATUS_LABELS[updated.status].toLowerCase()}.`)
+      return null
+    } catch (error) {
+      return getErrorMessage(error)
+    } finally {
+      saving.current = false
+      setIsChangingStatus(false)
+    }
   }
 
   async function save(): Promise<DraftField | undefined> {
@@ -75,10 +103,12 @@ export function useDraftEditor(articleId?: number) {
     saving.current = true
     setIsSaving(true)
     try {
-      const article = savedId.current === null
+      const article = persistedId === null
         ? await createDraft(values)
-        : await updateDraft(savedId.current, values)
-      savedId.current = article.id
+        : await updateDraft(persistedId, values)
+      setPersistedId(article.id)
+      setLastSavedValues(values)
+      setArticleStatus(article.status)
       setSaved(true)
     } catch (error) {
       const result = getDraftErrors(error)
@@ -92,6 +122,7 @@ export function useDraftEditor(articleId?: number) {
   }
 
   return {
+    persistedId, hasUnsavedChanges, isChangingStatus, changeStatus, statusNotice,
     articleStatus, isLoadingArticle, articleError,
     retryArticle: () => { setIsLoadingArticle(true); setArticleAttempt((value) => value + 1) },
     values, errors, generalErrors, isSaving, saved, change, save,

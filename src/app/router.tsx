@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage'
 import ProfileNewPage from './pages/ProfileNewPage'
 import RegisterPage from './pages/RegisterPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
 
 // Rutas privadas: colgar de <RequireAuth /> (redirige al login si no hay sesión).
 // Las que además necesitan perfil van dentro de <RequireProfile /> (redirige a /profile/new).
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { path: '/', element: <HomePage /> },
+      { path: '/articles', element: <PublishedArticlesPage /> },
       { path: '/communities', element: <CommunitiesPage /> },
       { path: '/communities/:id', element: <CommunityDetailPage /> },
       {
