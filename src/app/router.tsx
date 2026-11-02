@@ -11,6 +11,8 @@ import InterestsPage from './pages/InterestsPage'
 import LoginPage from './pages/LoginPage'
 import ProfileNewPage from './pages/ProfileNewPage'
 import RegisterPage from './pages/RegisterPage'
+import { CommunitiesPage } from './pages/CommunitiesPage';
+import { CommunityDetailPage } from './pages/CommunityDetailPage';
 import { NotFoundPage } from './pages/NotFoundPage'
 import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
 
@@ -47,5 +49,13 @@ export const router = createBrowserRouter([
       { path: '*', element: <NotFoundPage /> },
     ],
   },
+  {
+    element: <RequireAuth />,
+    children: [{ path: '/profile/new', element: <ProfileNewPage /> }],
+  },
+  { path: '/login', element: <LoginPage /> },
+  { path: '/register', element: <RegisterPage /> },
+  { path: '/communities', element: <CommunitiesPage /> },
+  { path: '/communities/:id', element: <CommunityDetailPage /> },
   { path: '*', element: <p>No encontrado</p> },
-])
+]);

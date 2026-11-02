@@ -1,4 +1,5 @@
-import { httpClient } from '../../../shared/api'
+import { httpClient } from '../../../shared/api';
+import type { Membership } from '../model/community.types';
 
 export type MembershipStatus = 'ACTIVE' | 'PENDING' | 'BANNED'
 
