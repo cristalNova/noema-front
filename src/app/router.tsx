@@ -1,12 +1,15 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { RequireAuth } from '@/features/auth'
+import { RequireProfile } from '@/features/profiles'
 import { AppLayout } from './layout/AppLayout'
 import HomePage from './pages/HomePage'
+import InterestsPage from './pages/InterestsPage'
 import LoginPage from './pages/LoginPage'
 import ProfileNewPage from './pages/ProfileNewPage'
 import RegisterPage from './pages/RegisterPage'
 
 // Rutas privadas: colgar de <RequireAuth /> (redirige al login si no hay sesión).
+// Las que además necesitan perfil van dentro de <RequireProfile /> (redirige a /profile/new).
 export const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -14,9 +17,18 @@ export const router = createBrowserRouter([
       { path: '/', element: <HomePage /> },
       {
         element: <RequireAuth />,
-        children: [{ path: '/profile/new', element: <ProfileNewPage /> }],
+        children: [
+          {
+            element: <RequireProfile />,
+            children: [{ path: '/onboarding/interests', element: <InterestsPage /> }],
+          },
+        ],
       },
     ],
+  },
+  {
+    element: <RequireAuth />,
+    children: [{ path: '/profile/new', element: <ProfileNewPage /> }],
   },
   { path: '/login', element: <LoginPage /> },
   { path: '/register', element: <RegisterPage /> },

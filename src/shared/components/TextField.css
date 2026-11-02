@@ -38,3 +38,9 @@
 .field__msg--error {
   color: var(--color-danger);
 }
+
+.field__input--area {
+  padding: 14px 20px;
+  border-radius: 24px;
+  resize: vertical;
+}
