@@ -1,0 +1,52 @@
+.membership-action {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.membership-action .btn {
+  min-width: 9rem;
+  transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1), background-color 180ms ease, opacity 180ms ease;
+}
+
+.membership-action .btn:active {
+  transform: scale(0.97);
+}
+
+.membership-action .btn[data-variant='leave'] {
+  background: #eadfd1;
+  color: #60432f;
+}
+
+.membership-action__pending,
+.membership-action__error {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.membership-action__pending {
+  color: #6f4a16;
+  font-weight: 700;
+}
+
+.membership-action__error {
+  color: var(--color-danger);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .membership-action .btn:not(:disabled):hover {
+    filter: brightness(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .membership-action .btn {
+    transition: opacity 180ms ease, background-color 180ms ease;
+  }
+}
+
+@media (max-width: 560px) {
+  .membership-action .btn {
+    width: 100%;
+  }
+}

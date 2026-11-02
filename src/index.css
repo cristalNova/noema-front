@@ -20,11 +20,22 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  min-height: 100svh;
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
   line-height: 1.5;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+}
+
+button,
+a {
+  touch-action: manipulation;
 }
 
 a {

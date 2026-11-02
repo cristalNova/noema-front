@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getCommunity } from '../../features/communities/api/communitiesApi'
+import { CommunityMembershipAction } from '../../features/communities/components/CommunityMembershipAction'
 import type { Community } from '../../features/communities/model/community.types'
 import { getErrorMessage } from '../../shared/api/apiError'
 
@@ -62,6 +63,7 @@ export function CommunityDetailPage() {
             {community.tags.map((item) => <li key={`${item.communityId}-${item.tag}`}>{item.tag}</li>)}
           </ul>
         )}
+        <CommunityMembershipAction community={community} />
       </article>
     </main>
   )
