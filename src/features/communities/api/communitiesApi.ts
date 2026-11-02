@@ -1,7 +1,7 @@
 import { httpClient } from '../../../shared/api'
 import type { Paginated } from '../../../shared/types/Paginated'
 import { toPageQuery } from '../../../shared/utils/pagination'
-import type { Community } from '../model/community.types'
+import type { Community, CreateCommunityDto } from '../model/community.types'
 
 export interface CommunityListParams {
   page?: number
@@ -27,5 +27,10 @@ export async function listCommunities(params: CommunityListParams = {}) {
 
 export async function getCommunity(id: number) {
   const response = await httpClient.get<Community>(`/communities/${id}`)
+  return response.data
+}
+
+export async function createCommunity(payload: CreateCommunityDto) {
+  const response = await httpClient.post<Community>('/communities', payload)
   return response.data
 }
