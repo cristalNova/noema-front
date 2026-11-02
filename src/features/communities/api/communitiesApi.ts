@@ -1,18 +1,18 @@
-import { httpClient } from '../../../shared/api'
-import type { Paginated } from '../../../shared/types/Paginated'
-import { toPageQuery } from '../../../shared/utils/pagination'
-import type { Community } from '../model/community.types'
+import { httpClient } from '../../../shared/api';
+import type { Paginated } from '../../../shared/types/Paginated';
+import { toPageQuery } from '../../../shared/utils/pagination';
+import type { Community, CommunityDetail } from '../model/community.types';
 
 export interface CommunityListParams {
-  page?: number
-  limit?: number
-  topic?: string
-  tag?: string
-  search?: string
+  page?: number;
+  limit?: number;
+  topic?: string;
+  tag?: string;
+  search?: string;
 }
 
 export async function listCommunities(params: CommunityListParams = {}) {
-  const { page, limit } = toPageQuery(params)
+  const { page, limit } = toPageQuery(params);
   const response = await httpClient.get<Paginated<Community>>('/communities', {
     params: {
       page,
@@ -21,11 +21,11 @@ export async function listCommunities(params: CommunityListParams = {}) {
       ...(params.tag?.trim() ? { tag: params.tag.trim() } : {}),
       ...(params.search?.trim() ? { search: params.search.trim() } : {}),
     },
-  })
-  return response.data
+  });
+  return response.data;
 }
 
 export async function getCommunity(id: number) {
-  const response = await httpClient.get<Community>(`/communities/${id}`)
-  return response.data
+  const response = await httpClient.get<CommunityDetail>(`/communities/${id}`);
+  return response.data;
 }
