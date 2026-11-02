@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { createDraft, updateDraft } from '../api/articlesApi'
+import { createDraft, getMyArticle, updateDraft } from '../api/articlesApi'
 import { listMyCommunityOptions } from '../../communities/api/communitiesApi'
 import type { Community } from '../../communities/model/community.types'
-import type { DraftErrors, DraftField, DraftInput } from '../model/article.types'
+import type { ArticleStatus, DraftErrors, DraftField, DraftInput } from '../model/article.types'
 import { getDraftErrors, validateDraft } from '../model/draftValidation'
 import { getErrorMessage } from '../../../shared/api/apiError'
 
 const EMPTY_DRAFT: DraftInput = { title: '', description: '', content: '', isPremium: false, communityId: null }
 
-export function useDraftEditor() {
+export function useDraftEditor(articleId?: number) {
   const [values, setValues] = useState<DraftInput>(EMPTY_DRAFT)
   const [errors, setErrors] = useState<DraftErrors>({})
   const [generalErrors, setGeneralErrors] = useState<string[]>([])
@@ -20,6 +20,28 @@ export function useDraftEditor() {
   const [isLoadingCommunities, setIsLoadingCommunities] = useState(true)
   const [communityError, setCommunityError] = useState('')
   const [attempt, setAttempt] = useState(0)
+  const [articleStatus, setArticleStatus] = useState<ArticleStatus>('DRAFT')
+  const [isLoadingArticle, setIsLoadingArticle] = useState(articleId !== undefined)
+  const [articleError, setArticleError] = useState('')
+  const [articleAttempt, setArticleAttempt] = useState(0)
+
+  useEffect(() => {
+    if (articleId === undefined) return
+    const controller = new AbortController()
+    getMyArticle(articleId, controller.signal).then((article) => {
+      if (controller.signal.aborted) return
+      setValues({ title: article.title, description: article.description ?? '', content: article.content,
+        isPremium: article.isPremium, communityId: article.communityId })
+      savedId.current = article.id
+      setArticleStatus(article.status)
+      setArticleError('')
+    }).catch((error: unknown) => {
+      if (!controller.signal.aborted) setArticleError(getErrorMessage(error))
+    }).finally(() => {
+      if (!controller.signal.aborted) setIsLoadingArticle(false)
+    })
+    return () => controller.abort()
+  }, [articleId, articleAttempt])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -70,6 +92,8 @@ export function useDraftEditor() {
   }
 
   return {
+    articleStatus, isLoadingArticle, articleError,
+    retryArticle: () => { setIsLoadingArticle(true); setArticleAttempt((value) => value + 1) },
     values, errors, generalErrors, isSaving, saved, change, save,
     communities, isLoadingCommunities, communityError,
     retryCommunities: () => { setIsLoadingCommunities(true); setAttempt((value) => value + 1) },

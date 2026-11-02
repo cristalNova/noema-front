@@ -35,6 +35,7 @@ export function CommunitiesPage() {
         <h1>Explora comunidades</h1>
         <p>Encuentra espacios para compartir tus intereses, lecturas e ideas.</p>
         <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
+        {' '}<Link className="button button--secondary" to="/app/articles">Mis ensayos</Link>
         <CommunityFilters value={searchInput} onChange={setSearchInput} onSubmit={submitSearch} />
       </header>
 

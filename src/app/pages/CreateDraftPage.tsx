@@ -1,15 +1,29 @@
 import { useRef } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useDraftEditor } from '../../features/articles/hooks/useDraftEditor'
 import type { DraftField } from '../../features/articles/model/article.types'
 import './CreateDraftPage.css'
+import { STATUS_LABELS } from '../../features/articles/model/myArticles'
 
 export function CreateDraftPage() {
-  const editor = useDraftEditor()
+  const { id } = useParams()
+  if (id !== undefined && (!/^\d+$/.test(id) || !Number.isSafeInteger(Number(id)) || Number(id) <= 0)) {
+    return <main className="page-shell"><Link className="back-link" to="/app/articles">← Mis ensayos</Link><p role="alert">El ensayo solicitado no es válido.</p></main>
+  }
+  return <ArticleEditor key={id ?? 'new'} articleId={id ? Number(id) : undefined} />
+}
+
+function ArticleEditor({ articleId }: { articleId?: number }) {
+  const editor = useDraftEditor(articleId)
   const form = useRef<HTMLFormElement>(null)
   const { values, errors, isSaving, saved, isLoadingCommunities } = editor
   const words = values.content.trim() ? values.content.trim().split(/\s+/u).length : 0
+  const isDraft = editor.articleStatus === 'DRAFT'
+
+  if (editor.isLoadingArticle || editor.articleError) {
+    return <main className="page-shell"><Link className="back-link" to="/app/articles">← Mis ensayos</Link>{editor.isLoadingArticle ? <p role="status">Cargando ensayo…</p> : <div role="alert"><p>{editor.articleError}</p><button type="button" className="button button--secondary" onClick={editor.retryArticle}>Reintentar</button></div>}</main>
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -25,19 +39,19 @@ export function CreateDraftPage() {
 
   return (
     <main className="page-shell draft-page">
-      <Link className="back-link" to="/communities">← Explorar comunidades</Link>
+      <Link className="back-link" to="/app/articles">← Mis ensayos</Link>
       <header className="page-header">
         <p className="eyebrow">Noema · Espacio de escritura</p>
-        <h1>Una idea empieza aquí.</h1>
-        <p>Dale forma a tu próximo ensayo. Puedes guardarlo y seguir escribiendo más tarde.</p>
+        <h1>{articleId ? 'Continúa tu ensayo.' : 'Una idea empieza aquí.'}</h1>
+        <p>{articleId ? 'Retoma tus ideas y guarda los cambios cuando estés listo.' : 'Dale forma a tu próximo ensayo. Puedes guardarlo y seguir escribiendo más tarde.'}</p>
       </header>
 
       <form ref={form} onSubmit={submit} noValidate aria-busy={isSaving}>
         <div className="draft-layout">
           <section className="draft-paper" aria-labelledby="draft-heading">
             <div className="draft-paper__heading">
-              <h2 id="draft-heading">Nuevo ensayo</h2>
-              <span className="draft-badge">Borrador</span>
+              <h2 id="draft-heading">{articleId ? 'Editar ensayo' : 'Nuevo ensayo'}</h2>
+              <span className="draft-badge">{STATUS_LABELS[editor.articleStatus]}</span>
             </div>
             <fieldset disabled={isSaving} className="draft-fields">
               <legend className="draft-sr-only">Texto del ensayo</legend>
@@ -70,6 +84,7 @@ export function CreateDraftPage() {
                 <label htmlFor="communityId">Comunidad <span className="draft-optional">Opcional</span></label>
                 <select id="communityId" name="communityId" value={values.communityId ?? ''} onChange={(event) => editor.change('communityId', event.target.value ? Number(event.target.value) : null)} disabled={isLoadingCommunities} aria-invalid={!!errors.communityId} aria-describedby={`community-hint${errors.communityId ? ' communityId-error' : ''}`}>
                   <option value="">Sin comunidad</option>
+                  {values.communityId !== null && !editor.communities.some((community) => community.id === values.communityId) && <option value={values.communityId}>Comunidad actual (#{values.communityId})</option>}
                   {editor.communities.map((community) => <option key={community.id} value={community.id}>{community.name}</option>)}
                 </select>
                 <p className="draft-hint" id="community-hint">La comunidad se aplicará cuando publiques. Solo aparecen aquellas de las que eres miembro activo.</p>
@@ -84,9 +99,9 @@ export function CreateDraftPage() {
                 {fieldError('isPremium')}
               </div>
             </fieldset>
-            <div className="draft-privacy"><strong>Solo tú puedes verlo</strong><p>Tu ensayo se guarda como borrador. Nadie más podrá leerlo hasta que decidas publicarlo.</p></div>
+            <div className="draft-privacy"><strong>{isDraft ? 'Solo tú puedes verlo' : `Ensayo ${STATUS_LABELS[editor.articleStatus].toLowerCase()}`}</strong><p>{isDraft ? 'Tu ensayo se guarda como borrador. Nadie más podrá leerlo hasta que decidas publicarlo.' : editor.articleStatus === 'PUBLISHED' ? 'Los cambios se aplicarán a tu ensayo publicado.' : 'Guardar los cambios mantiene tu ensayo archivado.'}</p></div>
             {editor.generalErrors.length > 0 && <div className="draft-error" role="alert">{editor.generalErrors.map((message) => <p key={message}>{message}</p>)}</div>}
-            <button type="submit" className="button button--primary draft-save" disabled={isSaving || saved}>{isSaving ? 'Guardando…' : saved ? 'Borrador guardado' : 'Guardar borrador'}</button>
+            <button type="submit" className="button button--primary draft-save" disabled={isSaving || saved}>{isSaving ? 'Guardando…' : saved ? 'Cambios guardados' : articleId ? 'Guardar cambios' : 'Guardar borrador'}</button>
             <p className="draft-save-status" role="status">{saved ? 'Guardado. Puedes seguir escribiendo y volver a guardar los cambios.' : 'Guarda tus cambios antes de salir.'}</p>
           </aside>
         </div>
