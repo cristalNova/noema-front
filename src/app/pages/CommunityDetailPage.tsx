@@ -8,9 +8,11 @@ import {
   getMyMembership,
   joinCommunity,
   leaveCommunity,
+  listCommunityMembers,
 } from '../../features/communities/api/membersApi';
 import type {
   CommunityDetail,
+  Membership,
   MembershipStatus,
 } from '../../features/communities/model/community.types';
 import { listPlans, type Plan } from '../../features/monetization/api/plansApi';
@@ -18,11 +20,17 @@ import { createSubscription } from '../../features/monetization/api/subscription
 import { getMyProfile } from '../../features/profiles/api/profilesApi';
 import { listPosts } from '../../features/social/api/postsApi';
 import type { Post } from '../../features/social/model/post.types';
-import { getErrorMessage } from '../../shared/api/apiError';
+import { getErrorMessage, toApiError } from '../../shared/api/apiError';
 import { tokenStorage } from '../../shared/api/tokenStorage';
 
-type Tab = 'essays' | 'posts';
+type Tab = 'essays' | 'posts' | 'members';
 type MembershipView = MembershipStatus | 'OWNER' | 'NONE' | 'UNKNOWN';
+
+const ROLE_LABELS: Record<Membership['role'], string> = {
+  MEMBER: 'Miembro',
+  MODERATOR: 'Moderador',
+  OWNER: 'Propietario',
+};
 
 const formatDate = (value: string | null) =>
   value
@@ -96,7 +104,7 @@ function PageError({
   );
 }
 
-export function CommunityDetailPage() {
+function CommunityDetail() {
   const { id } = useParams();
   const communityId = Number(id);
   const isInvalidId = !Number.isInteger(communityId) || communityId < 1;
@@ -108,6 +116,7 @@ export function CommunityDetailPage() {
   const [tab, setTab] = useState<Tab>('essays');
   const [articles, setArticles] = useState<Article[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [members, setMembers] = useState<Membership[]>([]);
   const [contentLoading, setContentLoading] = useState(false);
   const [contentError, setContentError] = useState<unknown>(null);
   const [contentRetry, setContentRetry] = useState(0);
@@ -179,12 +188,15 @@ export function CommunityDetailPage() {
     const request =
       tab === 'essays'
         ? listArticles({ communityId: community.id, page: contentPage })
-        : listPosts({ communityId: community.id, page: contentPage });
+        : tab === 'posts'
+          ? listPosts({ communityId: community.id, page: contentPage })
+          : listCommunityMembers(community.id, { page: contentPage });
     request
       .then((response) => {
         if (!active) return;
         if (tab === 'essays') setArticles(response.data as Article[]);
-        else setPosts(response.data as Post[]);
+        else if (tab === 'posts') setPosts(response.data as Post[]);
+        else setMembers(response.data as Membership[]);
         setContentTotal(response.total);
         setContentLimit(response.limit);
       })
@@ -237,7 +249,18 @@ export function CommunityDetailPage() {
           setCommunity({ ...community, memberCount: memberCount + 1 });
         }
       })
-      .catch((error: unknown) => setMembershipError(error))
+      .catch((error: unknown) => {
+        // Un miembro común no puede consultar su solicitud pendiente ni su veto (solo moderación los lista):
+        // si el backend responde que ya existe, esa respuesta dice en qué estado está.
+        const { status, message } = toApiError(error);
+        if (status === 409) {
+          setMembership(/pendiente/i.test(message) ? 'PENDING' : 'ACTIVE');
+        } else if (status === 403 && /vetado/i.test(message)) {
+          setMembership('BANNED');
+        } else {
+          setMembershipError(error);
+        }
+      })
       .finally(() => setMembershipBusy(false));
   };
 
@@ -330,7 +353,9 @@ export function CommunityDetailPage() {
       ? 'Salir'
       : membership === 'PENDING'
         ? 'Solicitud pendiente de aprobación'
-        : community.isPremium
+        : membership === 'BANNED'
+          ? 'Vetado de esta comunidad'
+          : community.isPremium
           ? 'Suscribirme'
           : 'Unirme';
 
@@ -395,6 +420,7 @@ export function CommunityDetailPage() {
                   disabled={
                     membershipBusy ||
                     membership === 'PENDING' ||
+                    membership === 'BANNED' ||
                     membership === 'OWNER'
                   }
                   onClick={
@@ -540,16 +566,37 @@ export function CommunityDetailPage() {
           >
             Publicaciones
           </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'members'}
+            aria-controls="community-members-panel"
+            id="community-members-tab"
+            className={tab === 'members' ? 'is-active' : ''}
+            onClick={() => {
+              setTab('members');
+              setContentPage(1);
+            }}
+          >
+            Miembros
+            {typeof memberCount === 'number' && ` (${formatNumber(memberCount)})`}
+          </button>
         </nav>
         <section
           className="community-content"
           role="tabpanel"
-          id={tab === 'essays' ? 'community-essays-panel' : 'community-posts-panel'}
-          aria-labelledby={tab === 'essays' ? 'community-essays-tab' : 'community-posts-tab'}
+          id={`community-${tab}-panel`}
+          aria-labelledby={`community-${tab}-tab`}
         >
           {contentLoading && (
             <p className="status-message" role="status">
-              Cargando {tab === 'essays' ? 'ensayos' : 'publicaciones'}…
+              Cargando{' '}
+              {tab === 'essays'
+                ? 'ensayos'
+                : tab === 'posts'
+                  ? 'publicaciones'
+                  : 'miembros'}
+              …
             </p>
           )}
           {contentError !== null && (
@@ -571,6 +618,42 @@ export function CommunityDetailPage() {
             tab === 'posts' &&
             posts.length === 0 && (
               <EmptyState>No hay publicaciones en esta comunidad.</EmptyState>
+            )}
+          {!contentLoading &&
+            !contentError &&
+            tab === 'members' &&
+            members.length === 0 && (
+              <EmptyState>Todavía no hay miembros en esta comunidad.</EmptyState>
+            )}
+          {!contentLoading &&
+            !contentError &&
+            tab === 'members' &&
+            members.length > 0 && (
+              <ul className="member-list" aria-label="Miembros de la comunidad">
+                {members.map((member) => (
+                  <li className="member-card" key={member.profileId}>
+                    <Avatar
+                      name={member.profile.name}
+                      photo={member.profile.profilePhoto}
+                    />
+                    <span className="member-card__info">
+                      <strong>{member.profile.name}</strong>
+                      <small>@{member.profile.username}</small>
+                    </span>
+                    {member.role !== 'MEMBER' && (
+                      <span className="member-card__role">
+                        {ROLE_LABELS[member.role]}
+                      </span>
+                    )}
+                    <time
+                      className="member-card__since"
+                      dateTime={member.joinedAt}
+                    >
+                      Desde {formatDate(member.joinedAt)}
+                    </time>
+                  </li>
+                ))}
+              </ul>
             )}
           {!contentLoading &&
             !contentError &&
@@ -636,4 +719,10 @@ export function CommunityDetailPage() {
       </article>
     </main>
   );
+}
+
+/** Se remonta al cambiar de comunidad para no arrastrar pestaña, página ni membresía de la anterior. */
+export function CommunityDetailPage() {
+  const { id } = useParams();
+  return <CommunityDetail key={id} />;
 }
