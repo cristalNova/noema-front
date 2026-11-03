@@ -13,11 +13,11 @@ import ProfileNewPage from './pages/ProfileNewPage'
 import RegisterPage from './pages/RegisterPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { CreateCommunityPage } from './pages/CreateCommunityPage'
+import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
+import { ArticleDetailPage } from './pages/ArticleDetailPage'
 
-// Esqueleto: rutas públicas y privadas. Los guards (feature auth) se agregan después.
 export const router = createBrowserRouter([
   {
-    // Privadas: envolver con RequireAuth cuando exista.
     path: '/app',
     element: <AppLayout />,
     children: [
@@ -31,6 +31,7 @@ export const router = createBrowserRouter([
               { path: '/app/articles/new', element: <CreateDraftPage /> },
               { path: '/app/articles', element: <MyArticlesPage /> },
               { path: '/app/articles/:id/edit', element: <CreateDraftPage /> },
+              { path: '/app/articles/:id', element: <ArticleDetailPage owned /> },
             ],
           },
         ],
@@ -56,6 +57,9 @@ export const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
+      { path: '/', element: <HomePage /> },
+      { path: '/articles', element: <PublishedArticlesPage /> },
+      { path: '/articles/:id', element: <ArticleDetailPage /> },
       { path: '/communities', element: <CommunitiesPage /> },
       {
         element: <RequireAuth />,
@@ -67,7 +71,7 @@ export const router = createBrowserRouter([
         ],
       },
       { path: '/communities/:id', element: <CommunityDetailPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
-  { path: '*', element: <p>No encontrado</p> },
 ]);

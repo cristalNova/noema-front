@@ -8,13 +8,17 @@ export interface ArticleTag {
 export interface Article extends DraftInput {
   id: number
   authorId: number
-  author: Profile
+  author?: Profile
   communityId: number | null
   community: Community | null
   status: ArticleStatus
   updatedAt: string
   publishedAt: string | null
   articleTags: ArticleTag[]
+  locked?: boolean
+  collectionId?: number | null
+  collectionPosition?: number | null
+  collection?: { id: number; title: string } | null
 }
 export interface DraftInput {
   title: string

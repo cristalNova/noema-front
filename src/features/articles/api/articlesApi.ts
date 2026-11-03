@@ -37,6 +37,11 @@ export async function getMyArticle(id: number, signal?: AbortSignal): Promise<Ar
   return response.data
 }
 
+export async function getPublishedArticle(id: number, signal?: AbortSignal): Promise<Article> {
+  const response = await httpClient.get<Article>(`/articles/${id}`, { signal })
+  return response.data
+}
+
 // /mine solo admite page y limit. Recorrer todas las páginas antes de filtrar
 // por estado evita presentar resultados incompletos al escritor.
 export async function listMyArticles(signal?: AbortSignal): Promise<ArticleSummary[]> {

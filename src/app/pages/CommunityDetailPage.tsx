@@ -578,7 +578,7 @@ export function CommunityDetailPage() {
             articles.map((article) => (
               <article className="content-card" key={article.id}>
                 <div className="content-card__meta">
-                  <span>{article.author.name}</span>
+                  {article.author?.name && <span>{article.author.name}</span>}
                   <time dateTime={article.publishedAt ?? undefined}>
                     {formatDate(article.publishedAt)}
                   </time>
@@ -586,9 +586,9 @@ export function CommunityDetailPage() {
                     <span className="premium-badge">Premium</span>
                   )}
                 </div>
-                <h2>{article.title}</h2>
+                <h2><Link to={`/articles/${article.id}`}>{article.title}</Link></h2>
                 {article.description && <p>{article.description}</p>}
-                {article.articleTags.length > 0 && (
+                {article.articleTags?.length > 0 && (
                   <ul className="tag-list">
                     {article.articleTags.map((tag) => (
                       <li key={`${article.id}-${tag.tag}`}>{tag.tag}</li>

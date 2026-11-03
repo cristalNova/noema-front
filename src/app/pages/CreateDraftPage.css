@@ -1,6 +1,6 @@
 .draft-page .page-header { max-width: 760px; }
 .draft-layout { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 1.5rem; align-items: start; }
-.draft-paper, .draft-settings { border: 1px solid #e1d6c9; border-radius: 0.8rem; background: #fffdf9; box-shadow: 0 0.5rem 1.5rem rgb(82 55 35 / 6%); }
+.draft-paper, .draft-settings { border: 1px solid var(--color-line); border-radius: 24px; background: var(--color-surface); }
 .draft-paper { padding: clamp(1.25rem, 3vw, 2.5rem); }
 .draft-paper__heading, .draft-paper__footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .draft-paper__heading { border-bottom: 1px solid #e1d6c9; padding-bottom: 1.25rem; margin-bottom: 1.5rem; }
