@@ -34,8 +34,10 @@ export function CommunitiesPage() {
         <p className="eyebrow">Noema · Comunidades</p>
         <h1>Explora comunidades</h1>
         <p>Encuentra espacios para compartir tus intereses, lecturas e ideas.</p>
-        <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
-        {' '}<Link className="button button--secondary" to="/app/articles">Mis ensayos</Link>
+        <div className="communities-page__actions">
+          <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
+          <Link className="button button--secondary" to="/app/articles">Mis ensayos</Link>
+        </div>
         <CommunityFilters value={searchInput} onChange={setSearchInput} onSubmit={submitSearch} />
         <Link className="button button--primary communities-page__create-link" to="/communities/new">
           Crear comunidad

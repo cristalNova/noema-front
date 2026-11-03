@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage'
 import ProfileNewPage from './pages/ProfileNewPage'
 import RegisterPage from './pages/RegisterPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { CreateCommunityPage } from './pages/CreateCommunityPage'
 
 // Esqueleto: rutas públicas y privadas. Los guards (feature auth) se agregan después.
 export const router = createBrowserRouter([
@@ -52,7 +53,21 @@ export const router = createBrowserRouter([
   },
   { path: '/login', element: <LoginPage /> },
   { path: '/register', element: <RegisterPage /> },
-  { path: '/communities', element: <CommunitiesPage /> },
-  { path: '/communities/:id', element: <CommunityDetailPage /> },
+  {
+    element: <AppLayout />,
+    children: [
+      { path: '/communities', element: <CommunitiesPage /> },
+      {
+        element: <RequireAuth />,
+        children: [
+          {
+            element: <RequireProfile />,
+            children: [{ path: '/communities/new', element: <CreateCommunityPage /> }],
+          },
+        ],
+      },
+      { path: '/communities/:id', element: <CommunityDetailPage /> },
+    ],
+  },
   { path: '*', element: <p>No encontrado</p> },
 ]);

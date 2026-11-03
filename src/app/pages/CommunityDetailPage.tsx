@@ -4,8 +4,8 @@ import { listArticles } from '../../features/articles/api/articlesApi';
 import type { Article } from '../../features/articles/model/article.types';
 import { getCommunity } from '../../features/communities/api/communitiesApi';
 import { CommunityPagination } from '../../features/communities/components/CommunityPagination';
-import { CommunityMembershipAction } from '../../features/communities/components/CommunityMembershipAction';
 import {
+  getMyMembership,
   joinCommunity,
   leaveCommunity,
 } from '../../features/communities/api/membersApi';
@@ -22,7 +22,7 @@ import { getErrorMessage } from '../../shared/api/apiError';
 import { tokenStorage } from '../../shared/api/tokenStorage';
 
 type Tab = 'essays' | 'posts';
-type MembershipView = MembershipStatus | 'NONE' | 'UNKNOWN';
+type MembershipView = MembershipStatus | 'OWNER' | 'NONE' | 'UNKNOWN';
 
 const formatDate = (value: string | null) =>
   value
@@ -151,8 +151,15 @@ export function CommunityDetailPage() {
     if (!community || !isAuthenticated) return undefined;
     let active = true;
     getMyProfile()
-      .then((profile) => {
-        if (active && profile.id === community.ownerId) setMembership('ACTIVE');
+      .then((profile) => getMyMembership(community.id, profile.id))
+      .then((currentMembership) => {
+        if (active) {
+          setMembership(
+            currentMembership?.role === 'OWNER'
+              ? 'OWNER'
+              : currentMembership?.status ?? 'NONE',
+          );
+        }
       })
       .catch(() => {
         if (active) setMembership('NONE');
@@ -193,8 +200,9 @@ export function CommunityDetailPage() {
   }, [community, contentPage, contentRetry, tab]);
 
   const memberCount = community?.membersCount;
+  const owner = community?.owner;
   const selectedPlan = useMemo(
-    () => plans.find((plan) => plan.id === selectedPlanId),
+    () => plans.find((plan) => plan?.id === selectedPlanId),
     [plans, selectedPlanId],
   );
 
@@ -207,7 +215,10 @@ export function CommunityDetailPage() {
       .then((response) => {
         setPlans(
           response.data.filter(
-            (plan) => plan.communityId === community.id && plan.isActive,
+            (plan) =>
+              Boolean(plan) &&
+              plan.communityId === community.id &&
+              plan.isActive,
           ),
         );
       })
@@ -313,10 +324,12 @@ export function CommunityDetailPage() {
   if (!community) return null;
 
   const membershipLabel =
-    membership === 'ACTIVE'
+    membership === 'OWNER'
+      ? 'Propietario'
+      : membership === 'ACTIVE'
       ? 'Salir'
       : membership === 'PENDING'
-        ? 'Solicitud pendiente'
+        ? 'Solicitud pendiente de aprobación'
         : community.isPremium
           ? 'Suscribirme'
           : 'Unirme';
@@ -351,15 +364,15 @@ export function CommunityDetailPage() {
           <aside className="community-hero__aside">
             <Link
               className="community-owner"
-              to={`/profiles/${community.owner.id}`}
+              to={`/profiles/${owner?.id ?? community.ownerId}`}
             >
               <Avatar
-                name={community.owner.name}
-                photo={community.owner.profilePhoto}
+                name={owner?.name ?? 'Propietario'}
+                photo={owner?.profilePhoto}
               />
               <span>
                 <small>Propietario</small>
-                <strong>{community.owner.name}</strong>
+                <strong>{owner?.name ?? 'Perfil no disponible'}</strong>
               </span>
             </Link>
             <div className="community-member-count">
@@ -379,7 +392,11 @@ export function CommunityDetailPage() {
                 <button
                   type="button"
                   className={`button ${membership === 'ACTIVE' ? 'button--secondary' : 'button--primary'}`}
-                  disabled={membershipBusy || membership === 'PENDING'}
+                  disabled={
+                    membershipBusy ||
+                    membership === 'PENDING' ||
+                    membership === 'OWNER'
+                  }
                   onClick={
                     membership === 'ACTIVE'
                       ? handleLeave
@@ -425,12 +442,14 @@ export function CommunityDetailPage() {
                   }
                 >
                   <option value="">Selecciona un plan</option>
-                  {plans.map((plan) => (
-                    <option key={plan.id} value={plan.id}>
-                      {plan.name} · {plan.price} {plan.currency} /{' '}
-                      {plan.billingPeriod === 'MONTHLY' ? 'mes' : 'año'}
-                    </option>
-                  ))}
+                  {plans.map((plan) =>
+                    plan ? (
+                      <option key={plan.id} value={plan.id}>
+                        {plan.name} · {plan.price} {plan.currency} /{' '}
+                        {plan.billingPeriod === 'MONTHLY' ? 'mes' : 'año'}
+                      </option>
+                    ) : null,
+                  )}
                 </select>
               </label>
               <button
@@ -497,6 +516,8 @@ export function CommunityDetailPage() {
             type="button"
             role="tab"
             aria-selected={tab === 'essays'}
+            aria-controls="community-essays-panel"
+            id="community-essays-tab"
             className={tab === 'essays' ? 'is-active' : ''}
             onClick={() => {
               setTab('essays');
@@ -509,6 +530,8 @@ export function CommunityDetailPage() {
             type="button"
             role="tab"
             aria-selected={tab === 'posts'}
+            aria-controls="community-posts-panel"
+            id="community-posts-tab"
             className={tab === 'posts' ? 'is-active' : ''}
             onClick={() => {
               setTab('posts');
@@ -518,7 +541,12 @@ export function CommunityDetailPage() {
             Publicaciones
           </button>
         </nav>
-        <section className="community-content" role="tabpanel">
+        <section
+          className="community-content"
+          role="tabpanel"
+          id={tab === 'essays' ? 'community-essays-panel' : 'community-posts-panel'}
+          aria-labelledby={tab === 'essays' ? 'community-essays-tab' : 'community-posts-tab'}
+        >
           {contentLoading && (
             <p className="status-message" role="status">
               Cargando {tab === 'essays' ? 'ensayos' : 'publicaciones'}…
@@ -605,7 +633,6 @@ export function CommunityDetailPage() {
             />
           )}
         </section>
-        <CommunityMembershipAction community={community} />
       </article>
     </main>
   );

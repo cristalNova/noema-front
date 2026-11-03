@@ -60,7 +60,7 @@ export interface CommunityTag {
 export interface Community {
   id: number;
   ownerId: number;
-  owner: Profile;
+  owner?: Profile;
   name: string;
   topic: string;
   description?: string;

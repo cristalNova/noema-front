@@ -214,6 +214,9 @@ export function CreateCommunityPage() {
           <div className="community-create__section-heading">
             <p className="eyebrow">03 · Acceso</p>
             <h2 id="community-create-premium">Comunidad premium</h2>
+            <p className="community-create__access-help">
+              Las comunidades premium pueden requerir una suscripción y aprobación antes de permitir el acceso.
+            </p>
           </div>
           <label className={`community-create__switch-row${isPremium ? ' community-create__switch-row--active' : ''}`}>
             <span>

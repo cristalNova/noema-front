@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import { toApiError } from '@/shared/api/apiError'
-import { listMyCommunityOptions } from '../api/communitiesApi'
-import { joinCommunity, leaveCommunity, type MembershipStatus } from '../api/membersApi'
+import { getMyProfile } from '@/features/profiles/api/profilesApi'
+import { getMyMembership, joinCommunity, leaveCommunity, type MembershipStatus } from '../api/membersApi'
 import type { Community } from '../model/community.types'
 
 export type CommunityMembershipState = 'NOT_MEMBER' | MembershipStatus | 'LOADING' | 'ERROR'
@@ -50,12 +50,13 @@ export function useCommunityMembership(community: Community): MembershipResult {
 
     const controller = new AbortController()
     let active = true
-    listMyCommunityOptions(controller.signal)
-      .then((communities) => {
+    getMyProfile()
+      .then((profile) => getMyMembership(community.id, profile.id))
+      .then((membership) => {
         if (!active) return
         setLoadedCommunityId(community.id)
         setErrorMessage(null)
-        setState(communities.some(({ id }) => id === community.id) ? 'ACTIVE' : 'NOT_MEMBER')
+        setState(membership?.status ?? 'NOT_MEMBER')
       })
       .catch((error: unknown) => {
         if (active && !controller.signal.aborted) {
@@ -89,18 +90,17 @@ export function useCommunityMembership(community: Community): MembershipResult {
       setState(membership.status)
     } catch (error: unknown) {
       if (toApiError(error).status === 409) {
-        let conflictMessage = getMembershipError(error)
         try {
-          const communities = await listMyCommunityOptions()
-          if (communities.some(({ id }) => id === community.id)) {
+          const profile = await getMyProfile()
+          const membership = await getMyMembership(community.id, profile.id)
+          if (membership) {
             setLoadedCommunityId(community.id)
-            setState('ACTIVE')
+            setState(membership.status)
             return
           }
         } catch (reconciliationError: unknown) {
-          conflictMessage = `${conflictMessage} ${getMembershipError(reconciliationError)}`
+          setErrorMessage(`${getMembershipError(error)} ${getMembershipError(reconciliationError)}`)
         }
-        setErrorMessage(conflictMessage)
       }
       setState('ERROR')
       setErrorMessage(getMembershipError(error))
