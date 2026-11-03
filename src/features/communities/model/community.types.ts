@@ -70,7 +70,7 @@ export interface Community {
 }
 
 export interface CommunityDetail extends Community {
-  membersCount?: number;
+  memberCount?: number;
 }
 
 export type MembershipStatus = 'ACTIVE' | 'PENDING' | 'BANNED';

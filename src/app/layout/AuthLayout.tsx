@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { Logo } from '@/shared/components/Logo'
 import './AuthLayout.css'
 
 interface AuthLayoutProps {
@@ -14,7 +15,7 @@ export function AuthLayout({ heading, title, footer, children }: AuthLayoutProps
   return (
     <main className="auth-layout">
       <header className="auth-layout__hero">
-        <Link className="auth-layout__brand" to="/">Noema</Link>
+        <Link className="auth-layout__brand" to="/"><Logo /></Link>
         <h1>{heading}</h1>
       </header>
 

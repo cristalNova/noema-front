@@ -199,7 +199,7 @@ export function CommunityDetailPage() {
     };
   }, [community, contentPage, contentRetry, tab]);
 
-  const memberCount = community?.membersCount;
+  const memberCount = community?.memberCount;
   const owner = community?.owner;
   const selectedPlan = useMemo(
     () => plans.find((plan) => plan?.id === selectedPlanId),
@@ -234,7 +234,7 @@ export function CommunityDetailPage() {
       .then((result) => {
         setMembership(result.status);
         if (result.status === 'ACTIVE' && typeof memberCount === 'number') {
-          setCommunity({ ...community, membersCount: memberCount + 1 });
+          setCommunity({ ...community, memberCount: memberCount + 1 });
         }
       })
       .catch((error: unknown) => setMembershipError(error))
@@ -256,7 +256,7 @@ export function CommunityDetailPage() {
         if (typeof memberCount === 'number')
           setCommunity({
             ...community,
-            membersCount: Math.max(0, memberCount - 1),
+            memberCount: Math.max(0, memberCount - 1),
           });
       })
       .catch((error: unknown) => setMembershipError(error))

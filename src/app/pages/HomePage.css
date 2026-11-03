@@ -1,4 +1,7 @@
 .home { width: min(1120px, calc(100% - 3rem)); margin: 0 auto; padding: 3rem 0; }
+.home { position: relative; z-index: 0; }
+.home__spines { margin: 0 0 2.5rem; border-bottom: 3px solid rgb(255 253 250 / 75%); box-shadow: 0 10px 14px -12px rgb(34 33 43 / 35%); }
+.home__spines svg { display: block; width: 100%; height: auto; max-height: 124px; }
 .home__hero { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 3rem; margin-bottom: 4rem; }
 .home__intro { min-width: 0; }
 .home h1 { margin: 1.25rem 0; max-width: 13ch; font-size: clamp(3rem, 5.6vw, 4.75rem); font-weight: 600; line-height: 0.98; letter-spacing: -0.06em; }

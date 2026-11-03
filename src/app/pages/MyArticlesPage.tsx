@@ -25,10 +25,12 @@ export function MyArticlesPage() {
 
   return (
     <main className="page-shell my-articles">
-      <Link to="/articles" className="back-link">Ver ensayos publicados →</Link>
       <header className="my-articles__header">
         <div className="page-header"><p className="eyebrow">Noema · Espacio de escritura</p><h1 ref={heading} tabIndex={-1}>Mis ensayos</h1><p>Tus ideas, en cada etapa. Organiza lo que escribes y decide qué sigue.</p></div>
-        <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
+        <div className="my-articles__actions">
+          <Link className="button button--secondary" to="/articles">Ver ensayos publicados</Link>
+          <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
+        </div>
       </header>
       <nav className="article-filters" aria-label="Filtrar ensayos por estado">
         {(['ALL', ...ARTICLE_STATUSES] as const).map((status) => <button type="button" className="button button--secondary" key={status} aria-pressed={list.status === status} onClick={() => list.filter(status)}>{status === 'ALL' ? 'Todos' : STATUS_LABELS[status]} <span>({list.articles.filter((article) => status === 'ALL' || article.status === status).length})</span></button>)}

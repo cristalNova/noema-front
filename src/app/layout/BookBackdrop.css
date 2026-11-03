@@ -1,0 +1,8 @@
+/* Solo hay margen libre a los lados de la columna de 1120px en pantallas anchas. */
+.book-backdrop { display: none; position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.book-backdrop__cover { position: absolute; top: var(--top); width: clamp(90px, calc((100vw - 1120px) / 2 - 20px), 160px); height: auto; border-radius: 7px; opacity: 0.9; filter: drop-shadow(0 18px 22px rgb(34 33 43 / 28%)); transform: rotate(var(--tilt)); animation: book-backdrop-float 8s ease-in-out var(--delay) infinite alternate; }
+.book-backdrop__cover--left { left: -20px; }
+.book-backdrop__cover--right { right: -20px; }
+@keyframes book-backdrop-float { from { transform: translateY(0) rotate(var(--tilt)); } to { transform: translateY(-12px) rotate(var(--tilt)); } }
+@media (min-width: 1360px) { .book-backdrop { display: block; } }
+@media (prefers-reduced-motion: reduce) { .book-backdrop__cover { animation: none; } }

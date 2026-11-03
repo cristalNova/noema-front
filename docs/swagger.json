@@ -2355,7 +2355,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/CommunityDetail"
                 }
               }
             }
@@ -2372,7 +2372,7 @@
             "bearer": []
           }
         ],
-        "summary": "Crear una comunidad (quien la crea queda como propietario)",
+        "summary": "Crear una comunidad (quien la crea queda como propietario y miembro OWNER activo)",
         "tags": [
           "Comunidades"
         ]
@@ -2428,7 +2428,37 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Página de comunidades con su propietario (owner) y etiquetas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Community"
+                      }
+                    },
+                    "total": {
+                      "type": "number"
+                    },
+                    "page": {
+                      "type": "number"
+                    },
+                    "limit": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "total",
+                    "page",
+                    "limit"
+                  ]
+                }
+              }
+            }
           }
         },
         "summary": "Listar comunidades, con filtros por tema, etiqueta y nombre",
@@ -2501,7 +2531,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/CommunityDetail"
                 }
               }
             }
@@ -2543,7 +2573,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/CommunityDetail"
                 }
               }
             }
@@ -5237,7 +5267,12 @@
             "type": "number"
           },
           "owner": {
-            "$ref": "#/components/schemas/Profile"
+            "description": "Perfil del propietario (quien creó la comunidad). Se incluye en el listado, el detalle y al crear o editar.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              }
+            ]
           },
           "name": {
             "type": "string"
@@ -5271,6 +5306,26 @@
           "isPremium",
           "createdAt",
           "tags"
+        ]
+      },
+      "CommunityDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Community"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "memberCount": {
+                "type": "number",
+                "description": "Número de miembros con membresía ACTIVE",
+                "example": 12
+              }
+            },
+            "required": [
+              "memberCount"
+            ]
+          }
         ]
       },
       "ArticleTag": {

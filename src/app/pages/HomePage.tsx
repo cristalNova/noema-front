@@ -3,6 +3,7 @@ import { useAuth } from '@/features/auth'
 import { useMyProfile } from '@/features/profiles'
 import { usePublishedArticles } from '@/features/articles/hooks/usePublishedArticles'
 import { EssayCover } from '@/features/articles/components/EssayCover'
+import { HomeShelf } from './HomeBooks'
 import './HomePage.css'
 
 export default function HomePage() {
@@ -25,6 +26,7 @@ export default function HomePage() {
           <p className="home__library-count"><span>{readings.total}</span> {readings.total === 1 ? 'ensayo para descubrir' : 'ensayos para descubrir'}</p>
         </> : <div className="home__library-message"><p>Las buenas ideas empiezan con una página en blanco.</p><Link to="/app/articles/new">Escribe el primer ensayo ↗</Link></div>}
       </section></div>
+      <HomeShelf />
 
       {isAuthenticated && status === 'missing' && <aside className="home__profile"><div><strong>Tu espacio está casi listo.</strong><p>Crea tu perfil para guardar ensayos y participar con tu identidad de escritor.</p></div><Link to="/profile/new">Crear mi perfil →</Link></aside>}
 

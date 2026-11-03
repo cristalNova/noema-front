@@ -460,13 +460,6 @@
     margin-top: 1.25rem;
   }
 
-  .communities-page__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-
   .community-create {
     max-width: 860px;
     border: 1px solid #e1d6c9;
@@ -840,16 +833,6 @@
       .pagination {
         align-items: stretch;
         flex-direction: column;
-      }
-
-      .communities-page__actions {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .communities-page__actions .button {
-        width: 100%;
-        text-align: center;
       }
 
       .community-filters input {
