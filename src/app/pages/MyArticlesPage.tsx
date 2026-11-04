@@ -28,6 +28,7 @@ export function MyArticlesPage() {
       <header className="my-articles__header">
         <div className="page-header"><p className="eyebrow">Noema · Espacio de escritura</p><h1 ref={heading} tabIndex={-1}>Mis ensayos</h1><p>Tus ideas, en cada etapa. Organiza lo que escribes y decide qué sigue.</p></div>
         <div className="my-articles__actions">
+          <Link className="button button--secondary" to="/app/collections">Mis colecciones</Link>
           <Link className="button button--secondary" to="/articles">Ver ensayos publicados</Link>
           <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
         </div>
@@ -59,3 +60,4 @@ export function MyArticlesPage() {
     </main>
   )
 }
+
