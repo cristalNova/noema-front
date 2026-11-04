@@ -1948,7 +1948,17 @@
       },
       "get": {
         "operationId": "CollectionsController_findAll",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "authorId",
+            "required": false,
+            "in": "query",
+            "description": "Id del perfil autor para listar solo sus colecciones",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -5704,6 +5714,13 @@
             "type": "number",
             "nullable": true
           },
+          "collectionPosition": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "nullable": true,
+            "description": "Posición del ensayo dentro de su colección. Requiere collectionId."
+          },
           "communityId": {
             "type": "number",
             "nullable": true
@@ -5734,6 +5751,13 @@
           "collectionId": {
             "type": "number",
             "nullable": true
+          },
+          "collectionPosition": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "nullable": true,
+            "description": "Posición del ensayo dentro de su colección. Requiere collectionId."
           },
           "communityId": {
             "type": "number",

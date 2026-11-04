@@ -112,9 +112,9 @@ test('authenticated user can validate the creation form without losing values', 
 test('authenticated user can join and leave an open community', async ({ page }) => {
   let membership: 'ACTIVE' | null = null
   let joinRequests = 0
-  await page.addInitScript((token) => localStorage.setItem('noema.access_token', token), tokenFor())
+  await page.addInitScript((token) => localStorage.setItem('noema.access_token', token), tokenFor('9'))
   await page.route('**/profiles/me', async (route) => {
-    await route.fulfill({ json: { id: 7, username: 'maria', name: 'María López' } })
+    await route.fulfill({ json: { id: 9, username: 'ana', name: 'Ana Gómez' } })
   })
   await mockCommunityApi(page)
   await page.route('**/communities/1/members**', async (route) => {
@@ -125,7 +125,7 @@ test('authenticated user can join and leave an open community', async ({ page })
     }
     if (request.method() === 'GET') {
       await route.fulfill({ json: pageOf(membership ? [{
-        profileId: 7,
+        profileId: 9,
         communityId: 1,
         role: 'MEMBER',
         status: membership,
@@ -137,7 +137,7 @@ test('authenticated user can join and leave an open community', async ({ page })
       joinRequests += 1
       membership = 'ACTIVE'
       await route.fulfill({ status: 201, json: {
-        profileId: 7,
+        profileId: 9,
         communityId: 1,
         role: 'MEMBER',
         status: 'ACTIVE',

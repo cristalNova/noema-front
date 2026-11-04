@@ -95,3 +95,21 @@ test('la API recorre todas las páginas y usa las rutas privadas y los cuerpos c
   httpClient.delete = async () => { throw new Error('No se pudo eliminar') }
   await assert.rejects(api.deleteArticle(1), /No se pudo eliminar/)
 })
+
+test('los ensayos de una colección van por posición, sin posición al final y con el id como desempate', async () => {
+  const { orderCollectionEssays } = await import(moduleUrl('../src/features/articles/model/collectionEssays.ts'))
+  const articles = [
+    { id: 1, collectionId: 5, collectionPosition: 3 },
+    { id: 2, collectionId: 5, collectionPosition: null },
+    { id: 3, collectionId: 9, collectionPosition: 1 },
+    { id: 4, collectionId: 5, collectionPosition: 1 },
+    { id: 5, collectionId: 5, collectionPosition: 3 },
+    { id: 6, collectionId: 5 },
+    { id: 7, collectionId: null, collectionPosition: null },
+  ]
+  const { positioned, unpositioned } = orderCollectionEssays(articles, 5)
+  assert.deepEqual(positioned.map((article) => article.id), [4, 1, 5])
+  assert.deepEqual(unpositioned.map((article) => article.id), [2, 6])
+  assert.deepEqual(articles.map((article) => article.id), [1, 2, 3, 4, 5, 6, 7], 'no altera los datos originales')
+  assert.deepEqual(orderCollectionEssays(articles, 99), { positioned: [], unpositioned: [] })
+})
