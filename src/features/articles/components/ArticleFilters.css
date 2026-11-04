@@ -1,0 +1,49 @@
+/* Mismo lenguaje que "Mis ensayos": píldoras suaves, la activa rellena de tinta */
+.explore-filters { margin-bottom: 2rem; }
+
+/* Etiquetas: una fila deslizable, como las pestañas de la referencia */
+.explore-tags { display: flex; gap: 0.5rem; padding-bottom: 0.4rem; overflow-x: auto; scrollbar-width: thin; scroll-snap-type: x proximity; }
+.explore-tags .button { flex: 0 0 auto; min-height: 38px; padding: 0.45rem 1rem; font-size: 0.85rem; white-space: nowrap; scroll-snap-align: start; transition: background-color 160ms ease, color 160ms ease; }
+.explore-tags .button span { opacity: 0.6; font-weight: 600; }
+.explore-tags .button[aria-pressed='true'] { color: #fffdf9; background: var(--color-ink); }
+.explore-tags .button:not([aria-pressed='true']):hover { background: #e2d4c2; }
+
+/* Comunidad / autor / colección: píldoras desplegables */
+.explore-selects { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.explore-select { min-width: 0; max-width: 100%; }
+.explore-select select {
+  max-width: 100%; min-height: 38px; padding: 0.45rem 2.3rem 0.45rem 1rem; border: 0; border-radius: var(--radius-pill);
+  appearance: none; background-color: #eadfd1; color: var(--color-ink); cursor: pointer; font-size: 0.85rem; font-weight: 700; text-overflow: ellipsis;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322212b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.85rem center; background-size: 13px;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.explore-select select:hover:not(:disabled) { background-color: #e2d4c2; }
+.explore-select select[data-active='true'] {
+  color: #fffdf9; background-color: var(--color-ink);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf9' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+.explore-select select:disabled { opacity: 0.45; cursor: not-allowed; }
+/* La lista desplegable hereda el color del select: sin esto quedaría blanco sobre blanco */
+.explore-select option { color: #22212b; background: #fffdfa; }
+.explore-tags .button:focus-visible, .explore-select select:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.explore-filters__hint { margin: 0.6rem 0 0 0.25rem; color: var(--color-muted); font-size: 0.78rem; }
+.explore-filters__notice { margin: 1rem 0 0; color: var(--color-danger); font-size: 0.85rem; }
+
+/* Filtros activos */
+.explore-filters__active { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-top: 1.1rem; padding-top: 1.1rem; border-top: 1px solid var(--color-line); }
+.explore-filters__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.filter-chip { display: inline-flex; align-items: center; gap: 0.45rem; max-width: 100%; padding: 0.2rem 0.3rem 0.2rem 0.9rem; border-radius: var(--radius-pill); background: #eeedf6; font-size: 0.85rem; animation: filter-chip-in 160ms cubic-bezier(0.23, 1, 0.32, 1); }
+.filter-chip__group { color: var(--color-accent); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.filter-chip__label { min-width: 0; overflow-wrap: anywhere; }
+.filter-chip button { display: inline-grid; flex: 0 0 auto; place-items: center; width: 1.9rem; height: 1.9rem; border: 0; border-radius: 50%; background: transparent; color: var(--color-ink); cursor: pointer; font-size: 1.15rem; line-height: 1; transition: background-color 160ms ease, transform 140ms ease; }
+.filter-chip button:hover { background: rgb(98 86 168 / 16%); }
+.filter-chip button:active { transform: scale(0.9); }
+.filter-chip button:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 1px; }
+.explore-filters__clear { min-height: 44px; padding: 0 0.25rem; border: 0; background: none; color: var(--color-accent); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+.explore-filters__clear:hover { text-decoration: underline; text-underline-offset: 3px; }
+.explore-filters__clear:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; border-radius: 4px; }
+.explore-filters__notice .explore-filters__clear { min-height: 0; padding: 0; text-decoration: underline; }
+@keyframes filter-chip-in { from { opacity: 0; transform: scale(0.92); } }
+@media (max-width: 540px) { .explore-select { flex: 1 1 100%; } .explore-select select { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .filter-chip, .explore-tags .button, .explore-select select, .filter-chip button { animation: none; transition: none; } }

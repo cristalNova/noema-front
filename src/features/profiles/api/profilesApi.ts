@@ -16,3 +16,15 @@ async function create(profile: NewProfile): Promise<Profile> {
 
 export const profilesApi = { getMine, create }
 export const getMyProfile = getMine
+
+export interface AuthorOption {
+  id: number
+  name: string
+  username: string
+}
+
+// GET /profiles: público y sin paginar. Sirve como lista de autores para el filtro.
+export async function listAuthors(signal?: AbortSignal): Promise<AuthorOption[]> {
+  const response = await httpClient.get<AuthorOption[]>('/profiles', { signal })
+  return response.data
+}
