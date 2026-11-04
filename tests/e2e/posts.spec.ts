@@ -54,6 +54,10 @@ async function mockAuthors(page: Page) {
   await mockApi(page, '**/profiles', (route) => route.fulfill({ json: [other, owner] }))
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.route('**/comments/**', (route) => route.fulfill({ json: { data: [], total: 0, page: 1, limit: 100 } }))
+})
+
 test('el feed pagina y filtra por autor conservando el filtro en la URL', async ({ page }) => {
   const requests: URL[] = []
   await mockAuthors(page)

@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import { listPostReplies } from '@/features/social/api/postsApi'
+import { CommentSection } from '@/features/social/components/CommentSection'
 import { PostCard } from '@/features/social/components/PostCard'
 import { PostList } from '@/features/social/components/PostList'
 import { usePagedPosts, type PostPageRequest } from '@/features/social/hooks/usePagedPosts'
@@ -70,6 +71,7 @@ function PostDetail({ id }: { id: number }) {
           <h1 className="post-detail__title">Publicación de {post.owner.name}</h1>
           <div className="post-detail__main"><PostCard post={post} linkToDetail={false} /></div>
           <Replies postId={post.id} />
+          <CommentSection target={{ kind: 'post', id: post.id }} />
         </>
       )}
     </main>
