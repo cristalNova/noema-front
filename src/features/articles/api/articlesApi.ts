@@ -1,6 +1,7 @@
 import { httpClient } from '../../../shared/api'
 import type { Paginated } from '../../../shared/types/Paginated'
 import type { Article, ArticleStatus, ArticleSummary, DraftInput } from '../model/article.types'
+import { EXPLORE_PAGE_SIZE, type ExploreFilters } from '../model/exploreFilters'
 
 export interface ArticleListParams {
   communityId?: number;
@@ -74,6 +75,21 @@ export async function deleteArticle(id: number): Promise<void> {
 export async function listPublishedArticles(page = 1, signal?: AbortSignal): Promise<Paginated<ArticleSummary>> {
   const response = await httpClient.get<Paginated<ArticleSummary>>('/articles', {
     params: { page: Math.max(1, page), limit: 10 }, signal,
+  })
+  return response.data
+}
+
+export async function exploreArticles(filters: ExploreFilters, page = 1, signal?: AbortSignal): Promise<Paginated<ArticleSummary>> {
+  const response = await httpClient.get<Paginated<ArticleSummary>>('/articles', {
+    params: {
+      page: Math.max(1, page),
+      limit: EXPLORE_PAGE_SIZE,
+      ...(filters.tag ? { tag: filters.tag } : {}),
+      ...(filters.communityId ? { communityId: filters.communityId } : {}),
+      ...(filters.authorId ? { authorId: filters.authorId } : {}),
+      ...(filters.collectionId ? { collectionId: filters.collectionId } : {}),
+    },
+    signal,
   })
   return response.data
 }
