@@ -134,6 +134,7 @@
   cursor: pointer;
 }
 
+a.navbar__menu-item { text-decoration: none; }
 .navbar__menu-item:hover { background: var(--color-field); }
 .navbar__menu-item:disabled { opacity: 0.6; cursor: not-allowed; }
 

@@ -61,3 +61,20 @@ export async function listMyCommunityFilterOptions(signal?: AbortSignal): Promis
   return [...communities.values()]
 }
 
+export interface OwnedCommunity extends CommunityOption {
+  isPremium: boolean
+}
+
+/** Comunidades de las que el usuario es propietario: el resto de membresías no permiten crear planes. */
+export async function listMyOwnedCommunities(signal?: AbortSignal): Promise<OwnedCommunity[]> {
+  const communities: OwnedCommunity[] = []
+  for (let page = 1; ; page += 1) {
+    const { data } = await httpClient.get<Paginated<{ role?: string; community?: Community }>>('/communities/mine', {
+      params: { page, limit: 100 }, signal,
+    })
+    for (const { role, community } of data.data) {
+      if (role === 'OWNER' && community) communities.push({ id: community.id, name: community.name, isPremium: community.isPremium })
+    }
+    if (data.data.length === 0 || page * data.limit >= data.total) return communities
+  }
+}
