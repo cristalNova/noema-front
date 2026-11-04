@@ -8,6 +8,7 @@ import {
   type Profile,
   type ProfileContextValue,
 } from '@/features/profiles'
+import { toApiError } from '@/shared/api/apiError'
 
 /** Carga el perfil del usuario autenticado y lo comparte; se reinicia al cambiar la sesión. */
 export function ProfileProvider({ children }: { children: ReactNode }) {
@@ -29,9 +30,12 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       .then((profile) => {
         if (!cancelled) dispatch({ type: 'loaded', profile })
       })
-      .catch(() => {
+      .catch((error: unknown) => {
+        if (cancelled) return
+        // Un 404 significa que aún no tiene perfil, no que algo fallara.
         // Un 401 ya lo gestiona la capa de sesión; aquí solo se marca el fallo.
-        if (!cancelled) dispatch({ type: 'failed' })
+        if (toApiError(error).status === 404) dispatch({ type: 'loaded', profile: null })
+        else dispatch({ type: 'failed' })
       })
     return () => {
       cancelled = true
