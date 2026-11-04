@@ -29,3 +29,5 @@
 .published-empty .button { margin-top: 0.5rem; }
 .published-empty > span svg { display: block; }
 @media (prefers-reduced-motion: reduce) { .published-library.is-refreshing .published-list { transition: none; } }
+
+.published-essay__author-card { margin-top: .3rem; }

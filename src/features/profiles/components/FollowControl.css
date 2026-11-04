@@ -1,0 +1,8 @@
+.follow-control { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1rem; margin-top: 1.2rem; }
+.follow-control__count { font-weight: 600; }
+.follow-control .button { min-height: 2.5rem; }
+.follow-control__error { flex-basis: 100%; color: #a73434; font-size: .85rem; }
+.follow-control__error button { margin-left: .5rem; border: 0; background: none; color: inherit; text-decoration: underline; cursor: pointer; }
+.follow-control--compact { margin-top: .65rem; gap: .4rem .65rem; }
+.follow-control--compact .button { padding: .4rem .8rem; font-size: .78rem; }
+.follow-control--compact .follow-control__count { font-size: .78rem; }

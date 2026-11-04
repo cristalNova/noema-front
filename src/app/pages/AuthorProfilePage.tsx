@@ -7,6 +7,7 @@ import { EssayCover } from '@/features/articles/components/EssayCover'
 import type { ArticleSummary } from '@/features/articles/model/article.types'
 import { listPublicReadingLists, type PublicReadingList } from '@/features/reading/api/readingListsApi'
 import { getErrorMessage, toApiError } from '@/shared/api/apiError'
+import { FollowControl } from '@/features/profiles/components/FollowControl'
 import './AuthorProfilePage.css'
 
 interface Settled {
@@ -86,7 +87,7 @@ function AuthorProfile({ id }: { id: number }) {
           <div><p className="eyebrow">Noema · Perfil público</p><h1>{profile.name}</h1><p className="author-profile__username">@{profile.username}</p></div>
         </div>
         {profile.bio && <p className="author-profile__bio">{profile.bio}</p>}
-        <p className="author-profile__followers">{profile.followersCount} {profile.followersCount === 1 ? 'seguidor' : 'seguidores'}</p>
+        <FollowControl key={profile.id} profileId={profile.id} followersCount={profile.followersCount} />
         {(website || socialLinks.length > 0) && <ul className="author-profile__links" aria-label="Enlaces del perfil">
           {website && <li><a href={website} target="_blank" rel="noopener noreferrer">Sitio web ↗</a></li>}
           {socialLinks.map(({ name, url }) => <li key={name}><a href={url ?? undefined} target="_blank" rel="noopener noreferrer">{name} ↗</a></li>)}

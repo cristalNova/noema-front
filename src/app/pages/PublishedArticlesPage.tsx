@@ -6,6 +6,7 @@ import { useArticleExplorer } from '../../features/articles/hooks/useArticleExpl
 import { useFilterOptions } from '../../features/articles/hooks/useFilterOptions'
 import { useArticleAttribution } from '../../features/articles/hooks/useArticleAttribution'
 import { ArticleByline } from '../../features/articles/components/ArticleByline'
+import { AuthorFollowCard } from '@/features/profiles/components/AuthorFollowCard'
 import './PublishedArticlesPage.css'
 
 export function PublishedArticlesPage() {
@@ -61,6 +62,7 @@ export function PublishedArticlesPage() {
             <div className="published-essay__meta"><span>{article.isPremium ? <span className="premium-badge">Premium</span> : 'Lectura abierta'}</span>{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' }).format(new Date(article.publishedAt))}</time>}</div>
             <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3>
             <ArticleByline author={authorOf(article)} community={communityOf(article)} />
+            <AuthorFollowCard authorId={article.authorId} />
             <p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>
             {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}><Link to={`/articles?tag=${encodeURIComponent(tag)}`}>#{tag}</Link></li>)}</ul>}
           </article>)}</div>}
