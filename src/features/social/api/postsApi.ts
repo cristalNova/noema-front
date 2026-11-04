@@ -1,7 +1,7 @@
 import { httpClient } from '@/shared/api'
 import type { Paginated, PaginationParams } from '@/shared/types/Paginated'
 import { toPageQuery } from '@/shared/utils/pagination'
-import type { Post, PostAuthor } from '../model/post.types'
+import type { Post } from '../model/post.types'
 
 export interface PostListParams extends PaginationParams {
   authorId?: number
@@ -39,30 +39,4 @@ export async function listPostReplies(id: number, params: PaginationParams = {},
 
 export async function deletePost(id: number): Promise<void> {
   await httpClient.delete(`/posts/${id}`)
-}
-
-// GET /profiles es público y no está paginado: es la única fuente de autores para el filtro.
-export async function listPostAuthors(signal?: AbortSignal): Promise<PostAuthor[]> {
-  const response = await httpClient.get<PostAuthor[]>('/profiles', { signal })
-  return response.data
-}
-
-export interface PostCommunityOption {
-  id: number
-  name: string
-}
-
-// GET /communities/mine devuelve membresías con la comunidad anidada, no comunidades.
-export async function listPostCommunities(signal?: AbortSignal): Promise<PostCommunityOption[]> {
-  const communities: PostCommunityOption[] = []
-  for (let page = 1; ; page += 1) {
-    const { data } = await httpClient.get<Paginated<{ community?: PostCommunityOption }>>('/communities/mine', {
-      params: toPageQuery({ page, limit: 100 }),
-      signal,
-    })
-    for (const { community } of data.data) {
-      if (community) communities.push({ id: community.id, name: community.name })
-    }
-    if (data.data.length === 0 || page * data.limit >= data.total) return communities
-  }
 }

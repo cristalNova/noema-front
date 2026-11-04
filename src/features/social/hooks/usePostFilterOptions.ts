@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/features/auth'
+import { listMyCommunityFilterOptions, type CommunityOption } from '@/features/communities/api/communitiesApi'
+import { listAuthors, type AuthorOption } from '@/features/profiles/api/profilesApi'
 import { toApiError } from '@/shared/api/apiError'
-import { listPostAuthors, listPostCommunities, type PostCommunityOption } from '../api/postsApi'
-import type { PostAuthor } from '../model/post.types'
 
 // Un usuario sin perfil recibe 404 en /communities/mine: simplemente no tiene comunidades.
-async function loadMyCommunities(signal: AbortSignal): Promise<PostCommunityOption[]> {
+async function loadMyCommunities(signal: AbortSignal): Promise<CommunityOption[]> {
   try {
-    return await listPostCommunities(signal)
+    return await listMyCommunityFilterOptions(signal)
   } catch (error) {
     if (toApiError(error).status === 404) return []
     throw error
   }
 }
 
-async function loadAuthors(signal: AbortSignal): Promise<PostAuthor[]> {
-  const authors = await listPostAuthors(signal)
+async function loadAuthors(signal: AbortSignal): Promise<AuthorOption[]> {
+  const authors = await listAuthors(signal)
   return [...authors].sort((a, b) => a.name.localeCompare(b.name, 'es'))
 }
 
@@ -25,8 +25,8 @@ async function loadAuthors(signal: AbortSignal): Promise<PostAuthor[]> {
  */
 export function usePostFilterOptions() {
   const { isAuthenticated } = useAuth()
-  const [authors, setAuthors] = useState<PostAuthor[]>([])
-  const [communities, setCommunities] = useState<PostCommunityOption[]>([])
+  const [authors, setAuthors] = useState<AuthorOption[]>([])
+  const [communities, setCommunities] = useState<CommunityOption[]>([])
   const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
