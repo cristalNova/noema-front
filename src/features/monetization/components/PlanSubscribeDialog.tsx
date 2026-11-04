@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { getErrorMessage } from '@/shared/api/apiError'
 import type { Plan } from '../api/plansApi'
-import { createSubscription, type PaymentMethod } from '../api/subscriptionsApi'
+import { createSubscription, type PaymentMethod, type Subscription } from '../api/subscriptionsApi'
 import { BILLING_PERIOD_UNITS, formatPlanPrice, PAYMENT_METHOD_LABELS } from '../model/plans'
 import './PlanSubscribeDialog.css'
 
 interface PlanSubscribeDialogProps {
   plan: Plan
   onClose: () => void
-  onSubscribed: (plan: Plan) => void
+  onSubscribed: (plan: Plan, subscription: Subscription) => void
 }
 
 const PAYMENT_METHODS = Object.keys(PAYMENT_METHOD_LABELS) as PaymentMethod[]
@@ -35,8 +35,8 @@ export function PlanSubscribeDialog({ plan, onClose, onSubscribed }: PlanSubscri
     setIsSubmitting(true)
     setError('')
     try {
-      await createSubscription({ planId: plan.id, paymentMethod, autoRenew: false })
-      onSubscribed(plan)
+      const subscription = await createSubscription({ planId: plan.id, paymentMethod, autoRenew: false })
+      onSubscribed(plan, subscription)
     } catch (reason) {
       setError(getErrorMessage(reason))
     } finally {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { listArticles } from '../../features/articles/api/articlesApi';
 import type { Article } from '../../features/articles/model/article.types';
@@ -16,8 +16,6 @@ import type {
   Membership,
   MembershipStatus,
 } from '../../features/communities/model/community.types';
-import { listPlans, type Plan } from '../../features/monetization/api/plansApi';
-import { createSubscription } from '../../features/monetization/api/subscriptionsApi';
 import { getMyProfile } from '../../features/profiles/api/profilesApi';
 import { listPosts } from '../../features/social/api/postsApi';
 import type { Post } from '../../features/social/model/post.types';
@@ -127,13 +125,6 @@ function CommunityDetail() {
   const [membership, setMembership] = useState<MembershipView>('UNKNOWN');
   const [membershipBusy, setMembershipBusy] = useState(false);
   const [membershipError, setMembershipError] = useState<unknown>(null);
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [plansRequested, setPlansRequested] = useState(false);
-  const [plansLoading, setPlansLoading] = useState(false);
-  const [planError, setPlanError] = useState<unknown>(null);
-  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
-  const [subscriptionBusy, setSubscriptionBusy] = useState(false);
-  const [subscriptionMessage, setSubscriptionMessage] = useState('');
 
   useEffect(() => {
     if (isInvalidId) return undefined;
@@ -214,31 +205,6 @@ function CommunityDetail() {
 
   const memberCount = community?.memberCount;
   const owner = community?.owner;
-  const selectedPlan = useMemo(
-    () => plans.find((plan) => plan?.id === selectedPlanId),
-    [plans, selectedPlanId],
-  );
-
-  const loadPlans = () => {
-    if (!community || plans.length > 0 || plansLoading) return;
-    setPlansRequested(true);
-    setPlansLoading(true);
-    setPlanError(null);
-    listPlans({ communityId: community.id })
-      .then((response) => {
-        setPlans(
-          response.data.filter(
-            (plan) =>
-              Boolean(plan) &&
-              plan.communityId === community.id &&
-              plan.isActive,
-          ),
-        );
-      })
-      .catch((error: unknown) => setPlanError(error))
-      .finally(() => setPlansLoading(false));
-  };
-
   const handleJoin = () => {
     if (!community || membershipBusy) return;
     setMembershipBusy(true);
@@ -285,24 +251,6 @@ function CommunityDetail() {
       })
       .catch((error: unknown) => setMembershipError(error))
       .finally(() => setMembershipBusy(false));
-  };
-
-  const handleSubscribe = () => {
-    if (!selectedPlan) return;
-    setSubscriptionBusy(true);
-    setPlanError(null);
-    createSubscription({
-      planId: selectedPlan.id,
-      autoRenew: true,
-      paymentMethod: 'CARD',
-    })
-      .then(() =>
-        setSubscriptionMessage(
-          'Suscripción creada. Solicita acceso para completar tu incorporación.',
-        ),
-      )
-      .catch((error: unknown) => setPlanError(error))
-      .finally(() => setSubscriptionBusy(false));
   };
 
   if (isInvalidId) {
@@ -356,9 +304,11 @@ function CommunityDetail() {
         ? 'Solicitud pendiente de aprobación'
         : membership === 'BANNED'
           ? 'Vetado de esta comunidad'
-          : community.isPremium
-          ? 'Suscribirme'
           : 'Unirme';
+  const plansPath = `/communities/${community.id}/plans`;
+  // Al suscribirse se concede la membresía: en una comunidad premium ese es el camino para entrar.
+  const canSubscribe =
+    community.isPremium && isAuthenticated && membership === 'NONE';
 
   return (
     <main className="page-shell community-detail-page">
@@ -413,15 +363,22 @@ function CommunityDetail() {
                   : 'Miembros no disponibles'}
               </span>
             </div>
-            {community.isPremium && (
+            {community.isPremium && !canSubscribe && (
               <Link
                 className="button button--secondary community-hero__plans"
-                to={`/communities/${community.id}/plans`}
+                to={plansPath}
               >
                 Ver planes
               </Link>
             )}
-            {isAuthenticated && membership !== 'UNKNOWN' ? (
+            {canSubscribe ? (
+              <Link
+                className="button button--primary community-hero__plans"
+                to={plansPath}
+              >
+                Suscribirme
+              </Link>
+            ) : isAuthenticated && membership !== 'UNKNOWN' ? (
               <div className="membership-action">
                 <button
                   type="button"
@@ -432,13 +389,7 @@ function CommunityDetail() {
                     membership === 'BANNED' ||
                     membership === 'OWNER'
                   }
-                  onClick={
-                    membership === 'ACTIVE'
-                      ? handleLeave
-                      : community.isPremium
-                        ? loadPlans
-                        : handleJoin
-                  }
+                  onClick={membership === 'ACTIVE' ? handleLeave : handleJoin}
                 >
                   {membershipBusy ? 'Procesando…' : membershipLabel}
                 </button>
@@ -457,90 +408,6 @@ function CommunityDetail() {
             )}
           </aside>
         </header>
-
-        {community.isPremium &&
-          membership === 'NONE' &&
-          plansRequested &&
-          plans.length > 0 && (
-            <section className="plan-panel" aria-label="Planes de suscripción">
-              <div>
-                <p className="eyebrow">Acceso premium</p>
-                <h2>Elige un plan</h2>
-                <p>La suscripción no sustituye la aprobación de membresía.</p>
-              </div>
-              <label>
-                Plan
-                <select
-                  value={selectedPlanId ?? ''}
-                  onChange={(event) =>
-                    setSelectedPlanId(Number(event.target.value) || null)
-                  }
-                >
-                  <option value="">Selecciona un plan</option>
-                  {plans.map((plan) =>
-                    plan ? (
-                      <option key={plan.id} value={plan.id}>
-                        {plan.name} · {plan.price} {plan.currency} /{' '}
-                        {plan.billingPeriod === 'MONTHLY' ? 'mes' : 'año'}
-                      </option>
-                    ) : null,
-                  )}
-                </select>
-              </label>
-              <button
-                type="button"
-                className="button button--primary"
-                disabled={!selectedPlan || subscriptionBusy}
-                onClick={handleSubscribe}
-              >
-                {subscriptionBusy ? 'Procesando…' : 'Confirmar suscripción'}
-              </button>
-              {subscriptionMessage && (
-                <p className="form-success" role="status">
-                  {subscriptionMessage}
-                </p>
-              )}
-              {subscriptionMessage && (
-                <button
-                  type="button"
-                  className="button button--secondary"
-                  disabled={membershipBusy}
-                  onClick={handleJoin}
-                >
-                  {membershipBusy ? 'Procesando…' : 'Solicitar acceso'}
-                </button>
-              )}
-            </section>
-          )}
-        {community.isPremium && membership === 'NONE' && plansLoading && (
-          <p className="status-message" role="status">
-            Cargando planes…
-          </p>
-        )}
-        {community.isPremium &&
-          membership === 'NONE' &&
-          plansRequested &&
-          !plansLoading &&
-          !planError &&
-          plans.length === 0 && (
-            <div className="status-message">
-              <p>
-                No hay planes activos para esta comunidad. Puedes solicitar
-                acceso directamente.
-              </p>
-              <button
-                type="button"
-                className="button button--primary"
-                disabled={membershipBusy}
-                onClick={handleJoin}
-              >
-                {membershipBusy ? 'Procesando…' : 'Solicitar acceso'}
-              </button>
-            </div>
-          )}
-        {community.isPremium && membership === 'NONE' && planError !== null && (
-          <PageError error={planError} onRetry={loadPlans} />
-        )}
 
         <nav
           className="community-tabs"
