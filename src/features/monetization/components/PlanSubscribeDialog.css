@@ -72,3 +72,8 @@
   gap: 0.5rem;
   margin-top: 1.5rem;
 }
+
+.plan-dialog__danger {
+  background: var(--color-danger);
+  color: var(--color-surface);
+}

@@ -16,7 +16,9 @@ import { CreateCommunityPage } from './pages/CreateCommunityPage'
 import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
 import { ArticleDetailPage } from './pages/ArticleDetailPage'
 import { AuthorProfilePage } from './pages/AuthorProfilePage'
+import { MyPlansPage } from './pages/MyPlansPage'
 import { MyPostsPage } from './pages/MyPostsPage'
+import { EditPlanPage, NewPlanPage } from './pages/PlanFormPage'
 import { PlansPage } from './pages/PlansPage'
 import { PostDetailPage } from './pages/PostDetailPage'
 import { PostsFeedPage } from './pages/PostsFeedPage'
@@ -39,6 +41,9 @@ export const router = createBrowserRouter([
               { path: '/app/articles/:id/edit', element: <CreateDraftPage /> },
               { path: '/app/articles/:id', element: <ArticleDetailPage owned /> },
               { path: '/app/posts', element: <MyPostsPage /> },
+              { path: '/app/plans', element: <MyPlansPage /> },
+              { path: '/app/plans/new', element: <NewPlanPage /> },
+              { path: '/app/plans/:id/edit', element: <EditPlanPage /> },
             ],
           },
         ],

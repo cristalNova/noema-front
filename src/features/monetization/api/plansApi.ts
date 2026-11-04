@@ -48,3 +48,39 @@ export async function listActivePlans(
     if (result.data.length === 0 || page * result.limit >= result.total) return plans
   }
 }
+
+export interface CreatePlanInput {
+  name: string
+  price: number
+  currency: string
+  billingPeriod: BillingPeriod
+  communityId?: number
+}
+
+export type UpdatePlanInput = Partial<Pick<Plan, 'name' | 'price' | 'isActive'>>
+
+/** Los planes que administra el usuario, activos o no: los suyos y los de las comunidades que posee. */
+export async function listAllMyPlans(signal?: AbortSignal): Promise<Plan[]> {
+  const plans: Plan[] = []
+  for (let page = 1; ; page += 1) {
+    const { data } = await httpClient.get<Paginated<Plan>>('/plans/mine', { params: { page, limit: 100 }, signal })
+    plans.push(...data.data)
+    if (data.data.length === 0 || page * data.limit >= data.total) return plans
+  }
+}
+
+export async function createPlan(input: CreatePlanInput): Promise<Plan> {
+  const response = await httpClient.post<Plan>('/plans', input)
+  return response.data
+}
+
+/** El backend solo admite cambiar el nombre, el precio y la activación. */
+export async function updatePlan(id: number, input: UpdatePlanInput): Promise<Plan> {
+  const response = await httpClient.patch<Plan>(`/plans/${id}`, input)
+  return response.data
+}
+
+/** Responde 409 si el plan tiene suscripciones: en ese caso solo se puede desactivar. */
+export async function deletePlan(id: number): Promise<void> {
+  await httpClient.delete(`/plans/${id}`)
+}
