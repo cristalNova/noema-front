@@ -3,13 +3,14 @@ import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import { listPosts } from '@/features/social/api/postsApi'
 import { PostFilters } from '@/features/social/components/PostFilters'
+import { PostComposer } from '@/features/social/components/PostComposer'
 import { PostList } from '@/features/social/components/PostList'
 import { PostsTabs } from '@/features/social/components/PostsTabs'
 import { usePagedPosts, type PostPageRequest } from '@/features/social/hooks/usePagedPosts'
 import { readPostFilters, type PostFilters as Filters } from '@/features/social/model/posts'
 import './PostsPage.css'
 
-function PostsFeed() {
+function PostsFeed({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const { authorId, communityId } = readPostFilters(searchParams)
   const hasFilters = authorId !== undefined || communityId !== undefined
@@ -42,6 +43,7 @@ function PostsFeed() {
           {!list.isLoading && !list.error && <span>{list.total} {list.total === 1 ? 'publicación' : 'publicaciones'}</span>}
         </header>
         <PostFilters filters={{ authorId, communityId }} onChange={changeFilters} />
+        {isAuthenticated && <PostComposer onCreated={list.prepend} />}
         <PostList
           list={list}
           label="Feed de publicaciones"
@@ -66,6 +68,6 @@ function PostsFeed() {
 
 /** Se remonta al cambiar la sesión: lo que el feed puede mostrar depende de quién lo consulta. */
 export function PostsFeedPage() {
-  const { session } = useAuth()
-  return <PostsFeed key={session?.user.id ?? 'visitor'} />
+  const { session, isAuthenticated } = useAuth()
+  return <PostsFeed key={session?.user.id ?? 'visitor'} isAuthenticated={isAuthenticated} />
 }

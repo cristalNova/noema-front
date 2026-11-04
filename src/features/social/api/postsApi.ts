@@ -8,6 +8,19 @@ export interface PostListParams extends PaginationParams {
   communityId?: number
 }
 
+export interface CreatePostInput {
+  postType: 'ORIGINAL'
+  content: string
+  articleId?: number
+  communityId?: number
+  visibility: 'PUBLIC' | 'FOLLOWERS' | 'COMMUNITY'
+}
+
+export async function createPost(input: CreatePostInput): Promise<Post> {
+  const response = await httpClient.post<Post>('/posts', input)
+  return response.data
+}
+
 // El backend ya filtra por visibilidad según quien consulta: el feed nunca trae posts restringidos ajenos.
 export async function listPosts(params: PostListParams = {}, signal?: AbortSignal): Promise<Paginated<Post>> {
   const response = await httpClient.get<Paginated<Post>>('/posts', {

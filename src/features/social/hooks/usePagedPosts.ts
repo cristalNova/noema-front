@@ -65,6 +65,15 @@ export function usePagedPosts(request: PostPageRequest) {
     error: current?.error ?? '',
     setPage,
     reload: useCallback(() => setAttempt((value) => value + 1), []),
+    prepend: useCallback((post: Post) => {
+      setSettled((previous) => {
+        if (!previous || previous.request !== request || previous.page !== 1 || previous.attempt !== attempt || !previous.result) return previous
+        return {
+          ...previous,
+          result: { ...previous.result, data: [post, ...previous.result.data], total: previous.result.total + 1 },
+        }
+      })
+    }, [attempt, request]),
   }
 }
 
