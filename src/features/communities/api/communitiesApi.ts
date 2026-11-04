@@ -42,3 +42,30 @@ export async function listMyCommunityOptions(signal?: AbortSignal): Promise<Comm
   })
   return response.data.data
 }
+
+export interface CommunityOption {
+  id: number
+  name: string
+}
+
+
+export async function listMyCommunityFilterOptions(signal?: AbortSignal): Promise<CommunityOption[]> {
+  const communities = new Map<number, CommunityOption>()
+  let page = 1
+  let received = 0
+  let total: number
+  do {
+    const response = await httpClient.get<Paginated<{ community?: Community }>>('/communities/mine', {
+      params: { page, limit: 100 }, signal,
+    })
+    for (const { community } of response.data.data) {
+      if (community) communities.set(community.id, { id: community.id, name: community.name })
+    }
+    received += response.data.data.length
+    total = response.data.total
+    if (response.data.data.length === 0) break
+    page += 1
+  } while (received < total)
+  return [...communities.values()]
+}
+
