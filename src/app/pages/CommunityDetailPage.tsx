@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { listArticles } from '../../features/articles/api/articlesApi';
 import type { Article } from '../../features/articles/model/article.types';
 import { getCommunity } from '../../features/communities/api/communitiesApi';
-import { CommunityPagination } from '../../features/communities/components/CommunityPagination';
+import { Pagination } from '../../shared/components/Pagination';
+import { PostCard } from '../../features/social/components/PostCard';
 import {
   getMyMembership,
   joinCommunity,
@@ -684,34 +685,14 @@ function CommunityDetail() {
             !contentError &&
             tab === 'posts' &&
             posts.map((post) => (
-              <article className="content-card" key={post.id}>
-                <div className="content-card__meta">
-                  <span className="content-card__author">
-                    <Avatar
-                      name={post.owner.name}
-                      photo={post.owner.profilePhoto}
-                    />
-                    {post.owner.name}
-                  </span>
-                  <time dateTime={post.createdAt}>
-                    {formatDate(post.createdAt)}
-                  </time>
-                </div>
-                <p className="post-content">
-                  {post.content || 'Publicación sin contenido.'}
-                </p>
-                <div className="post-stats" aria-label="Interacciones">
-                  <span>♡ {formatNumber(post.likes)}</span>
-                  <span>◌ {formatNumber(post.commentCount)}</span>
-                  <span>↻ {formatNumber(post.repostCount)}</span>
-                </div>
-              </article>
+              <PostCard key={post.id} post={post} showCommunity={false} />
             ))}
           {!contentLoading && !contentError && contentTotal > contentLimit && (
-            <CommunityPagination
+            <Pagination
               page={contentPage}
               total={contentTotal}
               limit={contentLimit}
+              label="Paginación del contenido de la comunidad"
               onPageChange={setContentPage}
             />
           )}
