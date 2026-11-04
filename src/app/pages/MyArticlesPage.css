@@ -1,4 +1,4 @@
-.my-articles__header { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.my-articles__header { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
 .my-articles__header .page-header { max-width: 720px; }
 .my-articles__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; flex-shrink: 0; }
 .article-filters, .article-dialog__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }

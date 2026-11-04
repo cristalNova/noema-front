@@ -4,6 +4,8 @@
 .article-reader__meta time { margin-left: auto; color: var(--color-muted); font-size: 0.8rem; }
 .article-reader h1 { margin: 1.5rem 0; font-family: var(--font-serif); font-weight: 400; font-size: clamp(2.3rem, 6vw, 4.5rem); line-height: 1.07; letter-spacing: -0.04em; overflow-wrap: anywhere; }
 .article-reader__description { font-size: 1.2rem; color: var(--color-muted); white-space: pre-wrap; }
+.article-reader__author { margin: 1.5rem 0 0; font-size: .95rem; color: var(--color-muted); }
+.article-reader__author a { color: var(--color-ink); font-weight: 600; }
 .article-reader__collection { font-size: 0.85rem; color: var(--color-muted); }
 .article-reader__content { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--color-line); font-family: var(--font-serif); font-size: 1.18rem; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
 .article-reader__locked { margin-top: 2rem; padding: 1.2rem; border-radius: 16px; background: var(--color-paper); }
