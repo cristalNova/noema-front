@@ -35,20 +35,12 @@ export async function createCommunity(input: CreateCommunityDto): Promise<Commun
   return response.data
 }
 
-export async function listMyCommunityOptions(signal?: AbortSignal): Promise<Community[]> {
-  const response = await httpClient.get<Paginated<Community>>('/communities/mine', {
-    params: { page: 1, limit: 100 },
-    signal,
-  })
-  return response.data.data
-}
-
 export interface CommunityOption {
   id: number
   name: string
 }
 
-
+// GET /communities/mine devuelve membresías con la comunidad anidada, no comunidades.
 export async function listMyCommunityFilterOptions(signal?: AbortSignal): Promise<CommunityOption[]> {
   const communities = new Map<number, CommunityOption>()
   let page = 1

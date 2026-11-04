@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { changeArticleStatus, createDraft, getMyArticle, updateDraft } from '../api/articlesApi'
-import { listMyCommunityOptions } from '../../communities/api/communitiesApi'
-import type { Community } from '../../communities/model/community.types'
+import { listMyCommunityFilterOptions, type CommunityOption } from '../../communities/api/communitiesApi'
 import type { ArticleStatus, DraftErrors, DraftField, DraftInput } from '../model/article.types'
 import { getDraftErrors, validateDraft } from '../model/draftValidation'
 import { getErrorMessage } from '../../../shared/api/apiError'
@@ -20,7 +19,7 @@ export function useDraftEditor(articleId?: number) {
   const [isChangingStatus, setIsChangingStatus] = useState(false)
   const [statusNotice, setStatusNotice] = useState('')
   const saving = useRef(false)
-  const [communities, setCommunities] = useState<Community[]>([])
+  const [communities, setCommunities] = useState<CommunityOption[]>([])
   const [isLoadingCommunities, setIsLoadingCommunities] = useState(true)
   const [communityError, setCommunityError] = useState('')
   const [attempt, setAttempt] = useState(0)
@@ -51,7 +50,7 @@ export function useDraftEditor(articleId?: number) {
 
   useEffect(() => {
     const controller = new AbortController()
-    listMyCommunityOptions(controller.signal).then((data) => {
+    listMyCommunityFilterOptions(controller.signal).then((data) => {
       if (!controller.signal.aborted) {
         setCommunities(data)
         setCommunityError('')

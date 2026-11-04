@@ -106,3 +106,29 @@ test('el inicio, la biblioteca y el lector caben en una pantalla móvil', async 
     await page.screenshot({ path: testInfo.outputPath(url === '/' ? 'mobile-home.png' : url === '/articles' ? 'mobile-library.png' : 'mobile-reader.png'), fullPage: true })
   }
 })
+
+test('el borrador ofrece las comunidades del usuario y envía la elegida', async ({ page }) => {
+  const payload = Buffer.from(JSON.stringify({ sub: '7', email: 'writer@example.test', roles: [], permissions: [], exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64')
+  const bodies: Record<string, unknown>[] = []
+  await page.addInitScript((token) => localStorage.setItem('noema.access_token', token), `header.${payload}.signature`)
+  await page.route('**/profiles/me', (route) => route.fulfill({ json: { id: 7, username: 'writer', name: 'Escritora' } }))
+  // GET /communities/mine devuelve membresías con la comunidad anidada, no comunidades.
+  await page.route('**/communities/mine**', (route) => route.fulfill({ json: {
+    data: [{ profileId: 7, communityId: 3, role: 'MEMBER', status: 'ACTIVE', community: { id: 3, name: 'Club de ciencia' } }],
+    total: 1, page: 1, limit: 100,
+  } }))
+  await page.route('**/articles**', async (route) => {
+    const request = route.request()
+    if (!['xhr', 'fetch'].includes(request.resourceType())) return route.fallback()
+    if (request.method() === 'POST') bodies.push(request.postDataJSON())
+    return route.fulfill({ status: request.method() === 'POST' ? 201 : 200, json: { ...essay, id: 9, status: 'DRAFT', content, communityId: 3 } })
+  })
+
+  await page.goto('/app/articles/new')
+  await page.locator('#communityId').selectOption({ label: 'Club de ciencia' })
+  await expect(page.locator('#communityId')).toHaveValue('3')
+  await page.locator('#title').fill('Un ensayo de comunidad')
+  await page.locator('.draft-content').fill(content)
+  await page.locator('button[type="submit"]').click()
+  await expect.poll(() => bodies.at(-1)?.communityId).toBe(3)
+})
