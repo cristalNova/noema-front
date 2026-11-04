@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '@/features/auth'
+import { useRequireAuth } from '@/features/auth'
 import { useMyProfile } from '@/features/profiles'
 import { toApiError } from '@/shared/api/apiError'
 import { joinCommunity } from '../api/membersApi'
 
 /** Solicita unirse sin pagar: en una comunidad premium la solicitud queda pendiente de moderación. */
 export function RequestCommunityAccess({ communityId }: { communityId: number }) {
-  const { isAuthenticated } = useAuth()
+  const requireAuth = useRequireAuth()
   const { status: profileStatus } = useMyProfile()
   const location = useLocation()
   const navigate = useNavigate()
@@ -17,9 +17,8 @@ export function RequestCommunityAccess({ communityId }: { communityId: number })
   const pending = useRef(false)
 
   async function request() {
-    const returnState = { state: { from: location.pathname + location.search } }
-    if (!isAuthenticated) return navigate('/login', returnState)
-    if (profileStatus === 'missing') return navigate('/profile/new', returnState)
+    if (!requireAuth('solicitar acceso a esta comunidad')) return
+    if (profileStatus === 'missing') return navigate('/profile/new', { state: { from: location.pathname + location.search } })
     if (pending.current) return
     pending.current = true
     setIsSubmitting(true)

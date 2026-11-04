@@ -108,6 +108,9 @@ test('sin sesión lleva a iniciar sesión y vuelve a la confirmación del plan e
   await page.goto('/communities/1/plans')
 
   await page.getByRole('button', { name: 'Suscribirme a Acceso anual' }).click()
+  const authPrompt = page.getByRole('dialog', { name: 'Inicia sesión para continuar' })
+  await expect(authPrompt).toContainText('suscribirte a este plan')
+  await authPrompt.getByRole('link', { name: 'Iniciar sesión' }).click()
   await expect(page).toHaveURL(/\/login$/)
 
   await page.getByLabel('Correo electrónico').fill('e2e@example.test')

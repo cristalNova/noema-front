@@ -7,6 +7,7 @@ import {
   loadInitialState,
   type AuthContextValue,
 } from '@/features/auth'
+import { captureReturnState } from '@/shared/utils/navigation'
 import { router } from '../router'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -16,7 +17,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 401 con sesión activa (token vencido o revocado): limpiar y mandar al login con aviso.
     setUnauthorizedHandler(() => {
       dispatch({ type: 'expired' })
-      void router.navigate('/login', { replace: true })
+      const { pathname } = router.state.location
+      const onAuthScreen = pathname === '/login' || pathname === '/register'
+      void router.navigate('/login', { replace: true, state: onAuthScreen ? undefined : captureReturnState() })
     })
 
     // Re-lee el almacenamiento cuando otra pestaña inicia/cierra sesión o cuando el navegador
