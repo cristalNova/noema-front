@@ -25,3 +25,9 @@ const priceFormatter = new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2
 export function formatPlanPrice(price: number): string {
   return priceFormatter.format(price)
 }
+
+const dateFormatter = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })
+
+export function formatSubscriptionEnd(endDate: string): string {
+  return dateFormatter.format(new Date(endDate))
+}

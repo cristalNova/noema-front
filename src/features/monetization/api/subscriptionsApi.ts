@@ -8,6 +8,8 @@ export interface Subscription {
   planId: number
   plan: Plan
   status: 'ACTIVE' | 'CANCELLED' | 'EXPIRED'
+  startDate: string
+  endDate: string
 }
 
 export interface CreateSubscriptionInput {

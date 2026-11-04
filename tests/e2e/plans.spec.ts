@@ -96,8 +96,8 @@ test('se llega a los planes del autor desde el bloqueo de un ensayo premium', as
     status: 'PUBLISHED', communityId: null, publishedAt: '2026-11-01T12:00:00.000Z', updatedAt: '2026-11-01T12:00:00.000Z', articleTags: [],
   } }))
   await page.goto('/articles/5')
-  await page.getByRole('link', { name: 'Ver planes del autor' }).click()
-  await expect(page).toHaveURL(/\/profiles\/7\/plans$/)
+  await page.getByRole('link', { name: 'Suscribirme', exact: true }).click()
+  await expect(page).toHaveURL(/\/profiles\/7\/plans\?essay=5$/)
   await expect(page.getByRole('heading', { name: 'Planes de María López' })).toBeVisible()
 })
 
@@ -108,6 +108,9 @@ test('sin sesión lleva a iniciar sesión y vuelve a la confirmación del plan e
   await page.goto('/communities/1/plans')
 
   await page.getByRole('button', { name: 'Suscribirme a Acceso anual' }).click()
+  const authPrompt = page.getByRole('dialog', { name: 'Inicia sesión para continuar' })
+  await expect(authPrompt).toContainText('suscribirte a este plan')
+  await authPrompt.getByRole('link', { name: 'Iniciar sesión' }).click()
   await expect(page).toHaveURL(/\/login$/)
 
   await page.getByLabel('Correo electrónico').fill('e2e@example.test')
@@ -191,4 +194,121 @@ test('un titular inexistente se informa y un fallo del servidor permite reintent
   await expect(page.getByRole('heading', { name: 'Autor no encontrado' })).toBeVisible()
   await page.goto('/profiles/99')
   await expect(page.getByRole('heading', { name: 'Perfil no encontrado' })).toBeVisible()
+})
+
+const activeSubscription = (plan: unknown) => ({ id: 1, planId: 9, plan, status: 'ACTIVE', startDate: '2026-11-03T00:00:00.000Z', endDate: '2026-12-03T12:00:00.000Z' })
+
+test('un pago rechazado no crea la suscripción, conserva el método y permite reintentar', async ({ page }) => {
+  const bodies: Record<string, unknown>[] = []
+  await signIn(page)
+  await mockCatalog(page)
+  await mockApi(page, '**/subscriptions', (route) => {
+    bodies.push(route.request().postDataJSON())
+    return bodies.length === 1
+      ? route.fulfill({ status: 402, json: { statusCode: 402, message: 'Fondos insuficientes' } })
+      : route.fulfill({ status: 201, json: activeSubscription(monthly) })
+  })
+  await page.goto('/communities/1/plans?plan=9')
+
+  const dialog = page.getByRole('dialog', { name: 'Confirma tu suscripción' })
+  await dialog.getByLabel('Medio de pago').selectOption('BANK_TRANSFER')
+  await dialog.getByRole('button', { name: 'Confirmar y pagar' }).click()
+  await expect(dialog.getByRole('alert')).toHaveText('Fondos insuficientes')
+  await expect(dialog.getByLabel('Medio de pago')).toHaveValue('BANK_TRANSFER')
+  await expect(page.getByText('Tu suscripción está activa.')).toHaveCount(0)
+
+  await dialog.getByRole('button', { name: 'Confirmar y pagar' }).click()
+  await expect(page.getByText('Tu suscripción está activa.')).toBeVisible()
+  await expect(dialog).toBeHidden()
+  expect(bodies.map((body) => body.paymentMethod)).toEqual(['BANK_TRANSFER', 'BANK_TRANSFER'])
+})
+
+test('el pago se bloquea mientras se procesa y no se cobra dos veces', async ({ page }) => {
+  let requests = 0
+  let release = () => {}
+  const held = new Promise<void>((resolve) => { release = resolve })
+  await signIn(page)
+  await mockCatalog(page)
+  await mockApi(page, '**/subscriptions', async (route) => {
+    requests += 1
+    await held
+    await route.fulfill({ status: 201, json: activeSubscription(monthly) })
+  })
+  await page.goto('/communities/1/plans?plan=9')
+
+  const dialog = page.getByRole('dialog', { name: 'Confirma tu suscripción' })
+  await dialog.getByRole('button', { name: 'Confirmar y pagar' }).dblclick()
+  await expect(dialog.getByRole('button', { name: 'Procesando…' })).toBeDisabled()
+  await expect(dialog.getByRole('button', { name: 'Cancelar' })).toBeDisabled()
+  await expect(dialog.getByLabel('Medio de pago')).toBeDisabled()
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeVisible()
+
+  release()
+  await expect(page.getByText('Tu suscripción está activa.')).toBeVisible()
+  expect(requests).toBe(1)
+})
+
+test('tras pagar desde un ensayo bloqueado se puede volver a leerlo completo', async ({ page }) => {
+  let subscribed = false
+  await signIn(page)
+  await mockCatalog(page, [authorPlan])
+  await mockApi(page, '**/articles/5', (route) => route.fulfill({ json: {
+    id: 5, authorId: 7, title: 'Ensayo premium', description: '', content: subscribed ? 'El texto completo.' : 'Solo un adelanto.', isPremium: true, locked: !subscribed,
+    status: 'PUBLISHED', communityId: null, publishedAt: '2026-11-01T12:00:00.000Z', updatedAt: '2026-11-01T12:00:00.000Z', articleTags: [],
+  } }))
+  await mockApi(page, '**/subscriptions', (route) => {
+    subscribed = true
+    return route.fulfill({ status: 201, json: activeSubscription(authorPlan) })
+  })
+
+  await page.goto('/articles/5')
+  await page.getByRole('link', { name: 'Suscribirme', exact: true }).click()
+  await page.getByRole('button', { name: 'Suscribirme a Lector fiel' }).click()
+  await page.getByRole('button', { name: 'Confirmar y pagar' }).click()
+
+  const confirmation = page.getByRole('status')
+  await expect(confirmation).toContainText('vigente hasta el 3 de diciembre de 2026')
+  await expect(confirmation).toContainText('Ya puedes leer sus ensayos premium.')
+  await confirmation.getByRole('link', { name: 'Leer el ensayo' }).click()
+  await expect(page).toHaveURL(/\/articles\/5$/)
+  await expect(page.getByText('El texto completo.')).toBeVisible()
+  await expect(page.getByText('Estás leyendo un adelanto premium.')).toHaveCount(0)
+})
+
+test('tras pagar un plan de comunidad el lector ya figura como miembro', async ({ page }) => {
+  let subscribed = false
+  await signIn(page)
+  await mockCatalog(page)
+  await mockApi(page, '**/articles**', (route) => route.fulfill({ json: pageOf([]) }))
+  await mockApi(page, '**/communities/1/members**', (route, url) => {
+    const isActiveList = (url.searchParams.get('status') ?? 'ACTIVE') === 'ACTIVE'
+    return route.fulfill({ json: pageOf(subscribed && isActiveList ? [{ profileId: 8, communityId: 1, role: 'MEMBER', status: 'ACTIVE', joinedAt: '2026-11-03T00:00:00.000Z', profile: { ...author, id: 8, username: 'lector', name: 'Lector' } }] : []) })
+  })
+  await mockApi(page, '**/subscriptions', (route) => {
+    subscribed = true
+    return route.fulfill({ status: 201, json: activeSubscription(monthly) })
+  })
+
+  await page.goto('/communities/1')
+  await page.getByRole('link', { name: 'Suscribirme' }).click()
+  await expect(page).toHaveURL(/\/communities\/1\/plans$/)
+  await page.getByRole('button', { name: 'Suscribirme a Acceso mensual' }).click()
+  await page.getByRole('button', { name: 'Confirmar y pagar' }).click()
+
+  const confirmation = page.getByRole('status')
+  await expect(confirmation).toContainText('Ya tienes acceso a la comunidad.')
+  await confirmation.getByRole('link', { name: 'Ir a la comunidad' }).click()
+  await expect(page.getByRole('button', { name: 'Salir' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Solicitar acceso' })).toHaveCount(0)
+})
+
+test('una comunidad premium sin planes permite solicitar acceso sin pagar', async ({ page }) => {
+  await signIn(page)
+  await mockCatalog(page, [])
+  await mockApi(page, '**/communities/1/members', (route) => route.fulfill({ status: 201, json: { profileId: 8, communityId: 1, role: 'MEMBER', status: 'PENDING', joinedAt: '2026-11-03T00:00:00.000Z' } }))
+  await page.goto('/communities/1/plans')
+
+  await page.getByRole('button', { name: 'Solicitar acceso' }).click()
+  await expect(page.getByRole('status')).toHaveText('Tu solicitud quedó pendiente de aprobación.')
 })

@@ -78,7 +78,10 @@ test('visitor can explore communities and open a detail page', async ({ page }) 
   await expect(page.getByText('Premium')).toBeVisible()
   await page.getByRole('link', { name: 'Ver comunidad' }).first().click()
   await expect(page.getByRole('heading', { name: community.name })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Inicia sesión para unirte' })).toHaveAttribute('href', '/login')
+  await page.getByRole('button', { name: 'Inicia sesión para unirte' }).click()
+  const authPrompt = page.getByRole('dialog', { name: 'Inicia sesión para continuar' })
+  await expect(authPrompt.getByRole('link', { name: 'Iniciar sesión' })).toHaveAttribute('href', '/login')
+  await authPrompt.getByRole('button', { name: 'Ahora no' }).click()
   await page.getByRole('tab', { name: 'Publicaciones' }).click()
   await expect(page.getByText('No hay publicaciones en esta comunidad.')).toBeVisible()
 })
@@ -153,73 +156,4 @@ test('authenticated user can join and leave an open community', async ({ page })
   page.once('dialog', (dialog) => void dialog.accept())
   await page.getByRole('button', { name: 'Salir' }).click()
   await expect(page.getByRole('button', { name: 'Unirme' })).toBeVisible()
-})
-
-test('premium community can be subscribed to before requesting pending membership', async ({ page }) => {
-  let membership: 'PENDING' | null = null
-  await page.addInitScript((token) => localStorage.setItem('noema.access_token', token), tokenFor())
-  await page.route('**/profiles/me', async (route) => {
-    await route.fulfill({ json: { id: 7, username: 'maria', name: 'María López' } })
-  })
-  await mockCommunityApi(page)
-  await page.route('**/communities/1/members**', async (route) => {
-    const request = route.request()
-    if (request.method() === 'GET') {
-      await route.fulfill({ json: pageOf(membership ? [{
-        profileId: 7,
-        communityId: 1,
-        role: 'MEMBER',
-        status: membership,
-        joinedAt: '2026-01-01T00:00:00.000Z',
-      }] : []) })
-      return
-    }
-    membership = 'PENDING'
-    await route.fulfill({ status: 201, json: {
-      profileId: 7,
-      communityId: 1,
-      role: 'MEMBER',
-      status: 'PENDING',
-      joinedAt: '2026-01-01T00:00:00.000Z',
-    } })
-  })
-  await page.route('**/communities/1', async (route) => {
-    const request = route.request()
-    if (
-      !['xhr', 'fetch'].includes(request.resourceType()) ||
-      new URL(request.url()).pathname !== '/communities/1'
-    ) {
-      await route.fallback()
-      return
-    }
-    await route.fulfill({ json: { ...community, isPremium: true } })
-  })
-  await page.route('**/plans**', async (route) => {
-    if (!['xhr', 'fetch'].includes(route.request().resourceType())) {
-      await route.fallback()
-      return
-    }
-    await route.fulfill({ json: pageOf([{
-      id: 9,
-      communityId: 1,
-      name: 'Acceso mensual',
-      price: 5,
-      currency: 'USD',
-      billingPeriod: 'MONTHLY',
-      isActive: true,
-    }]) })
-  })
-  await page.route('**/subscriptions', async (route) => {
-    if (!['xhr', 'fetch'].includes(route.request().resourceType())) {
-      await route.fallback()
-      return
-    }
-    await route.fulfill({ status: 201, json: { id: 10, planId: 9, status: 'ACTIVE' } })
-  })
-  await page.goto('/communities/1')
-  await page.getByRole('button', { name: 'Suscribirme' }).click()
-  await page.getByRole('combobox', { name: 'Plan' }).selectOption('9')
-  await page.getByRole('button', { name: 'Confirmar suscripción' }).click()
-  await page.getByRole('button', { name: 'Solicitar acceso' }).click()
-  await expect(page.getByRole('button', { name: 'Solicitud pendiente de aprobación' })).toBeVisible()
 })

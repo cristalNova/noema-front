@@ -60,7 +60,7 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
             {owned && <Link className="button button--secondary" to={`/app/articles/${id}/edit`}>Editar ensayo</Link>}
           </header>
           <div className="article-reader__content">{article.content}</div>
-          {article.locked && <aside className="article-reader__locked"><strong>Estás leyendo un adelanto premium.</strong><p>El contenido completo está disponible para quienes tienen una suscripción vigente al autor.</p><Link className="button button--primary" to={`/profiles/${article.authorId}/plans`}>Suscribirme</Link></aside>}
+          {article.locked && <aside className="article-reader__locked"><strong>Estás leyendo un adelanto premium.</strong><p>El contenido completo está disponible para quienes tienen una suscripción vigente al autor.</p><Link className="button button--primary" to={`/profiles/${article.authorId}/plans?essay=${id}`}>Suscribirme</Link></aside>}
           <footer><Link to={backTo}>Seguir explorando <span aria-hidden="true">↗</span></Link><span>Noema · Un espacio para las ideas</span></footer>
         </article>
       )}

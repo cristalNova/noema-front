@@ -16,18 +16,15 @@ export interface Plan {
   isActive: boolean
 }
 
-export interface PlanListParams {
-  communityId?: number;
-  authorId?: number;
-  page?: number;
-  limit?: number;
+export interface PlanListParams extends PaginationParams {
+  authorId?: number
+  communityId?: number
 }
 
 export async function listPlans(params: PlanListParams = {}, signal?: AbortSignal): Promise<Paginated<Plan>> {
   const response = await httpClient.get<Paginated<Plan>>('/plans', {
     params: {
       ...toPageQuery(params),
-      ...(params.authorId ? { authorId: params.authorId } : {}),
       ...(params.authorId ? { authorId: params.authorId } : {}),
       ...(params.communityId ? { communityId: params.communityId } : {}),
     },

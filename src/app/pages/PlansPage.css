@@ -24,12 +24,21 @@
   letter-spacing: -0.04em;
 }
 
-.plans-page__notice {
+.plans-page__confirmation {
   margin: 0 0 1.5rem;
-  padding: 0.75rem 1rem;
-  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  border-radius: 22px;
   background: #e4ecd9;
   overflow-wrap: anywhere;
+}
+
+.plans-page__confirmation > strong {
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.plans-page__confirmation p {
+  margin: 0.35rem 0 1rem;
 }
 
 .plans-page__empty {
@@ -47,5 +56,10 @@
 }
 
 .plans-page__empty p {
-  margin: 0;
+  margin: 0 0 1rem;
+}
+
+.plans-page__empty .plans-page__error {
+  margin: 1rem 0 0;
+  color: var(--color-danger);
 }
