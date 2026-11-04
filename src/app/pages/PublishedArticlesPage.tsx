@@ -32,6 +32,7 @@ export function PublishedArticlesPage() {
       <section ref={library} className={`published-library${list.isLoading ? ' is-refreshing' : ''}`} aria-labelledby="published-heading" aria-busy={list.isLoading}>
         <header className="published-library__heading">
           <h2 id="published-heading">Ensayos publicados</h2>
+          <Link className="published-library__topics" to="/tags">Explorar temas ↗</Link>
           {status === 'ready' && <span aria-live="polite">{list.total} {hasFilters ? (list.total === 1 ? 'resultado' : 'resultados') : (list.total === 1 ? 'lectura disponible' : 'lecturas disponibles')}</span>}
         </header>
 
@@ -52,7 +53,7 @@ export function PublishedArticlesPage() {
             <Link className="published-essay__cover" to={`/articles/${article.id}`} aria-label={`Leer “${article.title}”`}><EssayCover article={article} /></Link>
             <div className="published-essay__meta"><span>{article.isPremium ? <span className="premium-badge">Premium</span> : 'Lectura abierta'}</span>{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' }).format(new Date(article.publishedAt))}</time>}</div>
             <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3><p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>
-            {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}>#{tag}</li>)}</ul>}
+            {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}><Link to={`/articles?tag=${encodeURIComponent(tag)}`}>#{tag}</Link></li>)}</ul>}
           </article>)}</div>}
           {list.total > 0 && <nav className="pagination" aria-label="Paginación de ensayos publicados"><button type="button" className="button button--secondary" disabled={list.page <= 1} onClick={() => changePage(list.page - 1)}>Anterior</button><span>Página {list.page} de {list.totalPages} · {list.total} {list.total === 1 ? 'ensayo' : 'ensayos'}</span><button type="button" className="button button--secondary" disabled={list.page >= list.totalPages} onClick={() => changePage(list.page + 1)}>Siguiente</button></nav>}
         </>}
