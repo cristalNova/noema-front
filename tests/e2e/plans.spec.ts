@@ -43,6 +43,10 @@ async function mockProfile(page: Page, hasProfile = true) {
     : route.fulfill({ status: 404, json: { statusCode: 404, message: 'Perfil no encontrado' } }))
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.route('**/comments/**', (route) => route.fulfill({ json: { data: [], total: 0, page: 1, limit: 100 } }))
+})
+
 test('muestra nombre, precio, moneda y periodo de cada plan y oculta los inactivos', async ({ page }) => {
   const seen = await mockCatalog(page, [monthly, yearly, { ...monthly, id: 12, name: 'Plan retirado', isActive: false }])
   await page.goto('/communities/1/plans')

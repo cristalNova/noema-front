@@ -30,6 +30,10 @@ async function mockArticles(page: Page, options: { total?: number; locked?: bool
   })
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.route('**/comments/**', (route) => route.fulfill({ json: { data: [], total: 0, page: 1, limit: 100 } }))
+})
+
 test('el inicio conecta el listado público y permite leer un ensayo sin sesión', async ({ page }) => {
   await mockArticles(page)
   await page.goto('/')

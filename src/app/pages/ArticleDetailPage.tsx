@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import { getMyArticle, getPublishedArticle } from '@/features/articles/api/articlesApi'
 import { ArticleStatusBadge } from '@/features/articles/components/ArticleStatusBadge'
+import { CommentSection } from '@/features/social/components/CommentSection'
 import type { Article } from '@/features/articles/model/article.types'
 import { ApiError, getErrorMessage } from '@/shared/api/apiError'
 import './ArticleDetailPage.css'
@@ -49,6 +50,7 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
       {loading ? <p className="status-message" role="status">Cargando ensayo…</p> : error ? (
         <div className="article-reader__paper" role="alert"><h1>No pudimos abrir el ensayo</h1><p>{error}</p><button className="button button--secondary" onClick={() => setAttempt((value) => value + 1)}>Reintentar</button></div>
       ) : article && (
+        <>
         <article className="article-reader__paper">
           <header>
             <div className="article-reader__meta"><ArticleStatusBadge status={article.status} />{article.isPremium && <span className="premium-badge">Premium</span>}{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'long' }).format(new Date(article.publishedAt))}</time>}</div>
@@ -63,6 +65,9 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
           {article.locked && <aside className="article-reader__locked"><strong>Estás leyendo un adelanto premium.</strong><p>El contenido completo está disponible para quienes tienen una suscripción vigente al autor.</p><Link className="button button--primary" to={`/profiles/${article.authorId}/plans?essay=${id}`}>Suscribirme</Link></aside>}
           <footer><Link to={backTo}>Seguir explorando <span aria-hidden="true">↗</span></Link><span>Noema · Un espacio para las ideas</span></footer>
         </article>
+        {/* El backend solo expone los comentarios de ensayos publicados. */}
+        {article.status === 'PUBLISHED' && <CommentSection target={{ kind: 'article', id }} />}
+        </>
       )}
     </main>
   )

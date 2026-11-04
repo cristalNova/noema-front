@@ -1,0 +1,236 @@
+.comments {
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: var(--radius-sheet);
+  background: var(--color-surface);
+}
+
+.comments__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.comments__heading h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.comments__heading h2:focus {
+  outline: none;
+}
+
+.comments__heading span {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.comments__invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 22px;
+  background: var(--color-field);
+}
+
+.comments__invite p {
+  margin: 0;
+}
+
+.comments__empty {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.comments .pagination {
+  padding-top: 1.5rem;
+  color: var(--color-muted);
+}
+
+.comment-form textarea {
+  display: block;
+  width: 100%;
+  min-height: 5rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  background: var(--color-field);
+  color: var(--color-ink);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.comment-form textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  background: #fff;
+}
+
+.comment-form textarea[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.comment-form__error {
+  margin: 0.5rem 0 0;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
+
+.comment-form__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-top: 0.5rem;
+}
+
+.comment-form__count {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.comment-form__count--over {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.comment-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.comment-list {
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comments__threads {
+  margin-top: 1.75rem;
+}
+
+.comment > .comment-list {
+  margin-top: 1.25rem;
+}
+
+.comment-list--nested {
+  margin-left: 1.1rem;
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--color-line);
+}
+
+.comment__body {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.comment__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.comment__author {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.comment__author strong {
+  font-size: 0.925rem;
+  font-weight: 600;
+}
+
+.comment__avatar {
+  display: inline-grid;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--color-accent);
+  color: var(--color-surface);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.comment__meta {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.comment__content {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+}
+
+.comment__body .comment-form {
+  margin-top: 0.5rem;
+}
+
+.comment__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  margin-top: 0.15rem;
+}
+
+.comment__actions button {
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-muted);
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.comment__actions .comment__delete {
+  color: var(--color-danger);
+}
+
+.comment__reply-form {
+  margin-top: 0.5rem;
+  margin-left: 1.1rem;
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--color-line);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .comment__actions button:hover,
+  .comment__author:hover strong {
+    text-decoration: underline;
+  }
+}
+
+@media (max-width: 560px) {
+  .comment-list--nested,
+  .comment__reply-form {
+    margin-left: 0.4rem;
+    padding-left: 0.75rem;
+  }
+}
