@@ -66,6 +66,7 @@ test('la API recorre todas las páginas y usa las rutas privadas y los cuerpos c
   const { httpClient } = await import(mockUrl)
   const api = await import(moduleUrl('../src/features/articles/api/articlesApi.ts', [
     ["'../../../shared/api'", JSON.stringify(mockUrl)],
+    ["'../model/exploreFilters'", JSON.stringify(moduleUrl('../src/features/articles/model/exploreFilters.ts'))],
   ]))
   const calls = []
   const controller = new AbortController()
