@@ -84,6 +84,13 @@ test('si el servidor rechaza seguir, revierte el botón y el contador y avisa', 
 
 test('la tarjeta del autor en la biblioteca también permite seguir', async ({ page }) => {
   await signIn(page)
+  // El catálogo consulta filtros en paralelo. Evita que un 401 del backend real
+  // borre el token de esta sesión simulada y redirija la prueba al login.
+  await page.route('**/article-tags', (route) => route.fulfill({ json: [] }))
+  await page.route('**/profiles', (route) => route.fulfill({ json: [{ id: 7, name: 'Ana Pérez', username: 'ana' }] }))
+  await page.route('**/collections', (route) => route.fulfill({ json: [] }))
+  await page.route((url) => url.pathname.endsWith('/communities/mine'),
+    (route) => route.fulfill({ json: { data: [], total: 0, page: 1, limit: 100 } }))
   await page.route('**/profiles/7', (route) => route.fulfill({ json: author }))
   await page.route((url) => url.pathname.endsWith('/articles') && !url.searchParams.has('authorId'), (route) => {
     if (route.request().resourceType() === 'document') return route.fallback()

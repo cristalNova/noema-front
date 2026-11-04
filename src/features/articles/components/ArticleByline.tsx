@@ -4,10 +4,14 @@ import './ArticleByline.css'
 
 /** Autor y, si el ensayo pertenece a una comunidad, cuál es. */
 export function ArticleByline({ author, community }: { author: Attribution | null; community: Attribution | null }) {
-  if (!author?.name && !community) return null
+  if (!author && !community) return null
   return (
     <div className="article-byline">
-      {author?.name && <span className="article-byline__author">Por <Link to={`/profiles/${author.id}`}>{author.name}</Link></span>}
+      {author && (
+        <span className="article-byline__author">
+          {author.name ? <>Por <Link to={`/profiles/${author.id}`}>{author.name}</Link></> : <Link to={`/profiles/${author.id}`}>Ver perfil del autor</Link>}
+        </span>
+      )}
       {community && (
         <span className="article-byline__community">
           <span className="article-byline__label">Comunidad</span>

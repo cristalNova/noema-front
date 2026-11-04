@@ -4,12 +4,19 @@ import { useRef } from 'react'
 import { ArticleFilters } from '../../features/articles/components/ArticleFilters'
 import { useArticleExplorer } from '../../features/articles/hooks/useArticleExplorer'
 import { useFilterOptions } from '../../features/articles/hooks/useFilterOptions'
+import { useArticleAttribution } from '../../features/articles/hooks/useArticleAttribution'
+import { ArticleByline } from '../../features/articles/components/ArticleByline'
 import { AuthorFollowCard } from '@/features/profiles/components/AuthorFollowCard'
 import './PublishedArticlesPage.css'
 
 export function PublishedArticlesPage() {
   const list = useArticleExplorer()
   const options = useFilterOptions()
+  // Reutiliza las listas de autores y comunidades que ya cargan los filtros.
+  const { authorOf, communityOf } = useArticleAttribution(list.articles, {
+    authors: options.authors.data, communities: options.communities.data,
+    authorsLoading: options.authors.status === 'loading', communitiesLoading: options.communities.status === 'loading',
+  })
   const library = useRef<HTMLElement>(null)
   const hasFilters = list.activeCount > 0
   const status = list.error && !list.isLoading ? 'error' : list.isLoading && (list.articles.length === 0 || list.error) ? 'loading' : 'ready'
@@ -53,8 +60,10 @@ export function PublishedArticlesPage() {
           ) : <div className="published-list">{list.articles.map((article) => <article key={article.id} className="published-essay">
             <Link className="published-essay__cover" to={`/articles/${article.id}`} aria-label={`Leer “${article.title}”`}><EssayCover article={article} /></Link>
             <div className="published-essay__meta"><span>{article.isPremium ? <span className="premium-badge">Premium</span> : 'Lectura abierta'}</span>{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' }).format(new Date(article.publishedAt))}</time>}</div>
-            <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3><p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>
-            <AuthorFollowCard key={article.authorId} authorId={article.authorId} />
+            <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3>
+            <ArticleByline author={authorOf(article)} community={communityOf(article)} />
+            <AuthorFollowCard authorId={article.authorId} />
+            <p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>
             {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}><Link to={`/articles?tag=${encodeURIComponent(tag)}`}>#{tag}</Link></li>)}</ul>}
           </article>)}</div>}
           {list.total > 0 && <nav className="pagination" aria-label="Paginación de ensayos publicados"><button type="button" className="button button--secondary" disabled={list.page <= 1} onClick={() => changePage(list.page - 1)}>Anterior</button><span>Página {list.page} de {list.totalPages} · {list.total} {list.total === 1 ? 'ensayo' : 'ensayos'}</span><button type="button" className="button button--secondary" disabled={list.page >= list.totalPages} onClick={() => changePage(list.page + 1)}>Siguiente</button></nav>}

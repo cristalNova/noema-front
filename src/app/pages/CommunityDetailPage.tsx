@@ -6,6 +6,8 @@ import { listArticles } from '../../features/articles/api/articlesApi';
 import type { Article } from '../../features/articles/model/article.types';
 import { getCommunity } from '../../features/communities/api/communitiesApi';
 import { Pagination } from '../../shared/components/Pagination';
+import { ArticleByline } from '../../features/articles/components/ArticleByline';
+import { useArticleAttribution } from '../../features/articles/hooks/useArticleAttribution';
 import { PostCard } from '../../features/social/components/PostCard';
 import {
   getMyMembership,
@@ -129,6 +131,8 @@ function CommunityDetail() {
   const [membership, setMembership] = useState<MembershipView>('UNKNOWN');
   const [membershipBusy, setMembershipBusy] = useState(false);
   const [membershipError, setMembershipError] = useState<unknown>(null);
+  // GET /articles no incluye al autor: se resuelve por id (la comunidad ya es el contexto, no se repite).
+  const { authorOf } = useArticleAttribution(articles);
 
   useEffect(() => {
     if (isInvalidId) return undefined;
@@ -557,7 +561,6 @@ function CommunityDetail() {
             articles.map((article) => (
               <article className="content-card" key={article.id}>
                 <div className="content-card__meta">
-                  {article.author?.name && <span>{article.author.name}</span>}
                   <time dateTime={article.publishedAt ?? undefined}>
                     {formatDate(article.publishedAt)}
                   </time>
@@ -566,6 +569,7 @@ function CommunityDetail() {
                   )}
                 </div>
                 <h2><Link to={`/articles/${article.id}`}>{article.title}</Link></h2>
+                <ArticleByline author={authorOf(article)} community={null} />
                 {article.description && <p>{article.description}</p>}
                 {article.articleTags?.length > 0 && (
                   <ul className="tag-list">
