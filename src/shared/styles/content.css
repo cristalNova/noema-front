@@ -340,6 +340,13 @@
   font-size: 0.85rem;
 }
 
+.form-success {
+  margin: 0;
+  color: #356b4b;
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+}
+
 .community-tabs {
   display: flex;
   gap: 1.5rem;

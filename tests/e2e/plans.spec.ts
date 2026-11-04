@@ -96,7 +96,7 @@ test('se llega a los planes del autor desde el bloqueo de un ensayo premium', as
     status: 'PUBLISHED', communityId: null, publishedAt: '2026-11-01T12:00:00.000Z', updatedAt: '2026-11-01T12:00:00.000Z', articleTags: [],
   } }))
   await page.goto('/articles/5')
-  await page.getByRole('link', { name: 'Ver planes del autor' }).click()
+  await page.getByRole('link', { name: 'Suscribirme', exact: true }).click()
   await expect(page).toHaveURL(/\/profiles\/7\/plans\?essay=5$/)
   await expect(page.getByRole('heading', { name: 'Planes de María López' })).toBeVisible()
 })
@@ -263,7 +263,7 @@ test('tras pagar desde un ensayo bloqueado se puede volver a leerlo completo', a
   })
 
   await page.goto('/articles/5')
-  await page.getByRole('link', { name: 'Ver planes del autor' }).click()
+  await page.getByRole('link', { name: 'Suscribirme', exact: true }).click()
   await page.getByRole('button', { name: 'Suscribirme a Lector fiel' }).click()
   await page.getByRole('button', { name: 'Confirmar y pagar' }).click()
 
