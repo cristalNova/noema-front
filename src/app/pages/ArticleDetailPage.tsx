@@ -54,13 +54,13 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
             <div className="article-reader__meta"><ArticleStatusBadge status={article.status} />{article.isPremium && <span className="premium-badge">Premium</span>}{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'long' }).format(new Date(article.publishedAt))}</time>}</div>
             <h1>{article.title}</h1>
             {article.description && <p className="article-reader__description">{article.description}</p>}
-            {article.author?.name && <p>Por {article.author.name}</p>}
+            {article.author?.name && <p>Por <Link to={`/profiles/${article.authorId}`}>{article.author.name}</Link></p>}
             {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}>#{tag}</li>)}</ul>}
             {article.collectionId != null && <p className="article-reader__collection">Colección: {article.collection?.title ?? `#${article.collectionId}`}{article.collectionPosition != null && ` · Posición ${article.collectionPosition}`}</p>}
             {owned && <Link className="button button--secondary" to={`/app/articles/${id}/edit`}>Editar ensayo</Link>}
           </header>
           <div className="article-reader__content">{article.content}</div>
-          {article.locked && <aside className="article-reader__locked"><strong>Estás leyendo un adelanto premium.</strong><p>El contenido completo está disponible para quienes tienen una suscripción vigente al autor.</p><Link className="button button--primary" to={`/authors/${article.authorId}/plans`}>Suscribirme</Link></aside>}
+          {article.locked && <aside className="article-reader__locked"><strong>Estás leyendo un adelanto premium.</strong><p>El contenido completo está disponible para quienes tienen una suscripción vigente al autor.</p><Link className="button button--primary" to={`/profiles/${article.authorId}/plans`}>Suscribirme</Link></aside>}
           <footer><Link to={backTo}>Seguir explorando <span aria-hidden="true">↗</span></Link><span>Noema · Un espacio para las ideas</span></footer>
         </article>
       )}

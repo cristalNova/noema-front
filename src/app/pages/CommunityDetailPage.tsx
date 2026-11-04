@@ -413,6 +413,14 @@ function CommunityDetail() {
                   : 'Miembros no disponibles'}
               </span>
             </div>
+            {community.isPremium && (
+              <Link
+                className="button button--secondary community-hero__plans"
+                to={`/communities/${community.id}/plans`}
+              >
+                Ver planes
+              </Link>
+            )}
             {isAuthenticated && membership !== 'UNKNOWN' ? (
               <div className="membership-action">
                 <button

@@ -15,7 +15,9 @@ import { NotFoundPage } from './pages/NotFoundPage'
 import { CreateCommunityPage } from './pages/CreateCommunityPage'
 import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
 import { ArticleDetailPage } from './pages/ArticleDetailPage'
+import { AuthorProfilePage } from './pages/AuthorProfilePage'
 import { MyPostsPage } from './pages/MyPostsPage'
+import { PlansPage } from './pages/PlansPage'
 import { PostDetailPage } from './pages/PostDetailPage'
 import { PostsFeedPage } from './pages/PostsFeedPage'
 import { AuthorPlansPage } from './pages/AuthorPlansPage'
@@ -81,6 +83,9 @@ export const router = createBrowserRouter([
         ],
       },
       { path: '/communities/:id', element: <CommunityDetailPage /> },
+      { path: '/communities/:id/plans', element: <PlansPage kind="community" /> },
+      { path: '/profiles/:id', element: <AuthorProfilePage /> },
+      { path: '/profiles/:id/plans', element: <PlansPage kind="author" /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
