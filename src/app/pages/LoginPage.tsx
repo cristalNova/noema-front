@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { getReturnTo } from '@/shared/utils/navigation'
+import { getRestoreState, getReturnTo } from '@/shared/utils/navigation'
 import { LoginForm, useAuth } from '@/features/auth'
 import { AuthLayout } from '../layout/AuthLayout'
 import './LoginPage.css'
@@ -24,7 +24,7 @@ export default function LoginPage() {
           Tu sesión expiró. Inicia sesión de nuevo para continuar.
         </p>
       )}
-      <LoginForm onSuccess={() => navigate(getReturnTo(location.state), { replace: true })} />
+      <LoginForm onSuccess={() => navigate(getReturnTo(location.state), { replace: true, state: getRestoreState(location.state) })} />
     </AuthLayout>
   )
 }

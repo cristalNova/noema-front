@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useRequireAuth } from '../../features/auth';
 import { listArticles } from '../../features/articles/api/articlesApi';
 import type { Article } from '../../features/articles/model/article.types';
 import { getCommunity } from '../../features/communities/api/communitiesApi';
@@ -110,6 +111,7 @@ function CommunityDetail() {
   const communityId = Number(id);
   const isInvalidId = !Number.isInteger(communityId) || communityId < 1;
   const isAuthenticated = Boolean(tokenStorage.get());
+  const requireAuth = useRequireAuth();
   const [community, setCommunity] = useState<CommunityDetail | null>(null);
   const [communityLoading, setCommunityLoading] = useState(true);
   const [communityError, setCommunityError] = useState<unknown>(null);
@@ -449,9 +451,13 @@ function CommunityDetail() {
                 )}
               </div>
             ) : !isAuthenticated ? (
-              <Link className="button button--primary" to="/login">
+              <button
+                type="button"
+                className="button button--primary"
+                onClick={() => requireAuth('unirte a esta comunidad')}
+              >
                 Inicia sesión para unirte
-              </Link>
+              </button>
             ) : (
               <span className="status-message">Comprobando membresía…</span>
             )}

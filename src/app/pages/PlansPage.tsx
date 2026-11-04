@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
-import { Link, Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { useAuth } from '@/features/auth'
+import { Link, Navigate, useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { useAuth, useRequireAuth } from '@/features/auth'
 import type { Plan } from '@/features/monetization/api/plansApi'
 import { PlanCard } from '@/features/monetization/components/PlanCard'
 import { PlanSubscribeDialog } from '@/features/monetization/components/PlanSubscribeDialog'
@@ -35,7 +35,7 @@ function PlansCatalog({ owner }: { owner: PlanOwner }) {
   const { ownerName, plans, error, isUnavailable, isLoading, retry } = usePlanCatalog(owner)
   const [searchParams, setSearchParams] = useSearchParams()
   const location = useLocation()
-  const navigate = useNavigate()
+  const requireAuth = useRequireAuth()
   const [subscribedPlan, setSubscribedPlan] = useState<Plan | null>(null)
   const heading = useRef<HTMLHeadingElement>(null)
   const backTo = ownerPath(owner)
@@ -49,7 +49,7 @@ function PlansCatalog({ owner }: { owner: PlanOwner }) {
     const params = new URLSearchParams(searchParams)
     params.set(PLAN_PARAM, String(plan.id))
     if (isAuthenticated) setSearchParams(params)
-    else navigate('/login', { state: { from: `${location.pathname}?${params}` } })
+    else requireAuth('suscribirte a este plan', `${location.pathname}?${params}`)
   }
 
   function closeDialog() {
