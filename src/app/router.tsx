@@ -15,6 +15,7 @@ import { NotFoundPage } from './pages/NotFoundPage'
 import { CreateCommunityPage } from './pages/CreateCommunityPage'
 import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
 import { ArticleDetailPage } from './pages/ArticleDetailPage'
+import { TagsPage } from './pages/TagsPage'
 import { AuthorProfilePage } from './pages/AuthorProfilePage'
 import { MyPlansPage } from './pages/MyPlansPage'
 import { MyPostsPage } from './pages/MyPostsPage'
@@ -71,6 +72,7 @@ export const router = createBrowserRouter([
     children: [
       { path: '/', element: <HomePage /> },
       { path: '/articles', element: <PublishedArticlesPage /> },
+      { path: '/tags', element: <TagsPage /> },
       { path: '/articles/:id', element: <ArticleDetailPage /> },
       { path: '/posts', element: <PostsFeedPage /> },
       { path: '/posts/:id', element: <PostDetailPage /> },
