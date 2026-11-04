@@ -4,6 +4,7 @@ import { toPageQuery } from '../../../shared/utils/pagination';
 
 export interface Plan {
   id: number;
+  authorId: number | null;
   communityId: number | null;
   name: string;
   price: number;
@@ -13,6 +14,7 @@ export interface Plan {
 }
 
 export interface PlanListParams {
+  authorId?: number;
   communityId?: number;
   page?: number;
   limit?: number;
@@ -24,6 +26,7 @@ export async function listPlans(params: PlanListParams = {}) {
     params: {
       page,
       limit,
+      ...(params.authorId ? { authorId: params.authorId } : {}),
       ...(params.communityId ? { communityId: params.communityId } : {}),
     },
   });

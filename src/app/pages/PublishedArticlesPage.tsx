@@ -50,7 +50,7 @@ export function PublishedArticlesPage() {
             : <div className="published-empty"><span aria-hidden="true">＋</span><h3>La próxima lectura está por llegar.</h3><p>Todavía no hay ensayos publicados a los que tengas acceso.</p><Link className="button button--primary" to="/app/articles/new">Escribe el primero</Link></div>
           ) : <div className="published-list">{list.articles.map((article) => <article key={article.id} className="published-essay">
             <Link className="published-essay__cover" to={`/articles/${article.id}`} aria-label={`Leer “${article.title}”`}><EssayCover article={article} /></Link>
-            <div className="published-essay__meta"><span>{article.isPremium ? 'Premium' : 'Lectura abierta'}</span>{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' }).format(new Date(article.publishedAt))}</time>}</div>
+            <div className="published-essay__meta"><span>{article.isPremium ? <span className="premium-badge">Premium</span> : 'Lectura abierta'}</span>{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' }).format(new Date(article.publishedAt))}</time>}</div>
             <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3><p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>
             {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}>#{tag}</li>)}</ul>}
           </article>)}</div>}

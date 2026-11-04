@@ -18,6 +18,7 @@ import { ArticleDetailPage } from './pages/ArticleDetailPage'
 import { MyPostsPage } from './pages/MyPostsPage'
 import { PostDetailPage } from './pages/PostDetailPage'
 import { PostsFeedPage } from './pages/PostsFeedPage'
+import { AuthorPlansPage } from './pages/AuthorPlansPage'
 
 export const router = createBrowserRouter([
   {
@@ -72,7 +73,10 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <RequireProfile />,
-            children: [{ path: '/communities/new', element: <CreateCommunityPage /> }],
+            children: [
+              { path: '/communities/new', element: <CreateCommunityPage /> },
+              { path: '/authors/:authorId/plans', element: <AuthorPlansPage /> },
+            ],
           },
         ],
       },
