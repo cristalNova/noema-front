@@ -266,6 +266,10 @@
   gap: 1rem;
 }
 
+.community-hero__plans {
+  text-align: center;
+}
+
 .community-owner {
   display: flex;
   min-width: 0;

@@ -25,8 +25,8 @@ export async function listCommunities(params: CommunityListParams = {}) {
   return response.data;
 }
 
-export async function getCommunity(id: number) {
-  const response = await httpClient.get<CommunityDetail>(`/communities/${id}`);
+export async function getCommunity(id: number, signal?: AbortSignal) {
+  const response = await httpClient.get<CommunityDetail>(`/communities/${id}`, { signal });
   return response.data;
 }
 

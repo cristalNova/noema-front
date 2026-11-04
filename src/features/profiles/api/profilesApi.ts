@@ -14,7 +14,12 @@ async function create(profile: NewProfile): Promise<Profile> {
   return toProfile(response.data)
 }
 
-export const profilesApi = { getMine, create }
+async function getById(id: number, signal?: AbortSignal): Promise<Profile> {
+  const response = await httpClient.get<ProfileResponseDto>(`/profiles/${id}`, { signal })
+  return toProfile(response.data)
+}
+
+export const profilesApi = { getMine, create, getById }
 export const getMyProfile = getMine
 
 export interface AuthorOption {

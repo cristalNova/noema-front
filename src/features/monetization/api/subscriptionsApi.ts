@@ -1,21 +1,24 @@
-import { httpClient } from '../../../shared/api';
-import type { Plan } from './plansApi';
+import { httpClient } from '@/shared/api'
+import type { Plan } from './plansApi'
+
+export type PaymentMethod = 'CARD' | 'PAYPAL' | 'BANK_TRANSFER'
 
 export interface Subscription {
-  id: number;
-  planId: number;
-  plan: Plan;
-  status: 'ACTIVE' | 'CANCELLED' | 'EXPIRED';
+  id: number
+  planId: number
+  plan: Plan
+  status: 'ACTIVE' | 'CANCELLED' | 'EXPIRED'
 }
 
 export interface CreateSubscriptionInput {
-  planId: number;
-  autoRenew: boolean;
-  paymentMethod: 'CARD' | 'PAYPAL' | 'BANK_TRANSFER';
-  paymentToken?: string;
+  planId: number
+  autoRenew: boolean
+  paymentMethod: PaymentMethod
+  paymentToken?: string
 }
 
-export async function createSubscription(input: CreateSubscriptionInput) {
-  const response = await httpClient.post<Subscription>('/subscriptions', input);
-  return response.data;
+/** Cobra el primer periodo al instante. Un plan de comunidad concede además la membresía activa. */
+export async function createSubscription(input: CreateSubscriptionInput): Promise<Subscription> {
+  const response = await httpClient.post<Subscription>('/subscriptions', input)
+  return response.data
 }
