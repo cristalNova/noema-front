@@ -618,6 +618,11 @@
     min-width: 0;
   }
 
+  .community-create__tag-input .button {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
   .community-create__hint {
     margin: 0.5rem 0 0;
   }

@@ -76,9 +76,12 @@ export function CollectionsPage() {
         {!loading && !error && collections.length > 0 && <>
           <ul className="collections-page__list" aria-label="Mis colecciones">
             {visible.map((collection) => <li key={collection.id} className="collections-page__item">
-              <h3>{collection.title}</h3>
+              <h3><Link to={`/app/collections/${collection.id}`}>{collection.title}</Link></h3>
               <p>{collection.description}</p>
-              <span>{counts[collection.id] ?? 0} {(counts[collection.id] ?? 0) === 1 ? 'ensayo' : 'ensayos'}</span>
+              <div className="collections-page__item-footer">
+                <span>{counts[collection.id] ?? 0} {(counts[collection.id] ?? 0) === 1 ? 'ensayo' : 'ensayos'}</span>
+                <Link className="button button--secondary" to={`/app/collections/${collection.id}`} aria-label={`Ver los ensayos de “${collection.title}”`}>Ver ensayos</Link>
+              </div>
             </li>)}
           </ul>
           <nav className="collections-page__pagination" aria-label="Paginación de colecciones">

@@ -3,7 +3,7 @@
 .collections-page__sheet { padding: clamp(1.25rem, 4vw, 2.5rem); border: 1px solid var(--color-line); border-radius: var(--radius-sheet); background: var(--color-surface); }
 .collections-page__heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-line); }
 .collections-page__heading h2 { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -.03em; }
-.collections-page__heading span, .collections-page__item > span { color: var(--color-muted); font-size: .85rem; }
+.collections-page__heading span, .collections-page__item-footer > span { color: var(--color-muted); font-size: .85rem; }
 .collections-page__notice:empty { display: none; }
 .collections-page__empty { padding: 2rem 0; }
 .collections-page__empty h3 { margin: 0 0 .5rem; font-size: 1.5rem; }
@@ -11,6 +11,10 @@
 .collections-page__list { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
 .collections-page__item { padding: 1.25rem 1.5rem; border: 1px solid var(--color-line); border-radius: 22px; overflow-wrap: anywhere; }
 .collections-page__item h3 { margin: 0; font-size: 1.15rem; }
+.collections-page__item h3 a { text-decoration: none; }
+.collections-page__item h3 a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.collections-page__item-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; }
+.collections-page__item-footer .button { min-height: 36px; padding: .4rem 1rem; font-size: .85rem; }
 .collections-page__item p { margin: .5rem 0; color: var(--color-muted); white-space: pre-wrap; }
 .collections-page__pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem; margin-top: 1.5rem; }
 .collection-form-page { max-width: 760px; }
@@ -21,5 +25,28 @@
 .collection-form-page__field textarea { resize: vertical; }
 .collection-form-page__field [aria-invalid="true"] { border-color: var(--color-danger); }
 .collection-form-page__field p, .collection-form-page__error { color: var(--color-danger); }
-:is(.collections-page, .collection-form-page) :is(button, a, input, textarea):focus-visible { outline: 2px solid #8c4f2f; outline-offset: 3px; }
+/* Detalle de colección: un índice numerado, como la tabla de contenidos de un libro. */
+.collection-detail__description { white-space: pre-wrap; overflow-wrap: anywhere; }
+.collection-detail__legend { margin: 0 0 1.25rem; color: var(--color-muted); font-size: .9rem; }
+.collection-detail__subheading { margin: 2rem 0 .25rem; font-size: 1.05rem; }
+.collection-essays { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
+.collection-essay { display: grid; grid-template-columns: 3rem minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: 1px solid var(--color-line); border-radius: 22px; }
+.collection-essay--hidden { border-style: dashed; background: #fbf8f2; }
+.collection-essay__position { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; background: #f0e8df; color: #60432f; font-size: 1.05rem; font-weight: 700; }
+.collection-essay__position--none { border: 1px dashed #cfc3b5; background: transparent; color: var(--color-muted); }
+.collection-essay__body { min-width: 0; overflow-wrap: anywhere; }
+.collection-essay__body h4 { margin: 0; font-size: 1.05rem; line-height: 1.35; }
+.collection-essay__body h4 a { text-decoration: none; }
+.collection-essay__body h4 a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.collection-essay__body p { display: -webkit-box; margin: .3rem 0 0; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: var(--color-muted); font-size: .88rem; }
+.collection-essay__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .75rem; margin-top: .6rem; color: var(--color-muted); font-size: .78rem; }
+.collection-essay__note { color: #6f4a16; }
+.collection-essay__edit { min-height: 36px; padding: .4rem 1rem; font-size: .85rem; }
+.collection-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media (max-width: 600px) {
+  .collection-essay { grid-template-columns: 2.5rem minmax(0, 1fr); gap: .75rem; padding: 1rem; }
+  .collection-essay__position { width: 2.5rem; height: 2.5rem; }
+  .collection-essay__edit { grid-column: 2; justify-self: start; }
+}
+:is(.collections-page, .collection-form-page, .collection-detail) :is(button, a, input, textarea):focus-visible { outline: 2px solid #8c4f2f; outline-offset: 3px; }
 

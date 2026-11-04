@@ -1,7 +1,7 @@
 import { httpClient } from '../../../shared/api'
 import type { Paginated } from '../../../shared/types/Paginated'
 import { toPageQuery } from '../../../shared/utils/pagination'
-import type { Community, CommunityDetail, CreateCommunityDto } from '../model/community.types'
+import type { Community, CommunityDetail, CreateCommunityDto, UpdateCommunityDto } from '../model/community.types'
 
 export interface CommunityListParams {
   page?: number;
@@ -32,6 +32,18 @@ export async function getCommunity(id: number, signal?: AbortSignal) {
 
 export async function createCommunity(input: CreateCommunityDto): Promise<Community> {
   const response = await httpClient.post<Community>('/communities', input)
+  return response.data
+}
+
+// PATCH /communities/:id: solo el propietario (403 para cualquier otro). 409 si el nombre ya existe.
+export async function updateCommunity(id: number, input: UpdateCommunityDto): Promise<CommunityDetail> {
+  const response = await httpClient.patch<CommunityDetail>(`/communities/${id}`, input)
+  return response.data
+}
+
+// PUT /communities/:id/tags: reemplaza todas las etiquetas (solo el propietario). Devuelve la lista normalizada.
+export async function replaceCommunityTags(id: number, tags: string[]): Promise<string[]> {
+  const response = await httpClient.put<string[]>(`/communities/${id}/tags`, { tags })
   return response.data
 }
 

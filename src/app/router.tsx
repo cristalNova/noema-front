@@ -2,9 +2,11 @@ import { createBrowserRouter } from 'react-router-dom'
 import { CommunitiesPage } from './pages/CommunitiesPage'
 import { CommunityDetailPage } from './pages/CommunityDetailPage'
 import { CreateDraftPage } from './pages/CreateDraftPage'
+import { EditCommunityPage } from './pages/EditCommunityPage'
 import { MyArticlesPage } from './pages/MyArticlesPage'
 import { CollectionsPage } from './pages/CollectionsPage'
 import { NewCollectionPage } from './pages/NewCollectionPage'
+import { CollectionDetailPage } from './pages/CollectionDetailPage'
 import { RequireAuth } from '@/features/auth'
 import { RequireProfile } from '@/features/profiles'
 import { AppLayout } from './layout/AppLayout'
@@ -43,6 +45,7 @@ export const router = createBrowserRouter([
               { path: '/app/articles', element: <MyArticlesPage /> },
               { path: '/app/collections', element: <CollectionsPage /> },
               { path: '/app/collections/new', element: <NewCollectionPage /> },
+              { path: '/app/collections/:id', element: <CollectionDetailPage /> },
               { path: '/app/articles/:id/edit', element: <CreateDraftPage /> },
               { path: '/app/articles/:id', element: <ArticleDetailPage owned /> },
               { path: '/app/posts', element: <MyPostsPage /> },
@@ -88,6 +91,7 @@ export const router = createBrowserRouter([
             element: <RequireProfile />,
             children: [
               { path: '/communities/new', element: <CreateCommunityPage /> },
+              { path: '/communities/:id/edit', element: <EditCommunityPage /> },
               { path: '/authors/:authorId/plans', element: <AuthorPlansPage /> },
             ],
           },

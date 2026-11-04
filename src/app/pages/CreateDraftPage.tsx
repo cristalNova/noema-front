@@ -7,6 +7,7 @@ import './CreateDraftPage.css'
 import { STATUS_ACTIONS, STATUS_LABELS, STATUS_TRANSITIONS } from '../../features/articles/model/myArticles'
 import { ArticleActionDialog } from '../../features/articles/components/ArticleActionDialog'
 import { ArticleStatusBadge } from '../../features/articles/components/ArticleStatusBadge'
+import { TagPicker } from '../../features/articles/components/TagPicker'
 
 export function CreateDraftPage() {
   const { id } = useParams()
@@ -97,6 +98,35 @@ function ArticleEditor({ articleId }: { articleId?: number }) {
                 {editor.communityError && <div className="draft-error" role="alert"><p>No se pudieron cargar tus comunidades. {editor.communityError}</p><button className="button button--secondary" type="button" onClick={editor.retryCommunities}>Reintentar</button><p>Puedes guardar sin comunidad.</p></div>}
                 {!isLoadingCommunities && !editor.communityError && editor.communities.length === 0 && <p className="draft-hint">Aún no perteneces a ninguna comunidad.</p>}
                 {fieldError('communityId')}
+              </div>
+              <div className="draft-field">
+                <label htmlFor="tags">Etiquetas <span className="draft-optional">Opcional</span></label>
+                <TagPicker id="tags" name="tags" value={values.tags} onChange={(tags) => editor.change('tags', tags)} invalid={!!errors.tags} describedBy={`tags-hint${errors.tags ? ' tags-error' : ''}`} />
+                {fieldError('tags')}
+              </div>
+              <div className="draft-field">
+                <label htmlFor="collectionId">Colección <span className="draft-optional">Opcional</span></label>
+                <select id="collectionId" name="collectionId" value={values.collectionId ?? ''} onChange={(event) => editor.changeCollection(event.target.value ? Number(event.target.value) : null)} disabled={editor.isLoadingCollections} aria-invalid={!!errors.collectionId} aria-describedby={errors.collectionId ? 'collectionId-error' : undefined}>
+                  <option value="">Sin colección</option>
+                  {values.collectionId !== null && !editor.collections.some((collection) => collection.id === values.collectionId) && <option value={values.collectionId}>Colección actual (#{values.collectionId})</option>}
+                  {editor.collections.map((collection) => <option key={collection.id} value={collection.id}>{collection.title}</option>)}
+                </select>
+                {editor.isLoadingCollections && <p className="draft-hint" role="status">Cargando tus colecciones…</p>}
+                {editor.collectionError && <div className="draft-error" role="alert"><p>No se pudieron cargar tus colecciones. {editor.collectionError}</p><button className="button button--secondary" type="button" onClick={editor.retryCollections}>Reintentar</button><p>Puedes guardar sin colección.</p></div>}
+                {!editor.isLoadingCollections && !editor.collectionError && editor.collections.length === 0 && (
+                  <p className="draft-hint">
+                    Aún no tienes colecciones. <Link to="/app/collections/new" target="_blank" rel="noopener">Crear una colección</Link> (se abre en otra pestaña para que no pierdas lo que escribes; al volver aquí aparecerá en la lista).
+                  </p>
+                )}
+                {fieldError('collectionId')}
+                {values.collectionId !== null && (
+                  <div className="draft-field draft-field--nested">
+                    <label htmlFor="collectionPosition">Posición en la colección <span className="draft-optional">Opcional</span></label>
+                    <input id="collectionPosition" name="collectionPosition" type="number" inputMode="numeric" min={1} step={1} value={values.collectionPosition ?? ''} onChange={(event) => editor.change('collectionPosition', event.target.value === '' ? null : Number(event.target.value))} aria-invalid={!!errors.collectionPosition} aria-describedby={`collectionPosition-hint${errors.collectionPosition ? ' collectionPosition-error' : ''}`} />
+                    <p className="draft-hint" id="collectionPosition-hint">1 es el primer lugar. Si la dejas vacía, el ensayo queda sin posición.</p>
+                    {fieldError('collectionPosition')}
+                  </div>
+                )}
               </div>
               <div className="draft-premium">
                 <label htmlFor="isPremium"><input id="isPremium" name="isPremium" type="checkbox" checked={values.isPremium} onChange={(event) => editor.change('isPremium', event.target.checked)} aria-invalid={!!errors.isPremium} aria-describedby={`premium-hint${errors.isPremium ? ' isPremium-error' : ''}`} /> Ensayo premium</label>

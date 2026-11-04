@@ -92,3 +92,6 @@ export interface CreateCommunityDto {
   isPremium?: boolean
   tags?: string[]
 }
+
+// PATCH /communities/:id: solo el propietario. Las etiquetas se guardan aparte (PUT /communities/:id/tags).
+export type UpdateCommunityDto = Partial<Omit<CreateCommunityDto, 'tags'>>

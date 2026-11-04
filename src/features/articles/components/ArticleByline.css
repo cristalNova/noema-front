@@ -1,0 +1,5 @@
+.article-byline { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.75rem; margin: 0 0 0.6rem; color: var(--color-muted); font-size: 0.82rem; }
+.article-byline a { color: inherit; font-weight: 600; text-underline-offset: 3px; }
+.article-byline a:hover { color: var(--color-accent); }
+.article-byline__community { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 999px; padding: 0.1rem 0.65rem 0.1rem 0.15rem; background: #eeedf6; color: #3f3a63; }
+.article-byline__label { border-radius: 999px; padding: 0.1rem 0.5rem; background: #3f3a63; color: #fff; font-size: 0.68rem; letter-spacing: 0.02em; }

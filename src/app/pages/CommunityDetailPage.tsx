@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useRequireAuth } from '../../features/auth';
+import { useMyProfile } from '../../features/profiles';
 import { listArticles } from '../../features/articles/api/articlesApi';
 import type { Article } from '../../features/articles/model/article.types';
 import { getCommunity } from '../../features/communities/api/communitiesApi';
@@ -110,6 +111,7 @@ function CommunityDetail() {
   const isInvalidId = !Number.isInteger(communityId) || communityId < 1;
   const isAuthenticated = Boolean(tokenStorage.get());
   const requireAuth = useRequireAuth();
+  const { profile: myProfile } = useMyProfile();
   const [community, setCommunity] = useState<CommunityDetail | null>(null);
   const [communityLoading, setCommunityLoading] = useState(true);
   const [communityError, setCommunityError] = useState<unknown>(null);
@@ -297,20 +299,24 @@ function CommunityDetail() {
   }
   if (!community) return null;
 
+  // Solo el propietario ve la edición; el backend lo exige también (403 para cualquier otro).
+  const isOwner = myProfile !== null && myProfile.id === community.ownerId;
+  // El propietario no se une, no sale ni se suscribe a su propia comunidad, aunque falte su fila de membresía.
+  const currentMembership: MembershipView = isOwner ? 'OWNER' : membership;
   const membershipLabel =
-    membership === 'OWNER'
+    currentMembership === 'OWNER'
       ? 'Propietario'
-      : membership === 'ACTIVE'
+      : currentMembership === 'ACTIVE'
       ? 'Salir'
-      : membership === 'PENDING'
+      : currentMembership === 'PENDING'
         ? 'Solicitud pendiente de aprobación'
-        : membership === 'BANNED'
+        : currentMembership === 'BANNED'
           ? 'Vetado de esta comunidad'
           : 'Unirme';
   const plansPath = `/communities/${community.id}/plans`;
   // Al suscribirse se concede la membresía: en una comunidad premium ese es el camino para entrar.
   const canSubscribe =
-    community.isPremium && isAuthenticated && membership === 'NONE';
+    community.isPremium && isAuthenticated && currentMembership === 'NONE';
 
   return (
     <main className="page-shell community-detail-page">
@@ -365,6 +371,14 @@ function CommunityDetail() {
                   : 'Miembros no disponibles'}
               </span>
             </div>
+            {isOwner && (
+              <Link
+                className="button button--secondary community-hero__plans"
+                to={`/communities/${community.id}/edit`}
+              >
+                Editar comunidad
+              </Link>
+            )}
             {community.isPremium && !canSubscribe && (
               <Link
                 className="button button--secondary community-hero__plans"
@@ -380,18 +394,18 @@ function CommunityDetail() {
               >
                 Suscribirme
               </Link>
-            ) : isAuthenticated && membership !== 'UNKNOWN' ? (
+            ) : isAuthenticated && currentMembership !== 'UNKNOWN' ? (
               <div className="membership-action">
                 <button
                   type="button"
-                  className={`button ${membership === 'ACTIVE' ? 'button--secondary' : 'button--primary'}`}
+                  className={`button ${currentMembership === 'ACTIVE' ? 'button--secondary' : 'button--primary'}`}
                   disabled={
                     membershipBusy ||
-                    membership === 'PENDING' ||
-                    membership === 'BANNED' ||
-                    membership === 'OWNER'
+                    currentMembership === 'PENDING' ||
+                    currentMembership === 'BANNED' ||
+                    currentMembership === 'OWNER'
                   }
-                  onClick={membership === 'ACTIVE' ? handleLeave : handleJoin}
+                  onClick={currentMembership === 'ACTIVE' ? handleLeave : handleJoin}
                 >
                   {membershipBusy ? 'Procesando…' : membershipLabel}
                 </button>

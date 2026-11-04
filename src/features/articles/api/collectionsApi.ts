@@ -20,6 +20,12 @@ export async function listAuthorCollections(authorId: number, signal?: AbortSign
   return response.data
 }
 
+// GET /collections/:id: público. 404 si no existe.
+export async function getCollection(id: number, signal?: AbortSignal): Promise<CollectionOption> {
+  const response = await httpClient.get<CollectionOption>(`/collections/${id}`, { signal })
+  return response.data
+}
+
 export async function createCollection(input: { title: string; description: string }): Promise<CollectionOption> {
   const response = await httpClient.post<CollectionOption>('/collections', input)
   return response.data
