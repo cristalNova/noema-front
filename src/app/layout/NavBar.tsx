@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
+import { useMyProfile } from '@/features/profiles'
 import { Logo } from '@/shared/components/Logo'
 import './NavBar.css'
 
 export function NavBar() {
   const { session, isAuthenticated, logout } = useAuth()
+  const { profile } = useMyProfile()
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -81,6 +83,7 @@ export function NavBar() {
             {menuOpen && (
               <div className="navbar__menu" id="navbar-account-menu" role="menu">
                 <p className="navbar__menu-email">{session.user.email}</p>
+                {profile && <Link role="menuitem" className="navbar__menu-item" to={`/profiles/${profile.id}`} onClick={() => setMenuOpen(false)}>Mi perfil</Link>}
                 <Link role="menuitem" className="navbar__menu-item" to="/onboarding/interests" onClick={() => setMenuOpen(false)}>Mis intereses</Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/plans" onClick={() => setMenuOpen(false)}>
                   Mis planes

@@ -4,6 +4,7 @@ import { useAuth } from '@/features/auth'
 import { getMyArticle, getPublishedArticle } from '@/features/articles/api/articlesApi'
 import { ArticleStatusBadge } from '@/features/articles/components/ArticleStatusBadge'
 import { CommentSection } from '@/features/social/components/CommentSection'
+import { AuthorByline } from '@/features/profiles/components/AuthorByline'
 import type { Article } from '@/features/articles/model/article.types'
 import { ApiError, getErrorMessage } from '@/shared/api/apiError'
 import './ArticleDetailPage.css'
@@ -56,7 +57,7 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
             <div className="article-reader__meta"><ArticleStatusBadge status={article.status} />{article.isPremium && <span className="premium-badge">Premium</span>}{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'long' }).format(new Date(article.publishedAt))}</time>}</div>
             <h1>{article.title}</h1>
             {article.description && <p className="article-reader__description">{article.description}</p>}
-            {article.author?.name && <p>Por <Link to={`/profiles/${article.authorId}`}>{article.author.name}</Link></p>}
+            <AuthorByline authorId={article.authorId} name={article.author?.name} />
             {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}><Link to={`/articles?tag=${encodeURIComponent(tag)}`}>#{tag}</Link></li>)}</ul>}
             {article.collectionId != null && <p className="article-reader__collection">Colección: {article.collection?.title ?? `#${article.collectionId}`}{article.collectionPosition != null && ` · Posición ${article.collectionPosition}`}</p>}
             {owned && <Link className="button button--secondary" to={`/app/articles/${id}/edit`}>Editar ensayo</Link>}
