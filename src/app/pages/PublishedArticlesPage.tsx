@@ -62,8 +62,6 @@ export function PublishedArticlesPage() {
             <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3>
             <ArticleByline author={authorOf(article)} community={communityOf(article)} />
             <p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>
-            <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3><p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>
-            <Link to={`/profiles/${article.authorId}`} className="published-essay__author">Ver perfil del autor ↗</Link>
             {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}><Link to={`/articles?tag=${encodeURIComponent(tag)}`}>#{tag}</Link></li>)}</ul>}
           </article>)}</div>}
           {list.total > 0 && <nav className="pagination" aria-label="Paginación de ensayos publicados"><button type="button" className="button button--secondary" disabled={list.page <= 1} onClick={() => changePage(list.page - 1)}>Anterior</button><span>Página {list.page} de {list.totalPages} · {list.total} {list.total === 1 ? 'ensayo' : 'ensayos'}</span><button type="button" className="button button--secondary" disabled={list.page >= list.totalPages} onClick={() => changePage(list.page + 1)}>Siguiente</button></nav>}

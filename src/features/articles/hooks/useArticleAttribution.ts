@@ -71,15 +71,18 @@ export function useArticleAttribution(
 
   const authorOf = useCallback((article: Attributable): Attribution | null => {
     const name = article.author?.name || knownAuthors.get(article.authorId) || fetchedAuthors.get(article.authorId)
-    return name ? { id: article.authorId, name } : null
+    if (name) return { id: article.authorId, name }
+    // Sin nombre: solo se ofrece el enlace genérico si la consulta ya falló; mientras está pendiente, nada (evita parpadeos).
+    return fetchedAuthors.has(article.authorId) ? { id: article.authorId, name: null } : null
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [known.authors, fetchedAuthors])
 
-  // Si el nombre no se pudo resolver, igual se indica que el ensayo es de una comunidad.
+  // Si el nombre no se pudo resolver (la consulta falló), igual se indica que el ensayo es de una comunidad.
   const communityOf = useCallback((article: Attributable): Attribution | null => {
     if (article.communityId == null) return null
     const name = article.community?.name || knownCommunities.get(article.communityId) || fetchedCommunities.get(article.communityId)
-    return { id: article.communityId, name: name ?? null }
+    if (name) return { id: article.communityId, name }
+    return fetchedCommunities.has(article.communityId) ? { id: article.communityId, name: null } : null
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [known.communities, fetchedCommunities])
 

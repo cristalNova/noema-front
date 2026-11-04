@@ -91,6 +91,7 @@ function AuthorProfile({ id }: { id: number }) {
           {website && <li><a href={website} target="_blank" rel="noopener noreferrer">Sitio web ↗</a></li>}
           {socialLinks.map(({ name, url }) => <li key={name}><a href={url ?? undefined} target="_blank" rel="noopener noreferrer">{name} ↗</a></li>)}
         </ul>}
+        <Link className="button button--primary author-profile__plans" to={`/profiles/${profile.id}/plans`}>Ver planes</Link>
       </header>}
       {current === null && <p className="status-message" role="status">Cargando perfil…</p>}
       {current?.error && <div className="status-message status-message--error" role="alert"><p>{current.error}</p><button type="button" className="button button--secondary" onClick={() => setAttempt((value) => value + 1)}>Reintentar</button></div>}

@@ -19,6 +19,7 @@
 .author-profile__username { margin: 0; }
 .author-profile__bio { margin: 1.5rem 0; white-space: pre-wrap; }
 .author-profile__followers { margin: 1.25rem 0 0; font-weight: 600; }
+.author-profile__plans { margin-top: 1.5rem; }
 .author-profile__links { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .author-profile__links a { color: var(--color-ink); text-decoration-color: var(--color-accent); text-underline-offset: .2rem; }
 .author-profile__section { margin-bottom: 1.5rem; }
