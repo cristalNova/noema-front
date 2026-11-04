@@ -3,6 +3,8 @@ import { CommunitiesPage } from './pages/CommunitiesPage'
 import { CommunityDetailPage } from './pages/CommunityDetailPage'
 import { CreateDraftPage } from './pages/CreateDraftPage'
 import { MyArticlesPage } from './pages/MyArticlesPage'
+import { CollectionsPage } from './pages/CollectionsPage'
+import { NewCollectionPage } from './pages/NewCollectionPage'
 import { RequireAuth } from '@/features/auth'
 import { RequireProfile } from '@/features/profiles'
 import { AppLayout } from './layout/AppLayout'
@@ -39,6 +41,8 @@ export const router = createBrowserRouter([
             children: [
               { path: '/app/articles/new', element: <CreateDraftPage /> },
               { path: '/app/articles', element: <MyArticlesPage /> },
+              { path: '/app/collections', element: <CollectionsPage /> },
+              { path: '/app/collections/new', element: <NewCollectionPage /> },
               { path: '/app/articles/:id/edit', element: <CreateDraftPage /> },
               { path: '/app/articles/:id', element: <ArticleDetailPage owned /> },
               { path: '/app/posts', element: <MyPostsPage /> },
@@ -97,3 +101,4 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+
