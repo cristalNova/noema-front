@@ -47,6 +47,7 @@ export function NavBar() {
         <NavLink to="/" end>Inicio</NavLink>
         <NavLink to="/articles">Leer ensayos</NavLink>
         <NavLink to="/communities">Comunidades</NavLink>
+        <NavLink to="/posts">Publicaciones</NavLink>
         <NavLink to="/app/articles" end>Mis ensayos</NavLink>
         <NavLink to="/app/articles/new">Escribir</NavLink>
       </nav>

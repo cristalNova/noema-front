@@ -1,0 +1,30 @@
+.posts-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.posts-tabs a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 1.25rem;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 48%);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.posts-tabs a[aria-current='page'] {
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .posts-tabs a {
+    transition: none;
+  }
+}

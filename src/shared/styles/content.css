@@ -512,8 +512,7 @@
   overflow-wrap: anywhere;
 }
 
-.content-card__meta,
-.post-stats {
+.content-card__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -748,30 +747,6 @@
 
   .content-card__meta time {
     margin-left: auto;
-  }
-
-  .content-card__author {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-
-  .content-card__author .community-avatar {
-    width: 1.75rem;
-    height: 1.75rem;
-    flex-basis: 1.75rem;
-    font-size: 0.65rem;
-  }
-
-  .post-content {
-    white-space: pre-wrap;
-  }
-
-  .post-stats {
-    margin-top: 1rem;
-    font-variant-numeric: tabular-nums;
   }
 
   .community-empty {

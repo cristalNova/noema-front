@@ -15,6 +15,9 @@ import { NotFoundPage } from './pages/NotFoundPage'
 import { CreateCommunityPage } from './pages/CreateCommunityPage'
 import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
 import { ArticleDetailPage } from './pages/ArticleDetailPage'
+import { MyPostsPage } from './pages/MyPostsPage'
+import { PostDetailPage } from './pages/PostDetailPage'
+import { PostsFeedPage } from './pages/PostsFeedPage'
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +35,7 @@ export const router = createBrowserRouter([
               { path: '/app/articles', element: <MyArticlesPage /> },
               { path: '/app/articles/:id/edit', element: <CreateDraftPage /> },
               { path: '/app/articles/:id', element: <ArticleDetailPage owned /> },
+              { path: '/app/posts', element: <MyPostsPage /> },
             ],
           },
         ],
@@ -60,6 +64,8 @@ export const router = createBrowserRouter([
       { path: '/', element: <HomePage /> },
       { path: '/articles', element: <PublishedArticlesPage /> },
       { path: '/articles/:id', element: <ArticleDetailPage /> },
+      { path: '/posts', element: <PostsFeedPage /> },
+      { path: '/posts/:id', element: <PostDetailPage /> },
       { path: '/communities', element: <CommunitiesPage /> },
       {
         element: <RequireAuth />,
