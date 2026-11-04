@@ -18,6 +18,8 @@
 .published-essay h3 a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .published-essay p { display: -webkit-box; margin: 0; overflow: hidden; -webkit-line-clamp: 3; -webkit-box-orient: vertical; color: var(--color-muted); font-size: 0.88rem; white-space: pre-wrap; }
 .published-essay .published-essay__author { display: inline-block; margin-top: .8rem; color: var(--color-ink); font-size: .85rem; font-weight: 600; text-underline-offset: .2rem; }
+.published-essay__author-card { margin-top: .75rem; }
+.published-essay__author-card .published-essay__author { margin-top: 0; }
 .published-essay .tag-list { margin-bottom: 0; }
 .published-empty { padding: 2rem 0 3rem; text-align: center; }
 .published-empty > span { display: inline-grid; place-items: center; width: 4rem; height: 4rem; border-radius: 50%; background: var(--color-paper); font-size: 2rem; }
