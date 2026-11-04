@@ -1,45 +1,38 @@
-.author-profile {
-  max-width: 720px;
+.author-profile { max-width: 1120px; }
+.app-layout:has(.author-profile) {
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(56rem 34rem at 94% -6%, rgb(255 253 250 / 80%), transparent 65%),
+    radial-gradient(44rem 34rem at -8% 62%, rgb(199 197 244 / 35%), transparent 65%),
+    radial-gradient(48rem 36rem at 104% 100%, rgb(140 79 47 / 12%), transparent 68%),
+    radial-gradient(rgb(34 33 43 / 8%) 1px, transparent 1.6px);
+  background-size: auto, auto, auto, 24px 24px;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat;
 }
-
-.author-profile__card {
-  padding: clamp(1.5rem, 5vw, 3rem);
-  border-radius: var(--radius-sheet);
-  background: var(--color-surface);
-  overflow-wrap: anywhere;
-}
-
-.author-profile__avatar {
-  display: inline-grid;
-  width: 5rem;
-  height: 5rem;
-  place-items: center;
-  border-radius: 50%;
-  object-fit: cover;
-  background: var(--color-accent);
-  color: var(--color-surface);
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.author-profile__card h1 {
-  margin: 1rem 0 0.25rem;
-  font-size: clamp(2rem, 6vw, 3rem);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-}
-
-.author-profile__username {
-  margin: 0;
-  color: var(--color-muted);
-}
-
-.author-profile__bio {
-  margin: 1.25rem 0 1.5rem;
-  white-space: pre-wrap;
-}
-
-.author-profile__username + .button {
-  margin-top: 1.5rem;
-}
+.author-profile__card, .author-profile__section { padding: clamp(1.5rem, 4vw, 3rem); border-radius: var(--radius-sheet); background: var(--color-surface); overflow-wrap: anywhere; }
+.author-profile__card { margin-bottom: 1.5rem; }
+.author-profile__identity { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; }
+.author-profile__avatar { position: relative; display: inline-grid; width: 5.5rem; height: 5.5rem; flex: none; place-items: center; overflow: hidden; border-radius: 50%; background: var(--color-accent); color: var(--color-surface); font-size: 1.5rem; font-weight: 600; }
+.author-profile__avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.author-profile__card h1 { margin: .2rem 0; font-size: clamp(2rem, 6vw, 3rem); font-weight: 600; line-height: 1.1; letter-spacing: -.04em; }
+.author-profile__username, .author-profile__section p, .author-profile__section-heading > span, .author-profile__essays time { color: var(--color-muted); }
+.author-profile__username { margin: 0; }
+.author-profile__bio { margin: 1.5rem 0; white-space: pre-wrap; }
+.author-profile__followers { margin: 1.25rem 0 0; font-weight: 600; }
+.author-profile__links { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.author-profile__links a { color: var(--color-ink); text-decoration-color: var(--color-accent); text-underline-offset: .2rem; }
+.author-profile__section { margin-bottom: 1.5rem; }
+.author-profile__section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-line); margin-bottom: 1.5rem; }
+.author-profile__section h2 { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -.03em; }
+.author-profile__essays { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin: 0; padding: 0; list-style: none; }
+.author-profile__essays li { min-width: 0; overflow-wrap: anywhere; }
+.author-profile__essays li > a { display: block; padding: 1rem; border-radius: 18px; background: var(--color-paper); text-decoration: none; }
+.author-profile__essays h3 { margin: .8rem 0 .3rem; font-size: 1.1rem; line-height: 1.3; }
+.author-profile__essays h3 a { text-decoration: none; }
+.author-profile__essays h3 a:hover { text-decoration: underline; }
+.author-profile__essays time { font-size: .8rem; }
+.author-profile__reading-lists { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
+.author-profile__reading-lists li { padding: 1.1rem 1.3rem; border: 1px solid var(--color-line); border-radius: 18px; font-weight: 600; overflow-wrap: anywhere; }
+.author-profile__pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem; margin-top: 1.5rem; }
+@media (max-width: 760px) { .author-profile__essays { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 500px) { .author-profile__essays { grid-template-columns: 1fr; } }
