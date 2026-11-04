@@ -27,6 +27,16 @@
 .home__library-count > span { color: var(--color-ink); font-size: 2rem; letter-spacing: -0.05em; }
 .home__library-message { display: grid; align-content: center; min-height: 220px; padding: 1.5rem; border: 1px solid rgb(255 255 255 / 50%); border-radius: 24px; color: #4e4c61; background: rgb(255 255 255 / 22%); }
 .home__library-message a { font-weight: 600; }
+.home__interests { margin: 0 0 3rem; padding: clamp(1.5rem, 4vw, 2.75rem); border: 1px solid rgb(255 255 255 / 65%); border-radius: var(--radius-sheet); background: rgb(255 253 250 / 78%); }
+.home__interests .home__library-heading { margin-bottom: 1.5rem; }
+.home__interests .home__library-heading h2 { font-family: var(--font-sans); font-size: 1.8rem; font-weight: 500; letter-spacing: -0.045em; }
+.home__interest-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.home__interest-card { display: flex; min-width: 0; flex-direction: column; gap: 0.5rem; text-decoration: none; }
+.home__interest-card .essay-cover { min-height: 180px; padding: 1rem; }
+.home__interest-card .essay-cover__title { font-size: clamp(1.1rem, 2vw, 1.65rem); }
+.home__interest-card strong { overflow-wrap: anywhere; font-size: 0.9rem; }
+.home__interest-card > span:last-child { color: var(--color-muted); font-size: 0.75rem; overflow-wrap: anywhere; }
+.home__interest-card:hover strong { text-decoration: underline; }
 .home__destinations { background: var(--color-surface); border-radius: var(--radius-sheet); padding: clamp(1.5rem, 4vw, 2.75rem); }
 .home__destinations h2 { margin: 0; font-size: 1.8rem; font-weight: 500; letter-spacing: -0.045em; }
 .home__section-description { margin: 0.4rem 0 2rem; color: var(--color-muted); font-size: 0.9rem; }
@@ -44,4 +54,5 @@
 .home__access { margin: 1.5rem 0 0; text-align: center; color: #4e4c61; font-size: 0.85rem; }
 .home__access a { color: var(--color-ink); font-weight: 600; }
 @media (max-width: 850px) { .home__hero { grid-template-columns: 1fr; gap: 1.5rem; } .home h1 { max-width: 16ch; font-size: clamp(3rem, 9vw, 4.5rem); } .home__library { max-width: 600px; width: 100%; justify-self: center; } .home__shelf .essay-cover__title { font-size: clamp(1.25rem, 4vw, 1.8rem); } .home__destination-grid { grid-template-columns: 1fr; } .home__destination { padding-right: 3rem; gap: 1rem; } }
+@media (max-width: 850px) { .home__interest-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .home { padding-top: 1.5rem; width: calc(100% - 2rem); } .home__hero { margin-bottom: 2.5rem; } .home__shelf { gap: 0.3rem; padding-inline: 0.4rem; } .home__shelf .essay-cover { min-height: 170px; padding: 0.65rem; } .home__shelf .essay-cover__title { font-size: 1rem; } .home__shelf .essay-cover__edition { font-size: 0.35rem; } .home__shelf .essay-cover__footer { font-size: 0.4rem; } }

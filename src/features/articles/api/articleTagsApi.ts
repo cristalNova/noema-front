@@ -12,3 +12,7 @@ export async function listArticleTags(signal?: AbortSignal): Promise<TagOption[]
   const response = await httpClient.get<TagOption[]>('/article-tags', { signal })
   return response.data
 }
+
+// El onboarding reutiliza el mismo catálogo público de etiquetas.
+export type CatalogTag = TagOption
+export const listCatalogTags = listArticleTags
