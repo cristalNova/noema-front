@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import { useMyProfile } from '@/features/profiles'
 import { usePublishedArticles } from '@/features/articles/hooks/usePublishedArticles'
+import { useInterestArticles } from '@/features/articles/hooks/useInterestArticles'
 import { EssayCover } from '@/features/articles/components/EssayCover'
 import { HomeShelf } from './HomeBooks'
 import './HomePage.css'
@@ -10,6 +11,7 @@ export default function HomePage() {
   const { isAuthenticated } = useAuth()
   const { status, profile } = useMyProfile()
   const readings = usePublishedArticles()
+  const interests = useInterestArticles(isAuthenticated && status === 'ready')
   return (
     <main className="home">
       <div className="home__hero"><header className="home__intro">
@@ -26,6 +28,10 @@ export default function HomePage() {
           <p className="home__library-count"><span>{readings.total}</span> {readings.total === 1 ? 'ensayo para descubrir' : 'ensayos para descubrir'}</p>
         </> : <div className="home__library-message"><p>Las buenas ideas empiezan con una página en blanco.</p><Link to="/app/articles/new">Escribe el primer ensayo ↗</Link></div>}
       </section></div>
+      {isAuthenticated && status === 'ready' && <section className="home__interests" aria-labelledby="home-interests">
+        <div className="home__library-heading"><h2 id="home-interests">Para tus intereses</h2><Link to="/onboarding/interests">Editar intereses ↗</Link></div>
+        {interests.loading ? <p role="status">Buscando lecturas para ti…</p> : interests.error ? <div role="alert"><p>{interests.error}</p><button type="button" className="button button--secondary" onClick={interests.retry}>Reintentar</button></div> : interests.tags.length === 0 ? <p>Elige tus intereses para descubrir lecturas relacionadas. <Link to="/onboarding/interests">Elegir intereses</Link></p> : interests.articles.length === 0 ? <p>Todavía no hay ensayos publicados sobre tus intereses. <Link to="/articles">Explorar todos</Link></p> : <div className="home__interest-grid">{interests.articles.map((article) => <Link key={article.id} to={`/articles/${article.id}`} className="home__interest-card"><EssayCover article={article} /><strong>{article.title}</strong><span>{article.articleTags?.map(({ tag }) => `#${tag}`).join(' · ')}</span></Link>)}</div>}
+      </section>}
       <HomeShelf />
 
       {isAuthenticated && status === 'missing' && <aside className="home__profile"><div><strong>Tu espacio está casi listo.</strong><p>Crea tu perfil para guardar ensayos y participar con tu identidad de escritor.</p></div><Link to="/profile/new">Crear mi perfil →</Link></aside>}

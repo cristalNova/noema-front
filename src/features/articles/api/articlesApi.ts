@@ -93,3 +93,11 @@ export async function exploreArticles(filters: ExploreFilters, page = 1, signal?
   })
   return response.data
 }
+
+/** El backend admite un tag por consulta; el inicio combina los intereses del lector. */
+export async function listPublishedArticlesByTag(tag: string, signal?: AbortSignal): Promise<Paginated<ArticleSummary>> {
+  const response = await httpClient.get<Paginated<ArticleSummary>>('/articles', {
+    params: { tag, page: 1, limit: 4 }, signal,
+  })
+  return response.data
+}

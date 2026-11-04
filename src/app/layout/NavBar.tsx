@@ -81,6 +81,7 @@ export function NavBar() {
             {menuOpen && (
               <div className="navbar__menu" id="navbar-account-menu" role="menu">
                 <p className="navbar__menu-email">{session.user.email}</p>
+                <Link role="menuitem" className="navbar__menu-item" to="/onboarding/interests" onClick={() => setMenuOpen(false)}>Mis intereses</Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/plans" onClick={() => setMenuOpen(false)}>
                   Mis planes
                 </Link>
