@@ -19,6 +19,8 @@ export function useNotifications() {
   const page = readPageParam(searchParams)
   const [attempt, setAttempt] = useState(0)
   const [settled, setSettled] = useState<Settled | null>(null)
+  const [markError, setMarkError] = useState('')
+  const [announcement, setAnnouncement] = useState('')
 
   const setPage = useCallback(
     (next: number, options?: { replace?: boolean }) => {
@@ -56,6 +58,36 @@ export function useNotifications() {
     if (isOutOfRange) setPage(lastPage, { replace: true })
   }, [isOutOfRange, lastPage, setPage])
 
+  const setRead = useCallback((id: number, isRead: boolean) => {
+    setSettled((previous) => {
+      if (!previous?.result) return previous
+      const data = previous.result.data.map((item) => (item.id === id ? { ...item, isRead } : item))
+      return { ...previous, result: { ...previous.result, data } }
+    })
+  }, [])
+
+  /**
+   * Marca como leída al instante (sin recargar la lista) y confirma con el servidor.
+   * Si el servidor falla, la deja como estaba y expone el error.
+   */
+  const markAsRead = useCallback(
+    async (id: number): Promise<boolean> => {
+      setMarkError('')
+      setRead(id, true)
+      setAnnouncement('Notificación marcada como leída.')
+      try {
+        await notificationsApi.markAsRead(id)
+        return true
+      } catch (reason) {
+        setRead(id, false)
+        setAnnouncement('')
+        setMarkError(getErrorMessage(reason))
+        return false
+      }
+    },
+    [setRead],
+  )
+
   return {
     notifications: result?.data ?? [],
     total: result?.total ?? 0,
@@ -65,5 +97,8 @@ export function useNotifications() {
     error: current?.error ?? '',
     setPage,
     reload: useCallback(() => setAttempt((value) => value + 1), []),
+    markAsRead,
+    markError,
+    announcement,
   }
 }

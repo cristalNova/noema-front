@@ -8,7 +8,7 @@ interface NotificationListProps {
 }
 
 export function NotificationList({ list }: NotificationListProps) {
-  const { notifications, total, limit, page, isLoading, error, setPage, reload } = list
+  const { notifications, total, limit, page, isLoading, error, setPage, reload, markAsRead, markError, announcement } = list
 
   if (isLoading) {
     return (
@@ -44,9 +44,18 @@ export function NotificationList({ list }: NotificationListProps) {
 
   return (
     <>
+      {/* Anuncia el cambio a lectores de pantalla: el botón "Marcar como leída" desaparece al usarse. */}
+      <p className="notification__sr" role="status">
+        {announcement}
+      </p>
+      {markError && (
+        <p className="status-message--error" role="alert">
+          No se pudo marcar como leída: {markError}
+        </p>
+      )}
       <ul className="notification-list" aria-label="Notificaciones">
         {notifications.map((notification) => (
-          <NotificationItem key={notification.id} notification={notification} />
+          <NotificationItem key={notification.id} notification={notification} onMarkRead={(id) => void markAsRead(id)} />
         ))}
       </ul>
       <Pagination page={page} total={total} limit={limit} label="Paginación de notificaciones" onPageChange={setPage} />

@@ -88,3 +88,38 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.notification:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.notification__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+}
+
+.notification__open,
+.notification__mark {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.notification__open:hover {
+  text-decoration: underline;
+}
+
+.notification__mark {
+  color: var(--color-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
