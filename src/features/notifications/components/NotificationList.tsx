@@ -8,7 +8,10 @@ interface NotificationListProps {
 }
 
 export function NotificationList({ list }: NotificationListProps) {
-  const { notifications, total, limit, page, isLoading, error, setPage, reload, markAsRead, markError, announcement } = list
+  const {
+    notifications, total, limit, page, isLoading, error, setPage, reload,
+    markAsRead, markAllAsRead, isMarkingAll, unread, markError, announcement,
+  } = list
 
   if (isLoading) {
     return (
@@ -50,9 +53,20 @@ export function NotificationList({ list }: NotificationListProps) {
       </p>
       {markError && (
         <p className="status-message--error" role="alert">
-          No se pudo marcar como leída: {markError}
+          No se pudo completar la acción: {markError}
         </p>
       )}
+      <div className="notification-toolbar">
+        <p className="notification-toolbar__count">{unread > 0 ? `${unread} sin leer` : 'Todo al día'}</p>
+        <button
+          type="button"
+          className="button button--secondary"
+          disabled={unread === 0 || isMarkingAll}
+          onClick={() => void markAllAsRead()}
+        >
+          {isMarkingAll ? 'Marcando…' : 'Marcar todas como leídas'}
+        </button>
+      </div>
       <ul className="notification-list" aria-label="Notificaciones">
         {notifications.map((notification) => (
           <NotificationItem key={notification.id} notification={notification} onMarkRead={(id) => void markAsRead(id)} />

@@ -4,6 +4,7 @@ import { getErrorMessage } from '@/shared/api'
 import type { Paginated } from '@/shared/types/Paginated'
 import { readPageParam } from '@/shared/utils/pagination'
 import { notificationsApi } from '../api/notificationsApi'
+import { useUnreadCount } from './useUnreadCount'
 import type { AppNotification } from '../model/Notification'
 
 interface Settled {
@@ -21,6 +22,8 @@ export function useNotifications() {
   const [settled, setSettled] = useState<Settled | null>(null)
   const [markError, setMarkError] = useState('')
   const [announcement, setAnnouncement] = useState('')
+  const [isMarkingAll, setIsMarkingAll] = useState(false)
+  const { unread, adjust, clear } = useUnreadCount()
 
   const setPage = useCallback(
     (next: number, options?: { replace?: boolean }) => {
@@ -74,19 +77,43 @@ export function useNotifications() {
     async (id: number): Promise<boolean> => {
       setMarkError('')
       setRead(id, true)
+      adjust(-1)
       setAnnouncement('Notificación marcada como leída.')
       try {
         await notificationsApi.markAsRead(id)
         return true
       } catch (reason) {
         setRead(id, false)
+        adjust(1)
         setAnnouncement('')
         setMarkError(getErrorMessage(reason))
         return false
       }
     },
-    [setRead],
+    [setRead, adjust],
   )
+
+  /** Marca todas (también las de otras páginas). El servidor decide cuántas eran no leídas. */
+  const markAllAsRead = useCallback(async (): Promise<void> => {
+    setMarkError('')
+    setIsMarkingAll(true)
+    try {
+      const updated = await notificationsApi.markAllAsRead()
+      setSettled((previous) => {
+        if (!previous?.result) return previous
+        const data = previous.result.data.map((item) => ({ ...item, isRead: true }))
+        return { ...previous, result: { ...previous.result, data } }
+      })
+      clear()
+      setAnnouncement(
+        updated === 1 ? '1 notificación marcada como leída.' : `${updated} notificaciones marcadas como leídas.`,
+      )
+    } catch (reason) {
+      setMarkError(getErrorMessage(reason))
+    } finally {
+      setIsMarkingAll(false)
+    }
+  }, [clear])
 
   return {
     notifications: result?.data ?? [],
@@ -98,6 +125,9 @@ export function useNotifications() {
     setPage,
     reload: useCallback(() => setAttempt((value) => value + 1), []),
     markAsRead,
+    markAllAsRead,
+    isMarkingAll,
+    unread,
     markError,
     announcement,
   }

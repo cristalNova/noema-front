@@ -1,4 +1,6 @@
 export { NotificationList } from './components/NotificationList'
+export { UnreadContext, type UnreadContextValue } from './hooks/UnreadContext'
 export { useNotifications } from './hooks/useNotifications'
+export { useUnreadCount } from './hooks/useUnreadCount'
 export { notificationsApi } from './api/notificationsApi'
 export type { AppNotification } from './model/Notification'

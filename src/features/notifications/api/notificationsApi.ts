@@ -5,7 +5,7 @@ import type { AppNotification } from '../model/Notification'
 import type { NotificationDto } from '../model/notificationDto'
 import { toNotificationPage } from '../model/notificationMappers'
 
-// Pendiente (otras HU): GET /unread-count, POST /read-all, DELETE /:id
+// Pendiente (otras HU): DELETE /:id
 
 export const notificationsApi = {
   /** GET /notifications: las del usuario autenticado, de la más reciente a la más antigua. */
@@ -23,5 +23,17 @@ export const notificationsApi = {
    */
   async markAsRead(id: number): Promise<void> {
     await httpClient.patch(`/notifications/${id}/read`)
+  },
+
+  /** GET /notifications/unread-count → { unread }. */
+  async countUnread(signal?: AbortSignal): Promise<number> {
+    const { data } = await httpClient.get<{ unread: number }>('/notifications/unread-count', { signal })
+    return data.unread
+  },
+
+  /** POST /notifications/read-all → { updated }: cuántas pasaron de no leídas a leídas. */
+  async markAllAsRead(): Promise<number> {
+    const { data } = await httpClient.post<{ updated: number }>('/notifications/read-all')
+    return data.updated
   },
 }
