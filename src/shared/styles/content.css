@@ -416,6 +416,8 @@
   display: grid;
   min-width: 0;
   flex: 1;
+  color: inherit;
+  text-decoration: none;
 }
 
 .member-card__info strong,
@@ -432,12 +434,25 @@
 .member-card__role {
   border-radius: 999px;
   padding: 0.25rem 0.65rem;
-  color: #6f4a16;
-  background: #f7e6a8;
   font-family: system-ui, sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.member-card__role--member {
+  color: #3e5548;
+  background: #dcefe3;
+}
+
+.member-card__role--moderator {
+  color: #5b4677;
+  background: #e9ddf5;
+}
+
+.member-card__role--owner {
+  color: #6f4a16;
+  background: #f7e6a8;
 }
 
 .member-card__since {
@@ -445,6 +460,30 @@
   font-family: system-ui, sans-serif;
   font-size: 0.8rem;
   white-space: nowrap;
+}
+
+.member-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.member-filters button {
+  border: 1px solid #cdbdad;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  color: #5d5148;
+  background: #fffdf9;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.member-filters button.is-active {
+  border-color: #8c4f2f;
+  color: #fffdf9;
+  background: #8c4f2f;
 }
 
 @media (max-width: 560px) {
