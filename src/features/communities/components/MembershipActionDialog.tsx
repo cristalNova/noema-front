@@ -7,6 +7,7 @@ export type MembershipAction =
   | 'demote'
   | 'ban'
   | 'unban'
+  | 'kick'
 
 interface MembershipActionDialogProps {
   action: MembershipAction
@@ -47,6 +48,11 @@ const ACTION_COPY: Record<MembershipAction, { title: string; description: string
     title: '¿Quitar veto?',
     description: 'Esta persona volverá a ser un miembro activo de la comunidad.',
     confirm: 'Quitar veto',
+  },
+  kick: {
+    title: '¿Expulsar miembro?',
+    description: 'Esta persona dejará de formar parte de la comunidad, pero podrá volver a solicitar acceso.',
+    confirm: 'Expulsar',
   },
 }
 
@@ -101,7 +107,7 @@ export function MembershipActionDialog({
           </button>
           <button
             type="button"
-            className={action === 'ban' || action === 'reject' ? 'button button--danger' : 'button button--primary'}
+            className={action === 'ban' || action === 'reject' || action === 'kick' ? 'button button--danger' : 'button button--primary'}
             disabled={pending || submitted}
             onClick={() => void confirm()}
           >

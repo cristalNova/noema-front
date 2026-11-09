@@ -215,6 +215,22 @@ test('owner confirms moderation actions and updates rows without reloading', asy
   await expect(page.getByRole('status')).toContainText('vetado')
 })
 
+test('owner can expel an active member and updates the counter without reloading', async ({ page }) => {
+  await mockMembersPage(page, '7')
+  await page.goto('/communities/1')
+  await page.getByRole('tab', { name: /Miembros/ }).click()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+
+  await expect(page.getByRole('link', { name: 'Ver perfil de Luis Pérez' })).toBeAttached()
+  await page.getByRole('button', { name: 'Expulsar' }).click()
+  await expect(page.getByRole('dialog')).toContainText('dejará de formar parte')
+  await page.getByRole('dialog').getByRole('button', { name: 'Expulsar' }).click()
+
+  await expect(page.getByText('2', { exact: true })).toBeVisible()
+  await expect(page.getByRole('list', { name: 'Miembros de la comunidad' }).getByText('Luis Pérez')).toHaveCount(0)
+  await expect(page.getByText('Luis Pérez ha sido expulsado de la comunidad.')).toBeVisible()
+})
+
 test('owner can reject and approve pending requests using the real mutation endpoints', async ({ page }) => {
   await mockMembersPage(page, '7')
   await page.goto('/communities/1')

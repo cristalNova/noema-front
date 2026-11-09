@@ -270,7 +270,7 @@ function CommunityDetail() {
     setMemberActionError(undefined);
     try {
       const { action, member } = memberAction;
-      if (action === 'reject') {
+      if (action === 'reject' || action === 'kick') {
         await kickCommunityMember(community.id, member.profileId);
       } else {
         const update =
@@ -309,6 +309,20 @@ function CommunityDetail() {
         );
       } else if (action === 'reject') {
         setContentRetry((value) => value + 1);
+      } else if (action === 'kick') {
+        const nextTotal = Math.max(0, contentTotal - 1);
+        setMembers((current) =>
+          current.filter((item) => item.profileId !== member.profileId),
+        );
+        setContentTotal(nextTotal);
+        setCommunity((current) =>
+          current && typeof current.memberCount === 'number'
+            ? { ...current, memberCount: Math.max(0, current.memberCount - 1) }
+            : current,
+        );
+        if (contentPage > 1 && (contentPage - 1) * contentLimit >= nextTotal) {
+          setContentPage(contentPage - 1);
+        }
       } else if (action === 'ban' && memberStatus === 'ACTIVE') {
         setCommunity((current) =>
           current && current.memberCount
@@ -333,6 +347,7 @@ function CommunityDetail() {
         demote: `Se quitó el rol de moderador a ${member.profile.name}.`,
         ban: `${member.profile.name} ha sido vetado.`,
         unban: `Se quitó el veto a ${member.profile.name}.`,
+        kick: `${member.profile.name} ha sido expulsado de la comunidad.`,
       };
       setMemberActionSuccess(successMessages[action]);
       setMemberAction(null);
@@ -802,6 +817,14 @@ function CommunityDetail() {
                               onClick={() => openMemberAction('ban', member)}
                             >
                               Vetar
+                            </button>
+                            <button
+                              type="button"
+                              className="button button--danger"
+                              disabled={memberActionPending}
+                              onClick={() => openMemberAction('kick', member)}
+                            >
+                              Expulsar
                             </button>
                           </>
                         ) : memberStatus === 'BANNED' ? (
