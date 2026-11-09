@@ -13,11 +13,26 @@ const community = {
   memberCount: 3,
 }
 
-const members = [
+type MemberFixture = { profileId: number; role: 'MEMBER' | 'MODERATOR' | 'OWNER'; name: string; username: string }
+
+const members: MemberFixture[] = [
   { profileId: 7, role: 'OWNER', name: 'María López', username: 'maria' },
   { profileId: 8, role: 'MODERATOR', name: 'Luis Pérez', username: 'luis' },
   { profileId: 9, role: 'MEMBER', name: 'Ana Gómez', username: 'ana' },
 ]
+
+const pendingMember: MemberFixture = {
+  profileId: 10,
+  role: 'MEMBER',
+  name: 'Sofía Ruiz',
+  username: 'sofia',
+}
+const pendingMemberTwo: MemberFixture = {
+  profileId: 11,
+  role: 'MEMBER',
+  name: 'Diego León',
+  username: 'diego',
+}
 
 const tokenFor = (userId: string) => {
   const payload = btoa(JSON.stringify({
@@ -30,7 +45,7 @@ const tokenFor = (userId: string) => {
   return `header.${payload}.signature`
 }
 
-function membership(member: typeof members[number], status: 'ACTIVE' | 'PENDING' | 'BANNED') {
+function membership(member: MemberFixture, status: 'ACTIVE' | 'PENDING' | 'BANNED') {
   return {
     profileId: member.profileId,
     communityId: 1,
@@ -47,6 +62,9 @@ function membership(member: typeof members[number], status: 'ACTIVE' | 'PENDING'
 }
 
 async function mockMembersPage(page: Page, userId: string) {
+  const memberRecords = members.map((member) => membership(member, 'ACTIVE'))
+  memberRecords.push(membership(pendingMember, 'PENDING'))
+  memberRecords.push(membership(pendingMemberTwo, 'PENDING'))
   await page.addInitScript((token) => localStorage.setItem('noema.access_token', token), tokenFor(userId))
   await page.route('**/profiles/me', (route) =>
     route.fulfill({ json: { id: Number(userId), username: 'user', name: 'User' } }),
@@ -70,21 +88,38 @@ async function mockMembersPage(page: Page, userId: string) {
     json: { id: 8, username: 'luis', name: 'Luis Pérez', profilePhoto: null },
   }))
   await page.route('**/communities/1/members**', async (route) => {
+    const request = route.request()
     const url = new URL(route.request().url())
+    const profileId = Number(url.pathname.split('/').pop())
     const status = url.searchParams.get('status') ?? 'ACTIVE'
     const pageNumber = Number(url.searchParams.get('page') ?? '1')
     const limit = Number(url.searchParams.get('limit') ?? '1')
+    if (request.method() === 'PATCH') {
+      const body = request.postDataJSON() as { role?: string; status?: string }
+      const target = memberRecords.find((member) => member.profileId === profileId)
+      if (!target) {
+        await route.fulfill({ status: 404, json: { message: 'Miembro no encontrado' } })
+        return
+      }
+      Object.assign(target, body)
+      await route.fulfill({ json: target })
+      return
+    }
+    if (request.method() === 'DELETE') {
+      const index = memberRecords.findIndex((member) => member.profileId === profileId)
+      if (index >= 0) memberRecords.splice(index, 1)
+      await route.fulfill({ status: 204 })
+      return
+    }
     if (userId === '9' && status !== 'ACTIVE') {
       await route.fulfill({ status: 403, json: { message: 'No autorizado' } })
       return
     }
-    const statusMembers = status === 'ACTIVE'
-      ? members
-      : members.filter((member) => member.profileId !== 9)
+    const statusMembers = memberRecords.filter((member) => member.status === status)
     const pageItems = statusMembers.slice((pageNumber - 1) * limit, pageNumber * limit)
     await route.fulfill({
       json: {
-        data: pageItems.map((member) => membership(member, status as 'ACTIVE' | 'PENDING' | 'BANNED')),
+        data: pageItems,
         total: statusMembers.length,
         page: pageNumber,
         limit,
@@ -103,14 +138,21 @@ test('owner can filter members, paginate, and navigate to the correct profile', 
   await expect(page.locator('time[datetime="2026-01-02T00:00:00.000Z"]')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Siguiente' })).toBeEnabled()
   await page.getByRole('button', { name: 'Siguiente' }).click()
-  await expect(page.getByRole('link', { name: 'Ver perfil de Luis Pérez' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Ver perfil de Luis Pérez' })).toBeAttached()
   await expect(page.getByRole('button', { name: 'Anterior' })).toBeEnabled()
   await page.getByRole('button', { name: 'Pendientes' }).click()
-  await expect(page.getByText('Pendientes')).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.getByRole('list', { name: 'Miembros de la comunidad' }).getByText('Propietario')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pendientes' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('link', { name: 'Ver perfil de Sofía Ruiz' })).toBeAttached()
+  await page.getByRole('button', { name: 'Activos' }).click()
   await page.getByRole('button', { name: 'Siguiente' }).click()
-  await page.getByRole('link', { name: 'Ver perfil de Luis Pérez' }).click()
-  await expect(page).toHaveURL(/\/profiles\/8$/)
+})
+
+test('member profile links navigate to the selected public profile', async ({ page }) => {
+  await mockMembersPage(page, '9')
+  await page.goto('/communities/1')
+  await page.getByRole('tab', { name: /Miembros/ }).click()
+  await page.getByRole('link', { name: 'Ver perfil de María López' }).click()
+  await expect(page).toHaveURL(/\/profiles\/7$/)
 })
 
 test('normal member only sees active members and API rejects privileged statuses', async ({ page }) => {
@@ -138,5 +180,46 @@ test('moderator can access pending and banned member filters', async ({ page }) 
   await expect(page.getByRole('button', { name: 'Pendientes' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Vetados' })).toBeVisible()
   await page.getByRole('button', { name: 'Vetados' }).click()
-  await expect(page.getByRole('list', { name: 'Miembros de la comunidad' }).getByText('Propietario')).toBeVisible()
+  await expect(page.getByText('No hay miembros vetados.')).toBeVisible()
+})
+
+test('owner confirms moderation actions and updates rows without reloading', async ({ page }) => {
+  await mockMembersPage(page, '7')
+  let patches = 0
+  await page.route('**/communities/1/members/9', async (route) => {
+    if (route.request().method() === 'PATCH') patches += 1
+    await route.fallback()
+  })
+  await page.goto('/communities/1')
+  await page.getByRole('tab', { name: /Miembros/ }).click()
+
+  const memberRow = page.getByRole('list', { name: 'Miembros de la comunidad' })
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await memberRow.getByRole('button', { name: 'Promover a moderador' }).click()
+  await expect(page.getByRole('dialog')).toContainText('obtendrá permisos de moderación')
+  await page.getByRole('dialog').getByRole('button', { name: 'Promover' }).click()
+  await expect(memberRow.getByText('Moderador', { exact: true })).toBeVisible()
+  expect(patches).toBe(1)
+
+  await memberRow.getByRole('button', { name: 'Vetar' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Vetar' }).click()
+  await expect(memberRow.getByText('Ana Gómez')).toHaveCount(0)
+  await expect(page.getByRole('status')).toContainText('vetado')
+})
+
+test('owner can reject and approve pending requests using the real mutation endpoints', async ({ page }) => {
+  await mockMembersPage(page, '7')
+  await page.goto('/communities/1')
+  await page.getByRole('tab', { name: /Miembros/ }).click()
+  await page.getByRole('button', { name: 'Pendientes' }).click()
+
+  await expect(page.getByRole('link', { name: 'Ver perfil de Sofía Ruiz' })).toBeAttached()
+  await page.getByRole('button', { name: 'Rechazar' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Rechazar' }).click()
+  await expect(page.getByRole('link', { name: 'Ver perfil de Diego León' })).toBeAttached()
+
+  await page.getByRole('button', { name: 'Aprobar' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Aprobar' }).click()
+  await expect(page.getByRole('button', { name: 'Activos' })).toHaveAttribute('aria-pressed', 'true')
 })

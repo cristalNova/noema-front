@@ -5,6 +5,11 @@ import type { Paginated } from '../../../shared/types/Paginated'
 
 export type { MembershipStatus } from '../model/community.types'
 
+export type MembershipUpdate = {
+  role?: Extract<Membership['role'], 'MEMBER' | 'MODERATOR'>
+  status?: Extract<Membership['status'], 'ACTIVE' | 'BANNED'>
+}
+
 export async function joinCommunity(communityId: number): Promise<Membership> {
   const response = await httpClient.post<Membership>(`/communities/${communityId}/members`)
   return response.data
@@ -19,6 +24,25 @@ export async function listCommunityMembers(
     { params },
   )
   return response.data
+}
+
+export async function updateCommunityMember(
+  communityId: number,
+  profileId: number,
+  update: MembershipUpdate,
+): Promise<Membership> {
+  const response = await httpClient.patch<Membership>(
+    `/communities/${communityId}/members/${profileId}`,
+    update,
+  )
+  return response.data
+}
+
+export async function kickCommunityMember(
+  communityId: number,
+  profileId: number,
+): Promise<void> {
+  await httpClient.delete(`/communities/${communityId}/members/${profileId}`)
 }
 
 const MEMBERS_SCAN_LIMIT = 100
