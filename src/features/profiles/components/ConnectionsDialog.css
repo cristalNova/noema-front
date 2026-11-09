@@ -1,0 +1,100 @@
+.connections-dialog {
+  width: min(560px, calc(100% - 2rem));
+  max-height: min(82dvh, 680px);
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 28px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  overflow: hidden;
+}
+
+.connections-dialog[open] {
+  display: flex;
+}
+
+.connections-dialog::backdrop {
+  background: rgb(34 33 43 / 50%);
+}
+
+.connections-dialog__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 20px 20px 0;
+}
+
+.connections-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.connections-dialog__header h2 {
+  margin: 0;
+  overflow: hidden;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.connections-dialog__close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-field);
+  color: var(--color-ink);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.connections-dialog__tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-field);
+}
+
+.connections-dialog__tab {
+  flex: 1;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.connections-dialog__tab[aria-selected='true'] {
+  background: var(--color-ink);
+  color: #fff;
+}
+
+/* Solo la lista se desplaza; el título y las pestañas quedan fijos. */
+.connections-dialog__panel {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 20px;
+  overflow-y: auto;
+}
+
+@media (max-width: 560px) {
+  .connections-dialog__body {
+    padding: 16px 14px 0;
+  }
+}

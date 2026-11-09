@@ -1,5 +1,6 @@
 export { DeleteProfileDialog } from './components/DeleteProfileDialog'
 export { EditProfileForm } from './components/EditProfileForm'
+export { ConnectionsDialog } from './components/ConnectionsDialog'
 export { ProfileForm } from './components/ProfileForm'
 export { RequireProfile } from './components/RequireProfile'
 export { ProfileContext, type ProfileContextValue } from './hooks/ProfileContext'

@@ -9,7 +9,7 @@ import './FollowControl.css'
 const CHANGE_EVENT = 'noema:follow-change'
 type FollowChange = { profileId: number; following: boolean; count: number }
 
-export function FollowControl({ profileId, followersCount, compact = false }: { profileId: number; followersCount: number; compact?: boolean }) {
+export function FollowControl({ profileId, followersCount, compact = false, onShowFollowers }: { profileId: number; followersCount: number; compact?: boolean; onShowFollowers?: () => void }) {
   const { isAuthenticated } = useAuth()
   const { profile: mine, status } = useMyProfile()
   const myId = mine?.id
@@ -72,7 +72,9 @@ export function FollowControl({ profileId, followersCount, compact = false }: { 
   }
 
   return <div className={`follow-control${compact ? ' follow-control--compact' : ''}`}>
-    <span className="follow-control__count" aria-live="polite">{count} {count === 1 ? 'seguidor' : 'seguidores'}</span>
+    {onShowFollowers
+      ? <button type="button" className="follow-control__count follow-control__count--button" aria-haspopup="dialog" aria-live="polite" onClick={onShowFollowers}>{count} {count === 1 ? 'seguidor' : 'seguidores'}</button>
+      : <span className="follow-control__count" aria-live="polite">{count} {count === 1 ? 'seguidor' : 'seguidores'}</span>}
     {mine?.id === profileId ? null
       : !isAuthenticated ? <Link className="button button--secondary" to="/login" state={{ from: `/profiles/${profileId}` }}>Seguir</Link>
       : status === 'missing' ? <Link className="button button--secondary" to="/profile/new" state={{ from: `/profiles/${profileId}` }}>Seguir</Link>
