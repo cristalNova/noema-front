@@ -9,6 +9,15 @@ export interface CreateProfileRequestDto {
   socialLinks?: Record<string, string>
 }
 
+/** PATCH: parcial. Para vaciar un opcional hay que enviar null (un string vacío da 400). */
+export interface UpdateProfileRequestDto {
+  name?: string
+  profilePhoto?: string | null
+  bio?: string | null
+  website?: string | null
+  socialLinks?: Record<string, string> | null
+}
+
 export interface ProfileResponseDto {
   id: number
   userId: number

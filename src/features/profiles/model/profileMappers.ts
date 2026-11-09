@@ -1,5 +1,5 @@
-import type { NewProfile, Profile } from './Profile'
-import type { CreateProfileRequestDto, ProfileResponseDto } from './profileDto'
+import type { NewProfile, Profile, ProfileChanges } from './Profile'
+import type { CreateProfileRequestDto, ProfileResponseDto, UpdateProfileRequestDto } from './profileDto'
 
 export function toProfile(dto: ProfileResponseDto): Profile {
   return {
@@ -24,4 +24,14 @@ export function toCreateProfileDto(profile: NewProfile): CreateProfileRequestDto
   if (profile.socialLinks && Object.keys(profile.socialLinks).length > 0)
     dto.socialLinks = profile.socialLinks
   return dto
+}
+
+export function toUpdateProfileDto(changes: ProfileChanges): UpdateProfileRequestDto {
+  return {
+    name: changes.name,
+    profilePhoto: changes.photoUrl,
+    bio: changes.bio,
+    website: changes.website,
+    socialLinks: changes.socialLinks,
+  }
 }

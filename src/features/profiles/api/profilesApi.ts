@@ -1,8 +1,8 @@
 import { httpClient } from '../../../shared/api'
 import type { Profile } from '../model/Profile'
 import type { ProfileResponseDto } from '../model/profileDto'
-import { toCreateProfileDto, toProfile } from '../model/profileMappers'
-import type { NewProfile } from '../model/Profile'
+import { toCreateProfileDto, toProfile, toUpdateProfileDto } from '../model/profileMappers'
+import type { NewProfile, ProfileChanges } from '../model/Profile'
 
 async function getMine(): Promise<Profile> {
   const response = await httpClient.get<ProfileResponseDto>('/profiles/me')
@@ -19,7 +19,21 @@ async function getById(id: number, signal?: AbortSignal): Promise<Profile> {
   return toProfile(response.data)
 }
 
-export const profilesApi = { getMine, create, getById }
+/** PATCH /profiles/me: solo se envían los campos editables. */
+async function update(changes: ProfileChanges): Promise<Profile> {
+  const response = await httpClient.patch<ProfileResponseDto>('/profiles/me', toUpdateProfileDto(changes))
+  return toProfile(response.data)
+}
+
+/**
+ * DELETE /profiles/me (204). Borra el perfil y, en cascada, todo lo que cuelga de él
+ * (ensayos, posts, comentarios, comunidades, seguidores…). La cuenta de acceso permanece.
+ */
+async function remove(): Promise<void> {
+  await httpClient.delete('/profiles/me')
+}
+
+export const profilesApi = { getMine, create, getById, update, remove }
 export const getMyProfile = getMine
 
 export interface AuthorOption {

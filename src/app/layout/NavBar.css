@@ -96,9 +96,16 @@ a.navbar__icon { position: relative; text-decoration: none; }
 }
 
 .navbar__avatar {
+  overflow: hidden;
   background: var(--color-ink);
   color: #fff;
   font-weight: 600;
+}
+
+.navbar__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .navbar__account { position: relative; }
@@ -156,6 +163,7 @@ a.navbar__icon { position: relative; text-decoration: none; }
 }
 
 a.navbar__menu-item { text-decoration: none; }
+.navbar__menu-name { display: block; color: var(--color-ink); font-size: 0.875rem; }
 .navbar__menu-item:hover { background: var(--color-field); }
 .navbar__menu-item:disabled { opacity: 0.6; cursor: not-allowed; }
 
