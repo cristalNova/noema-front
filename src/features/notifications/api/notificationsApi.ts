@@ -1,2 +1,39 @@
-// listado, unread-count, read-all, marcar leída, eliminar
-export {}
+import { httpClient } from '@/shared/api'
+import type { Paginated, PaginationParams } from '@/shared/types/Paginated'
+import { toPageQuery } from '@/shared/utils/pagination'
+import type { AppNotification } from '../model/Notification'
+import type { NotificationDto } from '../model/notificationDto'
+import { toNotificationPage } from '../model/notificationMappers'
+
+// Pendiente (otras HU): DELETE /:id
+
+export const notificationsApi = {
+  /** GET /notifications: las del usuario autenticado, de la más reciente a la más antigua. */
+  async list(params: PaginationParams = {}, signal?: AbortSignal): Promise<Paginated<AppNotification>> {
+    const { data } = await httpClient.get<Paginated<NotificationDto>>('/notifications', {
+      params: toPageQuery(params),
+      signal,
+    })
+    return toNotificationPage(data)
+  },
+
+  /**
+   * PATCH /notifications/:id/read. Es idempotente. La respuesta no incluye el `actor`,
+   * por eso no se mapea: quien llama solo necesita saber que salió bien.
+   */
+  async markAsRead(id: number): Promise<void> {
+    await httpClient.patch(`/notifications/${id}/read`)
+  },
+
+  /** GET /notifications/unread-count → { unread }. */
+  async countUnread(signal?: AbortSignal): Promise<number> {
+    const { data } = await httpClient.get<{ unread: number }>('/notifications/unread-count', { signal })
+    return data.unread
+  },
+
+  /** POST /notifications/read-all → { updated }: cuántas pasaron de no leídas a leídas. */
+  async markAllAsRead(): Promise<number> {
+    const { data } = await httpClient.post<{ updated: number }>('/notifications/read-all')
+    return data.updated
+  },
+}
