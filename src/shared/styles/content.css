@@ -403,7 +403,8 @@
 }
 
 .member-card {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 0.9rem;
   border: 1px solid #e1d6c9;
@@ -468,6 +469,16 @@
   gap: 0.5rem;
 }
 
+.member-management {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.member-management__heading {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
 .member-filters button {
   border: 1px solid #cdbdad;
   border-radius: 999px;
@@ -486,14 +497,76 @@
   background: #8c4f2f;
 }
 
+.member-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  grid-column: 2 / -1;
+  justify-self: end;
+}
+
+.member-card__actions .button {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+.membership-action-dialog {
+  width: min(32rem, calc(100vw - 2rem));
+  border: 1px solid #e1d6c9;
+  border-radius: 1rem;
+  padding: 0;
+  color: #25211f;
+  background: #fffdf9;
+}
+
+.membership-action-dialog::backdrop {
+  background: rgb(37 33 31 / 45%);
+}
+
+.membership-action-dialog__body {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.membership-action-dialog__body h2,
+.membership-action-dialog__body p {
+  margin: 0;
+}
+
+.membership-action-dialog__error {
+  color: #9c3d2c;
+  font-family: system-ui, sans-serif;
+  font-size: 0.85rem;
+}
+
+.membership-action-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
 @media (max-width: 560px) {
   .member-card {
-    flex-wrap: wrap;
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .member-card__since {
     width: 100%;
     padding-left: 3.4rem;
+    grid-column: 1 / -1;
+  }
+
+  .member-card__actions {
+    justify-content: stretch;
+    padding-left: 3.4rem;
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+
+  .member-card__actions .button {
+    flex: 1;
   }
 }
 

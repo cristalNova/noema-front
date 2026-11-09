@@ -11,10 +11,16 @@ import { useArticleAttribution } from '../../features/articles/hooks/useArticleA
 import { PostCard } from '../../features/social/components/PostCard';
 import {
   getMyMembership,
+  kickCommunityMember,
   joinCommunity,
   leaveCommunity,
   listCommunityMembers,
+  updateCommunityMember,
 } from '../../features/communities/api/membersApi';
+import {
+  MembershipActionDialog,
+  type MembershipAction,
+} from '../../features/communities/components/MembershipActionDialog';
 import type {
   CommunityDetail,
   Membership,
@@ -141,6 +147,13 @@ function CommunityDetail() {
   const [memberStatus, setMemberStatus] = useState<MemberStatusFilter>('ACTIVE');
   const [membershipBusy, setMembershipBusy] = useState(false);
   const [membershipError, setMembershipError] = useState<unknown>(null);
+  const [memberAction, setMemberAction] = useState<{
+    action: MembershipAction;
+    member: Membership;
+  } | null>(null);
+  const [memberActionPending, setMemberActionPending] = useState(false);
+  const [memberActionError, setMemberActionError] = useState<string | undefined>();
+  const [memberActionSuccess, setMemberActionSuccess] = useState<string | null>(null);
   // GET /articles no incluye al autor: se resuelve por id (la comunidad ya es el contexto, no se repite).
   const { authorOf } = useArticleAttribution(articles);
   const communityUpdated = new URLSearchParams(location.search).get('updated') === '1';
@@ -233,6 +246,104 @@ function CommunityDetail() {
   const owner = community?.owner;
   const canModerateMembers =
     membershipRole === 'OWNER' || membershipRole === 'MODERATOR';
+  const canManageMember = (member: Membership) =>
+    canModerateMembers &&
+    member.role !== 'OWNER' &&
+    member.profileId !== myProfile?.id &&
+    (membershipRole === 'OWNER' || member.role === 'MEMBER');
+
+  const openMemberAction = (action: MembershipAction, member: Membership) => {
+    setMemberActionError(undefined);
+    setMemberAction({ action, member });
+  };
+
+  const closeMemberAction = () => {
+    if (!memberActionPending) {
+      setMemberAction(null);
+      setMemberActionError(undefined);
+    }
+  };
+
+  const confirmMemberAction = async (): Promise<boolean> => {
+    if (!community || !memberAction || memberActionPending) return false;
+    setMemberActionPending(true);
+    setMemberActionError(undefined);
+    try {
+      const { action, member } = memberAction;
+      if (action === 'reject') {
+        await kickCommunityMember(community.id, member.profileId);
+      } else {
+        const update =
+          action === 'approve'
+            ? { status: 'ACTIVE' as const }
+            : action === 'promote'
+              ? { role: 'MODERATOR' as const }
+              : action === 'demote'
+                ? { role: 'MEMBER' as const }
+                  : action === 'ban'
+                    ? { status: 'BANNED' as const }
+                    : { status: 'ACTIVE' as const };
+        const updated = await updateCommunityMember(
+          community.id,
+          member.profileId,
+          update,
+        );
+        if (action === 'promote' || action === 'demote') {
+          setMembers((current) =>
+            current.map((item) =>
+              item.profileId === member.profileId
+                ? { ...item, ...updated, profile: updated.profile ?? item.profile }
+                : item,
+            ),
+          );
+        }
+      }
+
+      if (action === 'approve') {
+        setMemberStatus('ACTIVE');
+        setContentPage(1);
+        setCommunity((current) =>
+          current
+            ? { ...current, memberCount: (current.memberCount ?? 0) + 1 }
+            : current,
+        );
+      } else if (action === 'reject') {
+        setContentRetry((value) => value + 1);
+      } else if (action === 'ban' && memberStatus === 'ACTIVE') {
+        setCommunity((current) =>
+          current && current.memberCount
+            ? { ...current, memberCount: current.memberCount - 1 }
+            : current,
+        );
+        setContentRetry((value) => value + 1);
+      } else if (action === 'unban' && memberStatus === 'BANNED') {
+        setMemberStatus('ACTIVE');
+        setContentPage(1);
+        setCommunity((current) =>
+          current
+            ? { ...current, memberCount: (current.memberCount ?? 0) + 1 }
+            : current,
+        );
+      }
+
+      const successMessages: Record<MembershipAction, string> = {
+        approve: `${member.profile.name} ahora es miembro activo.`,
+        reject: `La solicitud de ${member.profile.name} fue rechazada.`,
+        promote: `${member.profile.name} ahora es moderador.`,
+        demote: `Se quitó el rol de moderador a ${member.profile.name}.`,
+        ban: `${member.profile.name} ha sido vetado.`,
+        unban: `Se quitó el veto a ${member.profile.name}.`,
+      };
+      setMemberActionSuccess(successMessages[action]);
+      setMemberAction(null);
+      return true;
+    } catch (error: unknown) {
+      setMemberActionError(getErrorMessage(error));
+      return false;
+    } finally {
+      setMemberActionPending(false);
+    }
+  };
   const handleJoin = () => {
     if (!community || membershipBusy) return;
     setMembershipBusy(true);
@@ -530,6 +641,11 @@ function CommunityDetail() {
               onRetry={() => setContentRetry((value) => value + 1)}
             />
           )}
+          {memberActionSuccess && tab === 'members' && (
+            <p className="form-success" role="status" aria-live="polite">
+              {memberActionSuccess}
+            </p>
+          )}
           {!contentLoading &&
             !contentError &&
             tab === 'essays' &&
@@ -557,44 +673,53 @@ function CommunityDetail() {
               </EmptyState>
             )}
           {!contentLoading && !contentError && tab === 'members' && (
-            <div className="member-filters" aria-label="Filtrar miembros">
-              <button
-                type="button"
-                className={memberStatus === 'ACTIVE' ? 'is-active' : ''}
-                aria-pressed={memberStatus === 'ACTIVE'}
-                onClick={() => {
-                  setMemberStatus('ACTIVE');
-                  setContentPage(1);
-                }}
-              >
-                Activos
-              </button>
-              {canModerateMembers && (
-                <>
-                  <button
-                    type="button"
-                    className={memberStatus === 'PENDING' ? 'is-active' : ''}
-                    aria-pressed={memberStatus === 'PENDING'}
-                    onClick={() => {
-                      setMemberStatus('PENDING');
-                      setContentPage(1);
-                    }}
-                  >
-                    Pendientes
-                  </button>
-                  <button
-                    type="button"
-                    className={memberStatus === 'BANNED' ? 'is-active' : ''}
-                    aria-pressed={memberStatus === 'BANNED'}
-                    onClick={() => {
-                      setMemberStatus('BANNED');
-                      setContentPage(1);
-                    }}
-                  >
-                    Vetados
-                  </button>
-                </>
-              )}
+            <div className="member-management">
+              <h2 className="member-management__heading">
+                {memberStatus === 'PENDING' ? 'Solicitudes pendientes' : 'Miembros'}
+                {memberStatus === 'PENDING' && ` (${contentTotal})`}
+              </h2>
+              <div className="member-filters" aria-label="Filtrar miembros">
+                <button
+                  type="button"
+                  className={memberStatus === 'ACTIVE' ? 'is-active' : ''}
+                  aria-pressed={memberStatus === 'ACTIVE'}
+                  onClick={() => {
+                    setMemberStatus('ACTIVE');
+                    setContentPage(1);
+                    setMemberActionSuccess(null);
+                  }}
+                >
+                  Activos
+                </button>
+                {canModerateMembers && (
+                  <>
+                    <button
+                      type="button"
+                      className={memberStatus === 'PENDING' ? 'is-active' : ''}
+                      aria-pressed={memberStatus === 'PENDING'}
+                      onClick={() => {
+                        setMemberStatus('PENDING');
+                        setContentPage(1);
+                        setMemberActionSuccess(null);
+                      }}
+                    >
+                      Pendientes
+                    </button>
+                    <button
+                      type="button"
+                      className={memberStatus === 'BANNED' ? 'is-active' : ''}
+                      aria-pressed={memberStatus === 'BANNED'}
+                      onClick={() => {
+                        setMemberStatus('BANNED');
+                        setContentPage(1);
+                        setMemberActionSuccess(null);
+                      }}
+                    >
+                      Vetados
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           )}
           {!contentLoading &&
@@ -627,6 +752,70 @@ function CommunityDetail() {
                     >
                       Desde {formatDate(member.joinedAt)}
                     </time>
+                    {canManageMember(member) && (
+                      <div className="member-card__actions" aria-label={`Acciones para ${member.profile.name}`}>
+                        {memberStatus === 'PENDING' ? (
+                          <>
+                            <button
+                              type="button"
+                              className="button button--primary"
+                              disabled={memberActionPending}
+                              onClick={() => openMemberAction('approve', member)}
+                            >
+                              Aprobar
+                            </button>
+                            <button
+                              type="button"
+                              className="button button--danger"
+                              disabled={memberActionPending}
+                              onClick={() => openMemberAction('reject', member)}
+                            >
+                              Rechazar
+                            </button>
+                          </>
+                        ) : memberStatus === 'ACTIVE' ? (
+                          <>
+                            {member.role === 'MEMBER' && (
+                              <button
+                                type="button"
+                                className="button button--secondary"
+                                disabled={memberActionPending}
+                                onClick={() => openMemberAction('promote', member)}
+                              >
+                                Promover a moderador
+                              </button>
+                            )}
+                            {member.role === 'MODERATOR' && membershipRole === 'OWNER' && (
+                              <button
+                                type="button"
+                                className="button button--secondary"
+                                disabled={memberActionPending}
+                                onClick={() => openMemberAction('demote', member)}
+                              >
+                                Quitar rol de moderador
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              className="button button--danger"
+                              disabled={memberActionPending}
+                              onClick={() => openMemberAction('ban', member)}
+                            >
+                              Vetar
+                            </button>
+                          </>
+                        ) : memberStatus === 'BANNED' ? (
+                          <button
+                            type="button"
+                            className="button button--primary"
+                            disabled={memberActionPending}
+                            onClick={() => openMemberAction('unban', member)}
+                          >
+                            Quitar veto
+                          </button>
+                        ) : null}
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -678,6 +867,16 @@ function CommunityDetail() {
             />
           )}
         </section>
+        {memberAction && (
+          <MembershipActionDialog
+            action={memberAction.action}
+            memberName={memberAction.member.profile.name}
+            pending={memberActionPending}
+            error={memberActionError}
+            onClose={closeMemberAction}
+            onConfirm={confirmMemberAction}
+          />
+        )}
       </article>
     </main>
   );
