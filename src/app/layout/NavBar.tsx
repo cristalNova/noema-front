@@ -56,12 +56,12 @@ export function NavBar() {
 
       {isAuthenticated && session ? (
         <nav className="navbar__actions" aria-label="Sesión">
-          <button type="button" className="navbar__icon" disabled aria-label="Notificaciones (próximamente)" title="Notificaciones: próximamente">
+          <NavLink to="/app/notifications" className="navbar__icon" aria-label="Notificaciones" title="Notificaciones">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8" />
               <path d="M10.3 20a2 2 0 0 0 3.4 0" />
             </svg>
-          </button>
+          </NavLink>
           <div className="navbar__account" ref={accountRef}>
             <button
               type="button"
