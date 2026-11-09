@@ -52,6 +52,24 @@ export interface CommunityOption {
   name: string
 }
 
+export interface MyCommunityMembership {
+  role: 'MEMBER' | 'MODERATOR' | 'OWNER'
+  community: Community
+}
+
+export async function listMyCommunities(params: { page?: number; limit?: number } = {}, signal?: AbortSignal) {
+  const { page, limit } = toPageQuery(params)
+  const response = await httpClient.get<Paginated<MyCommunityMembership>>('/communities/mine', {
+    params: { page, limit },
+    signal,
+  })
+  return response.data
+}
+
+export async function deleteCommunity(id: number): Promise<void> {
+  await httpClient.delete(`/communities/${id}`)
+}
+
 // GET /communities/mine devuelve membresías con la comunidad anidada, no comunidades.
 export async function listMyCommunityFilterOptions(signal?: AbortSignal): Promise<CommunityOption[]> {
   const communities = new Map<number, CommunityOption>()
