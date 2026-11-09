@@ -28,6 +28,7 @@ import { tokenStorage } from '../../shared/api/tokenStorage';
 
 type Tab = 'essays' | 'posts' | 'members';
 type MembershipView = MembershipStatus | 'OWNER' | 'NONE' | 'UNKNOWN';
+type MemberStatusFilter = Extract<MembershipStatus, 'ACTIVE' | 'PENDING' | 'BANNED'>;
 
 const ROLE_LABELS: Record<Membership['role'], string> = {
   MEMBER: 'Miembro',
@@ -55,8 +56,14 @@ const getInitials = (name: string) =>
     .toUpperCase();
 
 function Avatar({ name, photo }: { name: string; photo?: string }) {
-  return photo ? (
-    <img className="community-avatar" src={photo} alt="" />
+  const [imageFailed, setImageFailed] = useState(false);
+  return photo && !imageFailed ? (
+    <img
+      className="community-avatar"
+      src={photo}
+      alt=""
+      onError={() => setImageFailed(true)}
+    />
   ) : (
     <span
       className="community-avatar community-avatar--fallback"
@@ -130,6 +137,8 @@ function CommunityDetail() {
   const [contentTotal, setContentTotal] = useState(0);
   const [contentLimit, setContentLimit] = useState(20);
   const [membership, setMembership] = useState<MembershipView>('UNKNOWN');
+  const [membershipRole, setMembershipRole] = useState<Membership['role'] | null>(null);
+  const [memberStatus, setMemberStatus] = useState<MemberStatusFilter>('ACTIVE');
   const [membershipBusy, setMembershipBusy] = useState(false);
   const [membershipError, setMembershipError] = useState<unknown>(null);
   // GET /articles no incluye al autor: se resuelve por id (la comunidad ya es el contexto, no se repite).
@@ -165,6 +174,7 @@ function CommunityDetail() {
       .then((profile) => getMyMembership(community.id, profile.id))
       .then((currentMembership) => {
         if (active) {
+          setMembershipRole(currentMembership?.role ?? null);
           setMembership(
             currentMembership?.role === 'OWNER'
               ? 'OWNER'
@@ -173,7 +183,10 @@ function CommunityDetail() {
         }
       })
       .catch(() => {
-        if (active) setMembership('NONE');
+          if (active) {
+            setMembershipRole(null);
+            setMembership('NONE');
+          }
       });
     return () => {
       active = false;
@@ -192,7 +205,10 @@ function CommunityDetail() {
         ? listArticles({ communityId: community.id, page: contentPage })
         : tab === 'posts'
           ? listPosts({ communityId: community.id, page: contentPage })
-          : listCommunityMembers(community.id, { page: contentPage });
+          : listCommunityMembers(community.id, {
+              page: contentPage,
+              status: memberStatus,
+            });
     request
       .then((response) => {
         if (!active) return;
@@ -211,10 +227,12 @@ function CommunityDetail() {
     return () => {
       active = false;
     };
-  }, [community, contentPage, contentRetry, tab]);
+  }, [community, contentPage, contentRetry, memberStatus, tab]);
 
   const memberCount = community?.memberCount;
   const owner = community?.owner;
+  const canModerateMembers =
+    membershipRole === 'OWNER' || membershipRole === 'MODERATOR';
   const handleJoin = () => {
     if (!community || membershipBusy) return;
     setMembershipBusy(true);
@@ -530,8 +548,55 @@ function CommunityDetail() {
             !contentError &&
             tab === 'members' &&
             members.length === 0 && (
-              <EmptyState>Todavía no hay miembros en esta comunidad.</EmptyState>
+              <EmptyState>
+                {memberStatus === 'ACTIVE'
+                  ? 'Todavía no hay miembros activos en esta comunidad.'
+                  : memberStatus === 'PENDING'
+                    ? 'No hay solicitudes pendientes.'
+                    : 'No hay miembros vetados.'}
+              </EmptyState>
             )}
+          {!contentLoading && !contentError && tab === 'members' && (
+            <div className="member-filters" aria-label="Filtrar miembros">
+              <button
+                type="button"
+                className={memberStatus === 'ACTIVE' ? 'is-active' : ''}
+                aria-pressed={memberStatus === 'ACTIVE'}
+                onClick={() => {
+                  setMemberStatus('ACTIVE');
+                  setContentPage(1);
+                }}
+              >
+                Activos
+              </button>
+              {canModerateMembers && (
+                <>
+                  <button
+                    type="button"
+                    className={memberStatus === 'PENDING' ? 'is-active' : ''}
+                    aria-pressed={memberStatus === 'PENDING'}
+                    onClick={() => {
+                      setMemberStatus('PENDING');
+                      setContentPage(1);
+                    }}
+                  >
+                    Pendientes
+                  </button>
+                  <button
+                    type="button"
+                    className={memberStatus === 'BANNED' ? 'is-active' : ''}
+                    aria-pressed={memberStatus === 'BANNED'}
+                    onClick={() => {
+                      setMemberStatus('BANNED');
+                      setContentPage(1);
+                    }}
+                  >
+                    Vetados
+                  </button>
+                </>
+              )}
+            </div>
+          )}
           {!contentLoading &&
             !contentError &&
             tab === 'members' &&
@@ -543,15 +608,19 @@ function CommunityDetail() {
                       name={member.profile.name}
                       photo={member.profile.profilePhoto}
                     />
-                    <span className="member-card__info">
+                    <Link
+                      className="member-card__info"
+                      to={`/profiles/${member.profileId}`}
+                      aria-label={`Ver perfil de ${member.profile.name}`}
+                    >
                       <strong>{member.profile.name}</strong>
                       <small>@{member.profile.username}</small>
+                    </Link>
+                    <span
+                      className={`member-card__role member-card__role--${member.role.toLowerCase()}`}
+                    >
+                      {ROLE_LABELS[member.role]}
                     </span>
-                    {member.role !== 'MEMBER' && (
-                      <span className="member-card__role">
-                        {ROLE_LABELS[member.role]}
-                      </span>
-                    )}
                     <time
                       className="member-card__since"
                       dateTime={member.joinedAt}
@@ -593,12 +662,18 @@ function CommunityDetail() {
             posts.map((post) => (
               <PostCard key={post.id} post={post} showCommunity={false} />
             ))}
-          {!contentLoading && !contentError && contentTotal > contentLimit && (
+          {!contentLoading &&
+            !contentError &&
+            contentTotal > contentLimit && (
             <Pagination
               page={contentPage}
               total={contentTotal}
               limit={contentLimit}
-              label="Paginación del contenido de la comunidad"
+              label={
+                tab === 'members'
+                  ? `Paginación de miembros ${memberStatus.toLowerCase()}`
+                  : 'Paginación del contenido de la comunidad'
+              }
               onPageChange={setContentPage}
             />
           )}

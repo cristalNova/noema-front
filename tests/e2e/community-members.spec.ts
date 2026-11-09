@@ -1,0 +1,142 @@
+import { expect, test, type Page } from '@playwright/test'
+
+const community = {
+  id: 1,
+  ownerId: 7,
+  owner: { id: 7, name: 'María López', profilePhoto: null },
+  name: 'Club de lectura contemporánea',
+  topic: 'Literatura',
+  description: 'Lecturas y conversaciones.',
+  isPremium: false,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  tags: [],
+  memberCount: 3,
+}
+
+const members = [
+  { profileId: 7, role: 'OWNER', name: 'María López', username: 'maria' },
+  { profileId: 8, role: 'MODERATOR', name: 'Luis Pérez', username: 'luis' },
+  { profileId: 9, role: 'MEMBER', name: 'Ana Gómez', username: 'ana' },
+]
+
+const tokenFor = (userId: string) => {
+  const payload = btoa(JSON.stringify({
+    sub: userId,
+    email: 'e2e@example.test',
+    roles: [],
+    permissions: [],
+    exp: Math.floor(Date.now() / 1000) + 3600,
+  }))
+  return `header.${payload}.signature`
+}
+
+function membership(member: typeof members[number], status: 'ACTIVE' | 'PENDING' | 'BANNED') {
+  return {
+    profileId: member.profileId,
+    communityId: 1,
+    role: member.role,
+    status,
+    joinedAt: '2026-01-02T00:00:00.000Z',
+    profile: {
+      id: member.profileId,
+      name: member.name,
+      username: member.username,
+      profilePhoto: null,
+    },
+  }
+}
+
+async function mockMembersPage(page: Page, userId: string) {
+  await page.addInitScript((token) => localStorage.setItem('noema.access_token', token), tokenFor(userId))
+  await page.route('**/profiles/me', (route) =>
+    route.fulfill({ json: { id: Number(userId), username: 'user', name: 'User' } }),
+  )
+  await page.route('**/notifications/unread-count', (route) =>
+    route.fulfill({ json: { count: 0 } }),
+  )
+  await page.route('**/communities/1', (route) => {
+    if (!['xhr', 'fetch'].includes(route.request().resourceType())) return route.fallback()
+    return route.fulfill({ json: community })
+  })
+  await page.route('**/articles**', (route) => {
+    if (!['xhr', 'fetch'].includes(route.request().resourceType())) return route.fallback()
+    return route.fulfill({ json: { data: [], total: 0, page: 1, limit: 20 } })
+  })
+  await page.route('**/posts**', (route) => {
+    if (!['xhr', 'fetch'].includes(route.request().resourceType())) return route.fallback()
+    return route.fulfill({ json: { data: [], total: 0, page: 1, limit: 20 } })
+  })
+  await page.route('**/profiles/8', (route) => route.fulfill({
+    json: { id: 8, username: 'luis', name: 'Luis Pérez', profilePhoto: null },
+  }))
+  await page.route('**/communities/1/members**', async (route) => {
+    const url = new URL(route.request().url())
+    const status = url.searchParams.get('status') ?? 'ACTIVE'
+    const pageNumber = Number(url.searchParams.get('page') ?? '1')
+    const limit = Number(url.searchParams.get('limit') ?? '1')
+    if (userId === '9' && status !== 'ACTIVE') {
+      await route.fulfill({ status: 403, json: { message: 'No autorizado' } })
+      return
+    }
+    const statusMembers = status === 'ACTIVE'
+      ? members
+      : members.filter((member) => member.profileId !== 9)
+    const pageItems = statusMembers.slice((pageNumber - 1) * limit, pageNumber * limit)
+    await route.fulfill({
+      json: {
+        data: pageItems.map((member) => membership(member, status as 'ACTIVE' | 'PENDING' | 'BANNED')),
+        total: statusMembers.length,
+        page: pageNumber,
+        limit,
+      },
+    })
+  })
+}
+
+test('owner can filter members, paginate, and navigate to the correct profile', async ({ page }) => {
+  await mockMembersPage(page, '7')
+  await page.goto('/communities/1')
+  await page.getByRole('tab', { name: /Miembros/ }).click()
+
+  await expect(page.getByRole('link', { name: 'Ver perfil de María López' })).toBeVisible()
+  await expect(page.getByRole('list', { name: 'Miembros de la comunidad' }).getByText('Propietario')).toBeVisible()
+  await expect(page.locator('time[datetime="2026-01-02T00:00:00.000Z"]')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Siguiente' })).toBeEnabled()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await expect(page.getByRole('link', { name: 'Ver perfil de Luis Pérez' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Anterior' })).toBeEnabled()
+  await page.getByRole('button', { name: 'Pendientes' }).click()
+  await expect(page.getByText('Pendientes')).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('list', { name: 'Miembros de la comunidad' }).getByText('Propietario')).toBeVisible()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await page.getByRole('link', { name: 'Ver perfil de Luis Pérez' }).click()
+  await expect(page).toHaveURL(/\/profiles\/8$/)
+})
+
+test('normal member only sees active members and API rejects privileged statuses', async ({ page }) => {
+  await mockMembersPage(page, '9')
+  await page.goto('/communities/1')
+  await page.getByRole('tab', { name: /Miembros/ }).click()
+
+  await expect(page.getByRole('button', { name: 'Activos' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pendientes' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Vetados' })).toHaveCount(0)
+  const statuses = await page.evaluate(async () => Promise.all(
+    ['PENDING', 'BANNED'].map(async (status) => {
+      const response = await fetch(`/communities/1/members?status=${status}`)
+      return response.status
+    }),
+  ))
+  expect(statuses).toEqual([403, 403])
+})
+
+test('moderator can access pending and banned member filters', async ({ page }) => {
+  await mockMembersPage(page, '8')
+  await page.goto('/communities/1')
+  await page.getByRole('tab', { name: /Miembros/ }).click()
+
+  await expect(page.getByRole('button', { name: 'Pendientes' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Vetados' })).toBeVisible()
+  await page.getByRole('button', { name: 'Vetados' }).click()
+  await expect(page.getByRole('list', { name: 'Miembros de la comunidad' }).getByText('Propietario')).toBeVisible()
+})
