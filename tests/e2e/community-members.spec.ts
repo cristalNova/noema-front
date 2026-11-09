@@ -33,6 +33,12 @@ const pendingMemberTwo: MemberFixture = {
   name: 'Diego León',
   username: 'diego',
 }
+const bannedMember: MemberFixture = {
+  profileId: 12,
+  role: 'MEMBER',
+  name: 'Elena Mora',
+  username: 'elena',
+}
 
 const tokenFor = (userId: string) => {
   const payload = btoa(JSON.stringify({
@@ -65,6 +71,7 @@ async function mockMembersPage(page: Page, userId: string) {
   const memberRecords = members.map((member) => membership(member, 'ACTIVE'))
   memberRecords.push(membership(pendingMember, 'PENDING'))
   memberRecords.push(membership(pendingMemberTwo, 'PENDING'))
+  memberRecords.push(membership(bannedMember, 'BANNED'))
   await page.addInitScript((token) => localStorage.setItem('noema.access_token', token), tokenFor(userId))
   await page.route('**/profiles/me', (route) =>
     route.fulfill({ json: { id: Number(userId), username: 'user', name: 'User' } }),
@@ -180,7 +187,7 @@ test('moderator can access pending and banned member filters', async ({ page }) 
   await expect(page.getByRole('button', { name: 'Pendientes' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Vetados' })).toBeVisible()
   await page.getByRole('button', { name: 'Vetados' }).click()
-  await expect(page.getByText('No hay miembros vetados.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Quitar veto' })).toBeVisible()
 })
 
 test('owner confirms moderation actions and updates rows without reloading', async ({ page }) => {
@@ -222,4 +229,19 @@ test('owner can reject and approve pending requests using the real mutation endp
   await page.getByRole('button', { name: 'Aprobar' }).click()
   await page.getByRole('dialog').getByRole('button', { name: 'Aprobar' }).click()
   await expect(page.getByRole('button', { name: 'Activos' })).toHaveAttribute('aria-pressed', 'true')
+})
+
+test('owner can remove a ban and return the member to active list', async ({ page }) => {
+  await mockMembersPage(page, '7')
+  await page.goto('/communities/1')
+  await page.getByRole('tab', { name: /Miembros/ }).click()
+  await page.getByRole('button', { name: 'Vetados' }).click()
+
+  await expect(page.getByRole('link', { name: 'Ver perfil de Elena Mora' })).toBeAttached()
+  await page.getByRole('button', { name: 'Quitar veto' }).click()
+  await expect(page.getByRole('dialog')).toContainText('volverá a ser un miembro activo')
+  await page.getByRole('dialog').getByRole('button', { name: 'Quitar veto' }).click()
+
+  await expect(page.getByRole('button', { name: 'Activos' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByText('Se quitó el veto a Elena Mora.')).toBeVisible()
 })

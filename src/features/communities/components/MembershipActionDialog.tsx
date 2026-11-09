@@ -6,6 +6,7 @@ export type MembershipAction =
   | 'promote'
   | 'demote'
   | 'ban'
+  | 'unban'
 
 interface MembershipActionDialogProps {
   action: MembershipAction
@@ -41,6 +42,11 @@ const ACTION_COPY: Record<MembershipAction, { title: string; description: string
     title: '¿Vetar a esta persona?',
     description: 'La persona quedará vetada de la comunidad y no podrá volver a unirse.',
     confirm: 'Vetar',
+  },
+  unban: {
+    title: '¿Quitar veto?',
+    description: 'Esta persona volverá a ser un miembro activo de la comunidad.',
+    confirm: 'Quitar veto',
   },
 }
 

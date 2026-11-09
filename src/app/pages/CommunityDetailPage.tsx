@@ -280,7 +280,9 @@ function CommunityDetail() {
               ? { role: 'MODERATOR' as const }
               : action === 'demote'
                 ? { role: 'MEMBER' as const }
-                : { status: 'BANNED' as const };
+                  : action === 'ban'
+                    ? { status: 'BANNED' as const }
+                    : { status: 'ACTIVE' as const };
         const updated = await updateCommunityMember(
           community.id,
           member.profileId,
@@ -314,6 +316,14 @@ function CommunityDetail() {
             : current,
         );
         setContentRetry((value) => value + 1);
+      } else if (action === 'unban' && memberStatus === 'BANNED') {
+        setMemberStatus('ACTIVE');
+        setContentPage(1);
+        setCommunity((current) =>
+          current
+            ? { ...current, memberCount: (current.memberCount ?? 0) + 1 }
+            : current,
+        );
       }
 
       const successMessages: Record<MembershipAction, string> = {
@@ -322,6 +332,7 @@ function CommunityDetail() {
         promote: `${member.profile.name} ahora es moderador.`,
         demote: `Se quitó el rol de moderador a ${member.profile.name}.`,
         ban: `${member.profile.name} ha sido vetado.`,
+        unban: `Se quitó el veto a ${member.profile.name}.`,
       };
       setMemberActionSuccess(successMessages[action]);
       setMemberAction(null);
@@ -741,7 +752,7 @@ function CommunityDetail() {
                     >
                       Desde {formatDate(member.joinedAt)}
                     </time>
-                    {canManageMember(member) && memberStatus !== 'BANNED' && (
+                    {canManageMember(member) && (
                       <div className="member-card__actions" aria-label={`Acciones para ${member.profile.name}`}>
                         {memberStatus === 'PENDING' ? (
                           <>
@@ -793,6 +804,15 @@ function CommunityDetail() {
                               Vetar
                             </button>
                           </>
+                        ) : memberStatus === 'BANNED' ? (
+                          <button
+                            type="button"
+                            className="button button--primary"
+                            disabled={memberActionPending}
+                            onClick={() => openMemberAction('unban', member)}
+                          >
+                            Quitar veto
+                          </button>
                         ) : null}
                       </div>
                     )}
