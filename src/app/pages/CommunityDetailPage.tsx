@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useRequireAuth } from '../../features/auth';
 import { useMyProfile } from '../../features/profiles';
 import { listArticles } from '../../features/articles/api/articlesApi';
@@ -109,6 +109,7 @@ function PageError({
 
 function CommunityDetail() {
   const { id } = useParams();
+  const location = useLocation();
   const communityId = Number(id);
   const isInvalidId = !Number.isInteger(communityId) || communityId < 1;
   const isAuthenticated = Boolean(tokenStorage.get());
@@ -133,6 +134,7 @@ function CommunityDetail() {
   const [membershipError, setMembershipError] = useState<unknown>(null);
   // GET /articles no incluye al autor: se resuelve por id (la comunidad ya es el contexto, no se repite).
   const { authorOf } = useArticleAttribution(articles);
+  const communityUpdated = new URLSearchParams(location.search).get('updated') === '1';
 
   useEffect(() => {
     if (isInvalidId) return undefined;
@@ -327,6 +329,11 @@ function CommunityDetail() {
       <Link className="back-link" to="/communities">
         ← Volver a comunidades
       </Link>
+      {communityUpdated && (
+        <p className="status-message" role="status">
+          Cambios guardados correctamente.
+        </p>
+      )}
       <article className="community-detail">
         <header className="community-hero">
           <div className="community-hero__copy">

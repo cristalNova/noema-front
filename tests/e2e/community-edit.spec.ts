@@ -22,8 +22,8 @@ async function api(page: Page, match: (pathname: string, method: string) => bool
 }
 
 interface Calls { patch: Record<string, unknown>[]; tags: string[][] }
-async function setup(page: Page, options: { userId?: number | null; patchStatus?: number; patchMessage?: string } = {}) {
-  const { userId = OWNER_ID, patchStatus = 200, patchMessage = '' } = options
+async function setup(page: Page, options: { userId?: number | null; patchStatus?: number; patchMessage?: string; tagsStatus?: number; tagsMessage?: string } = {}) {
+  const { userId = OWNER_ID, patchStatus = 200, patchMessage = '', tagsStatus = 200, tagsMessage = '' } = options
   const calls: Calls = { patch: [], tags: [] }
   if (userId !== null) {
     await page.addInitScript((value) => localStorage.setItem('noema.access_token', value), token(userId))
@@ -39,6 +39,7 @@ async function setup(page: Page, options: { userId?: number | null; patchStatus?
   await api(page, (p, m) => p === '/communities/1/tags' && m === 'PUT', (route) => {
     const { tags } = route.request().postDataJSON() as { tags: string[] }
     calls.tags.push(tags)
+    if (tagsStatus !== 200) return route.fulfill({ status: tagsStatus, json: { statusCode: tagsStatus, message: tagsMessage } })
     return route.fulfill({ json: [...tags].sort() })
   })
   await api(page, (p) => p === '/communities/1/members', (route) => route.fulfill({ json: empty }))
@@ -94,7 +95,8 @@ test('el propietario edita nombre, temática y etiquetas', async ({ page }) => {
   await page.getByLabel('Añadir etiqueta').press('Enter')
   await page.getByRole('button', { name: 'Guardar cambios' }).click()
 
-  await expect(page).toHaveURL(/\/communities\/1$/)
+  await expect(page).toHaveURL(/\/communities\/1\?updated=1$/)
+  await expect(page.getByText('Cambios guardados correctamente.')).toBeVisible()
   // Las etiquetas no van en el PATCH (el backend las recibe por su propio endpoint).
   expect(calls.patch).toEqual([{ name: 'Club de lectura contemporánea', topic: 'Literatura', description: '', isPremium: false }])
   expect(calls.tags).toEqual([['ensayo', 'poesía']])
@@ -105,8 +107,17 @@ test('si solo cambian los datos no se vuelven a enviar las etiquetas', async ({ 
   await page.goto('/communities/1/edit')
   await page.getByLabel('Temática').fill('Narrativa')
   await page.getByRole('button', { name: 'Guardar cambios' }).click()
-  await expect(page).toHaveURL(/\/communities\/1$/)
+  await expect(page).toHaveURL(/\/communities\/1\?updated=1$/)
   expect(calls.patch).toHaveLength(1)
+  expect(calls.tags).toHaveLength(0)
+})
+
+test('si no cambian datos ni etiquetas no envía peticiones de actualización', async ({ page }) => {
+  const calls = await setup(page)
+  await page.goto('/communities/1/edit')
+  await page.getByRole('button', { name: 'Guardar cambios' }).click()
+  await expect(page).toHaveURL(/\/communities\/1\?updated=1$/)
+  expect(calls.patch).toHaveLength(0)
   expect(calls.tags).toHaveLength(0)
 })
 
@@ -125,5 +136,18 @@ test('si el backend rechaza con 403 se explica que solo el propietario puede edi
   await page.goto('/communities/1/edit')
   await page.getByLabel('Temática').fill('Narrativa')
   await page.getByRole('button', { name: 'Guardar cambios' }).click()
-  await expect(page.getByRole('alert').filter({ hasText: 'Solo el propietario puede editar esta comunidad.' })).toBeVisible()
+  await expect(page.getByRole('alert').filter({ hasText: 'Solo el propietario puede modificar la comunidad' })).toBeVisible()
+})
+
+test('si fallan las etiquetas después del PATCH conserva el formulario y permite reintentar', async ({ page }) => {
+  const calls = await setup(page, { tagsStatus: 500, tagsMessage: 'No se pudieron actualizar las etiquetas' })
+  await page.goto('/communities/1/edit')
+  await page.getByLabel('Temática').fill('Narrativa')
+  await page.getByRole('button', { name: 'Eliminar etiqueta novela' }).click()
+  await page.getByRole('button', { name: 'Guardar cambios' }).click()
+  await expect(page.getByRole('alert').filter({ hasText: 'Los datos se guardaron, pero las etiquetas no' })).toBeVisible()
+  await expect(page.getByLabel('Temática')).toHaveValue('Narrativa')
+  await expect(page).toHaveURL(/\/communities\/1\/edit$/)
+  expect(calls.patch).toHaveLength(1)
+  expect(calls.tags).toHaveLength(1)
 })
