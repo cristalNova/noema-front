@@ -1,4 +1,4 @@
-import type { NewProfile } from './Profile'
+import type { NewProfile, Profile, ProfileChanges } from './Profile'
 
 export const SOCIAL_NETWORKS = [
   { key: 'twitter', label: 'X / Twitter' },
@@ -104,6 +104,54 @@ export function toNewProfile(values: ProfileFormValues): NewProfile {
     name: values.name.trim(),
     photoUrl: optionalUrl(values.photoUrl),
     bio: values.bio.trim() || undefined,
+    website: optionalUrl(values.website),
+    socialLinks,
+  }
+}
+
+/** Valores iniciales del formulario de edición a partir del perfil actual. */
+export function profileToFormValues(profile: Profile): ProfileFormValues {
+  return {
+    username: profile.username,
+    name: profile.name,
+    bio: profile.bio ?? '',
+    photoUrl: profile.photoUrl ?? '',
+    website: profile.website ?? '',
+    twitter: profile.socialLinks.twitter ?? '',
+    instagram: profile.socialLinks.instagram ?? '',
+    linkedin: profile.socialLinks.linkedin ?? '',
+    github: profile.socialLinks.github ?? '',
+  }
+}
+
+/** Como validateProfile, pero sin el username: en la edición no se puede cambiar. */
+export function validateProfileEdit(values: ProfileFormValues): ProfileErrors {
+  const errors = validateProfile(values)
+  delete errors.username
+  return errors
+}
+
+/**
+ * Formulario (ya validado) → cambios. Lo vacío pasa a null para que el servidor lo borre.
+ * Las redes que el formulario no maneja (creadas desde otro cliente) se conservan.
+ */
+export function toProfileChanges(values: ProfileFormValues, current: Profile): ProfileChanges {
+  const optionalUrl = (raw: string) => (raw.trim() ? normalizeUrl(raw) : null)
+
+  const known = new Set<string>(SOCIAL_NETWORKS.map(({ key }) => key))
+  const socialLinks: Record<string, string> = {}
+  for (const [network, url] of Object.entries(current.socialLinks)) {
+    if (!known.has(network)) socialLinks[network] = url
+  }
+  for (const { key } of SOCIAL_NETWORKS) {
+    const url = optionalUrl(values[key])
+    if (url) socialLinks[key] = url
+  }
+
+  return {
+    name: values.name.trim(),
+    photoUrl: optionalUrl(values.photoUrl),
+    bio: values.bio.trim() || null,
     website: optionalUrl(values.website),
     socialLinks,
   }

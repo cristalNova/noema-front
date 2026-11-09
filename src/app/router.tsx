@@ -16,6 +16,7 @@ import LoginPage from './pages/LoginPage'
 import ProfileNewPage from './pages/ProfileNewPage'
 import RegisterPage from './pages/RegisterPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { EditProfilePage } from './pages/EditProfilePage'
 import { NotificationsPage } from './pages/NotificationsPage'
 import { CreateCommunityPage } from './pages/CreateCommunityPage'
 import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
               { path: '/app/articles/:id', element: <ArticleDetailPage owned /> },
               { path: '/app/posts', element: <MyPostsPage /> },
               { path: '/app/notifications', element: <NotificationsPage /> },
+              { path: '/app/profile/edit', element: <EditProfilePage /> },
               { path: '/app/plans', element: <MyPlansPage /> },
               { path: '/app/plans/new', element: <NewPlanPage /> },
               { path: '/app/plans/:id/edit', element: <EditPlanPage /> },

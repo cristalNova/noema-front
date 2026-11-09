@@ -12,6 +12,9 @@ export function NavBar() {
   const { profile } = useMyProfile()
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
+  // Si la foto no carga (URL rota) se vuelve a la inicial; se reintenta al cambiar la URL.
+  const [failedPhoto, setFailedPhoto] = useState<string | null>(null)
+  const photoFailed = failedPhoto !== null && failedPhoto === profile?.photoUrl
   const [menuOpen, setMenuOpen] = useState(false)
   const accountRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -82,11 +85,15 @@ export function NavBar() {
               aria-haspopup="menu"
               aria-expanded={menuOpen}
               aria-controls="navbar-account-menu"
-              aria-label={`Cuenta de ${session.user.email}`}
+              aria-label={`Cuenta de ${profile?.name ?? session.user.email}`}
               onClick={() => setMenuOpen((open) => !open)}
             >
               <span className="navbar__avatar" aria-hidden="true">
-                {session.user.email.charAt(0).toUpperCase()}
+                {profile?.photoUrl && !photoFailed ? (
+                  <img src={profile.photoUrl} alt="" onError={() => setFailedPhoto(profile.photoUrl)} />
+                ) : (
+                  (profile?.name ?? session.user.email).charAt(0).toUpperCase()
+                )}
               </span>
               <svg className="navbar__chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="m6 9 6 6 6-6" />
@@ -94,8 +101,15 @@ export function NavBar() {
             </button>
             {menuOpen && (
               <div className="navbar__menu" id="navbar-account-menu" role="menu">
-                <p className="navbar__menu-email">{session.user.email}</p>
+                {profile ? (
+                  <p className="navbar__menu-email">
+                    <strong className="navbar__menu-name">{profile.name}</strong>@{profile.username}
+                  </p>
+                ) : (
+                  <p className="navbar__menu-email">{session.user.email}</p>
+                )}
                 {profile && <Link role="menuitem" className="navbar__menu-item" to={`/profiles/${profile.id}`} onClick={() => setMenuOpen(false)}>Mi perfil</Link>}
+                {profile && <Link role="menuitem" className="navbar__menu-item" to="/app/profile/edit" onClick={() => setMenuOpen(false)}>Editar perfil</Link>}
                 <Link role="menuitem" className="navbar__menu-item" to="/onboarding/interests" onClick={() => setMenuOpen(false)}>Mis intereses</Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/plans" onClick={() => setMenuOpen(false)}>
                   Mis planes
