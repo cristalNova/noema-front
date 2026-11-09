@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { CommunitiesPage } from './pages/CommunitiesPage'
+import { MyCommunitiesPage } from './pages/MyCommunitiesPage'
 import { CommunityDetailPage } from './pages/CommunityDetailPage'
 import { CreateDraftPage } from './pages/CreateDraftPage'
 import { EditCommunityPage } from './pages/EditCommunityPage'
@@ -95,6 +96,7 @@ export const router = createBrowserRouter([
             element: <RequireProfile />,
             children: [
               { path: '/communities/new', element: <CreateCommunityPage /> },
+              { path: '/communities/mine', element: <MyCommunitiesPage /> },
               { path: '/communities/:id/edit', element: <EditCommunityPage /> },
               { path: '/authors/:authorId/plans', element: <AuthorPlansPage /> },
             ],
@@ -109,4 +111,3 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
-

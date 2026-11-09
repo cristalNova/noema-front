@@ -3,6 +3,10 @@ import type { Paginated } from '../../../shared/types/Paginated'
 import { toPageQuery } from '../../../shared/utils/pagination'
 import type { Community, CommunityDetail, CreateCommunityDto, UpdateCommunityDto } from '../model/community.types'
 
+function normalizeCommunity<T extends Community>(community: T): T {
+  return { ...community, tags: community.tags ?? [] }
+}
+
 export interface CommunityListParams {
   page?: number;
   limit?: number;
@@ -22,23 +26,23 @@ export async function listCommunities(params: CommunityListParams = {}) {
       ...(params.search?.trim() ? { search: params.search.trim() } : {}),
     },
   });
-  return response.data;
+  return { ...response.data, data: response.data.data.map(normalizeCommunity) };
 }
 
 export async function getCommunity(id: number, signal?: AbortSignal) {
   const response = await httpClient.get<CommunityDetail>(`/communities/${id}`, { signal });
-  return response.data;
+  return normalizeCommunity(response.data);
 }
 
 export async function createCommunity(input: CreateCommunityDto): Promise<Community> {
   const response = await httpClient.post<Community>('/communities', input)
-  return response.data
+  return normalizeCommunity(response.data)
 }
 
 // PATCH /communities/:id: solo el propietario (403 para cualquier otro). 409 si el nombre ya existe.
 export async function updateCommunity(id: number, input: UpdateCommunityDto): Promise<CommunityDetail> {
   const response = await httpClient.patch<CommunityDetail>(`/communities/${id}`, input)
-  return response.data
+  return normalizeCommunity(response.data)
 }
 
 // PUT /communities/:id/tags: reemplaza todas las etiquetas (solo el propietario). Devuelve la lista normalizada.
@@ -50,6 +54,30 @@ export async function replaceCommunityTags(id: number, tags: string[]): Promise<
 export interface CommunityOption {
   id: number
   name: string
+}
+
+export interface MyCommunityMembership {
+  role: 'MEMBER' | 'MODERATOR' | 'OWNER'
+  community: Community
+}
+
+export async function listMyCommunities(params: { page?: number; limit?: number } = {}, signal?: AbortSignal) {
+  const { page, limit } = toPageQuery(params)
+  const response = await httpClient.get<Paginated<MyCommunityMembership>>('/communities/mine', {
+    params: { page, limit },
+    signal,
+  })
+  return {
+    ...response.data,
+    data: response.data.data.map((membership) => ({
+      ...membership,
+      community: normalizeCommunity(membership.community),
+    })),
+  }
+}
+
+export async function deleteCommunity(id: number): Promise<void> {
+  await httpClient.delete(`/communities/${id}`)
 }
 
 // GET /communities/mine devuelve membresías con la comunidad anidada, no comunidades.
