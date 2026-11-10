@@ -5,6 +5,8 @@ import { useMyProfile } from '../../features/profiles';
 import { listArticles } from '../../features/articles/api/articlesApi';
 import type { Article } from '../../features/articles/model/article.types';
 import { getCommunity } from '../../features/communities/api/communitiesApi';
+import { LeaveCommunityDialog } from '../../features/communities/components/LeaveCommunityDialog';
+import { useLeaveCommunity } from '../../features/communities/hooks/useLeaveCommunity';
 import { Pagination } from '../../shared/components/Pagination';
 import { ArticleByline } from '../../features/articles/components/ArticleByline';
 import { useArticleAttribution } from '../../features/articles/hooks/useArticleAttribution';
@@ -13,7 +15,6 @@ import {
   getMyMembership,
   kickCommunityMember,
   joinCommunity,
-  leaveCommunity,
   listCommunityMembers,
   updateCommunityMember,
 } from '../../features/communities/api/membersApi';
@@ -147,6 +148,8 @@ function CommunityDetail() {
   const [memberStatus, setMemberStatus] = useState<MemberStatusFilter>('ACTIVE');
   const [membershipBusy, setMembershipBusy] = useState(false);
   const [membershipError, setMembershipError] = useState<unknown>(null);
+  const [confirmingLeave, setConfirmingLeave] = useState(false);
+  const leaveRequest = useLeaveCommunity();
   const [memberAction, setMemberAction] = useState<{
     action: MembershipAction;
     member: Membership;
@@ -385,26 +388,22 @@ function CommunityDetail() {
       .finally(() => setMembershipBusy(false));
   };
 
+  // Salir pide confirmación en un diálogo; el motivo de un rechazo del servidor se muestra dentro de él.
   const handleLeave = () => {
-    if (
-      !community ||
-      membershipBusy ||
-      !window.confirm('¿Quieres salir de esta comunidad?')
-    )
-      return;
-    setMembershipBusy(true);
+    if (!community || membershipBusy) return;
     setMembershipError(null);
-    leaveCommunity(community.id)
-      .then(() => {
-        setMembership('NONE');
-        if (typeof memberCount === 'number')
-          setCommunity({
-            ...community,
-            memberCount: Math.max(0, memberCount - 1),
-          });
-      })
-      .catch((error: unknown) => setMembershipError(error))
-      .finally(() => setMembershipBusy(false));
+    setConfirmingLeave(true);
+  };
+
+  const confirmLeave = async (target: CommunityDetail): Promise<string | null> => {
+    setMembershipBusy(true);
+    const reason = await leaveRequest(target.id);
+    setMembershipBusy(false);
+    if (reason) return reason;
+    setMembership('NONE');
+    if (typeof memberCount === 'number')
+      setCommunity({ ...target, memberCount: Math.max(0, memberCount - 1) });
+    return null;
   };
 
   if (isInvalidId) {
@@ -564,6 +563,13 @@ function CommunityDetail() {
                 >
                   {membershipBusy ? 'Procesando…' : membershipLabel}
                 </button>
+                {confirmingLeave && (
+                  <LeaveCommunityDialog
+                    communityName={community.name}
+                    onClose={() => setConfirmingLeave(false)}
+                    onConfirm={() => confirmLeave(community)}
+                  />
+                )}
                 {membershipError !== null && (
                   <p className="form-error" role="alert">
                     {getErrorMessage(membershipError)}

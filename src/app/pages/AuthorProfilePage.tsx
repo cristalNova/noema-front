@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { profilesApi, type Profile } from '@/features/profiles'
+import { ConnectionsDialog, profilesApi, type Profile } from '@/features/profiles'
 import { exploreArticles } from '@/features/articles/api/articlesApi'
 import { EMPTY_FILTERS, EXPLORE_PAGE_SIZE } from '@/features/articles/model/exploreFilters'
 import { EssayCover } from '@/features/articles/components/EssayCover'
@@ -47,6 +47,7 @@ function AuthorProfile({ id }: { id: number }) {
   const [page, setPage] = useState(1)
   const [attempt, setAttempt] = useState(0)
   const [settled, setSettled] = useState<Settled | null>(null)
+  const [connectionsOpen, setConnectionsOpen] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -87,13 +88,14 @@ function AuthorProfile({ id }: { id: number }) {
           <div><p className="eyebrow">Noema · Perfil público</p><h1>{profile.name}</h1><p className="author-profile__username">@{profile.username}</p></div>
         </div>
         {profile.bio && <p className="author-profile__bio">{profile.bio}</p>}
-        <FollowControl key={profile.id} profileId={profile.id} followersCount={profile.followersCount} />
+        <FollowControl key={profile.id} profileId={profile.id} followersCount={profile.followersCount} onShowFollowers={() => setConnectionsOpen(true)} />
         {(website || socialLinks.length > 0) && <ul className="author-profile__links" aria-label="Enlaces del perfil">
           {website && <li><a href={website} target="_blank" rel="noopener noreferrer">Sitio web ↗</a></li>}
           {socialLinks.map(({ name, url }) => <li key={name}><a href={url ?? undefined} target="_blank" rel="noopener noreferrer">{name} ↗</a></li>)}
         </ul>}
         <Link className="button button--primary author-profile__plans" to={`/profiles/${profile.id}/plans`}>Ver planes</Link>
       </header>}
+      {profile && connectionsOpen && <ConnectionsDialog profileId={profile.id} profileName={profile.name} onClose={() => setConnectionsOpen(false)} />}
       {current === null && <p className="status-message" role="status">Cargando perfil…</p>}
       {current?.error && <div className="status-message status-message--error" role="alert"><p>{current.error}</p><button type="button" className="button button--secondary" onClick={() => setAttempt((value) => value + 1)}>Reintentar</button></div>}
       {current && !current.error && <>

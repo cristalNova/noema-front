@@ -1,4 +1,4 @@
-import type { PaginationParams } from '../types/Paginated'
+import type { Paginated, PaginationParams } from '../types/Paginated'
 
 export const MAX_PAGE_SIZE = 100
 
@@ -8,7 +8,17 @@ export function toPageQuery({ page = 1, limit = 20 }: PaginationParams = {}) {
 }
 
 /** Lee `?page=` de la URL; cualquier valor que no sea un entero positivo cuenta como la página 1. */
-export function readPageParam(params: URLSearchParams): number {
-  const page = Number(params.get('page'))
+export function readPageParam(params: URLSearchParams, name = 'page'): number {
+  const page = Number(params.get(name))
   return Number.isSafeInteger(page) && page > 0 ? page : 1
+}
+
+/**
+ * Pagina en el cliente una lista que el backend entrega completa. Una página fuera de rango
+ * se ajusta a la última (o a la primera si no hay elementos).
+ */
+export function paginate<T>(items: readonly T[], page: number, limit: number): Paginated<T> {
+  const lastPage = Math.max(1, Math.ceil(items.length / limit))
+  const current = Math.min(Math.max(1, page), lastPage)
+  return { data: items.slice((current - 1) * limit, current * limit), total: items.length, page: current, limit }
 }
