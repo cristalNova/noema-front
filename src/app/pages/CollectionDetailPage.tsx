@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useMyProfile } from '@/features/profiles'
 import { listMyArticles } from '@/features/articles/api/articlesApi'
-import { getCollection, type CollectionOption } from '@/features/articles/api/collectionsApi'
+import { deleteCollection, getCollection, type CollectionOption } from '@/features/articles/api/collectionsApi'
 import { ArticleStatusBadge } from '@/features/articles/components/ArticleStatusBadge'
+import { DeleteCollectionDialog } from '@/features/articles/components/DeleteCollectionDialog'
 import type { ArticleSummary } from '@/features/articles/model/article.types'
 import { orderCollectionEssays } from '@/features/articles/model/collectionEssays'
 import { ApiError, getErrorMessage } from '@/shared/api/apiError'
@@ -22,6 +23,12 @@ export function CollectionDetailPage() {
 
 function CollectionDetail({ collectionId }: { collectionId: number }) {
   const { profile } = useMyProfile()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [deleting, setDeleting] = useState(false)
+  const [pendingDelete, setPendingDelete] = useState(false)
+  const notice = location.state && typeof location.state === 'object' && 'notice' in location.state
+    && typeof location.state.notice === 'string' ? location.state.notice : ''
   const [collection, setCollection] = useState<CollectionOption | null>(null)
   const [articles, setArticles] = useState<ArticleSummary[]>([])
   const [error, setError] = useState<unknown>(null)
@@ -72,16 +79,37 @@ function CollectionDetail({ collectionId }: { collectionId: number }) {
     )
   }
 
+  async function confirmDelete(): Promise<string | null> {
+    setPendingDelete(true)
+    try {
+      await deleteCollection(collectionId)
+    } catch (reason) {
+      // Si ya no existía, el resultado buscado (que no esté) se cumple: se vuelve al listado igual.
+      if (!(reason instanceof ApiError && reason.status === 404)) {
+        setPendingDelete(false)
+        return getErrorMessage(reason)
+      }
+    }
+    navigate('/app/collections', { replace: true, state: { notice: `Se eliminó “${collection?.title}”.` } })
+    return null
+  }
+
   return (
     <main className="page-shell collection-detail">
       {back}
+      {notice && <p className="collection-detail__notice" role="status">{notice}</p>}
       <header className="collections-page__header">
         <div className="page-header">
           <p className="eyebrow">Noema · Colección</p>
           <h1>{collection.title}</h1>
           {collection.description && <p className="collection-detail__description">{collection.description}</p>}
         </div>
+        <div className="collection-detail__actions">
+          <Link className="button button--secondary" to={`/app/collections/${collectionId}/edit`}>Editar colección</Link>
+          <button type="button" className="button collection-delete-link" onClick={() => setDeleting(true)}>Eliminar colección</button>
+        </div>
       </header>
+      {deleting && <DeleteCollectionDialog title={collection.title} total={total} published={published} pending={pendingDelete} onClose={() => setDeleting(false)} onConfirm={confirmDelete} />}
       <section className="collections-page__sheet" aria-labelledby="collection-essays-heading">
         <div className="collections-page__heading">
           <h2 id="collection-essays-heading">Ensayos de la colección</h2>

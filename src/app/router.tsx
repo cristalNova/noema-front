@@ -8,6 +8,7 @@ import { MyArticlesPage } from './pages/MyArticlesPage'
 import { CollectionsPage } from './pages/CollectionsPage'
 import { NewCollectionPage } from './pages/NewCollectionPage'
 import { CollectionDetailPage } from './pages/CollectionDetailPage'
+import { EditCollectionPage } from './pages/EditCollectionPage'
 import { RequireAuth } from '@/features/auth'
 import { RequireProfile } from '@/features/profiles'
 import { AppLayout } from './layout/AppLayout'
@@ -18,7 +19,6 @@ import ProfileNewPage from './pages/ProfileNewPage'
 import RegisterPage from './pages/RegisterPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { EditProfilePage } from './pages/EditProfilePage'
-import { MyCommunitiesPage } from './pages/MyCommunitiesPage'
 import { NotificationsPage } from './pages/NotificationsPage'
 import { CreateCommunityPage } from './pages/CreateCommunityPage'
 import { PublishedArticlesPage } from './pages/PublishedArticlesPage'
@@ -50,6 +50,7 @@ export const router = createBrowserRouter([
               { path: '/app/collections', element: <CollectionsPage /> },
               { path: '/app/collections/new', element: <NewCollectionPage /> },
               { path: '/app/collections/:id', element: <CollectionDetailPage /> },
+              { path: '/app/collections/:id/edit', element: <EditCollectionPage /> },
               { path: '/app/articles/:id/edit', element: <CreateDraftPage /> },
               { path: '/app/articles/:id', element: <ArticleDetailPage owned /> },
               { path: '/app/posts', element: <MyPostsPage /> },

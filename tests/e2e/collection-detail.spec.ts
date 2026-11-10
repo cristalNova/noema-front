@@ -24,6 +24,7 @@ async function setup(page: Page) {
     const request = route.request()
     if (!['xhr', 'fetch'].includes(request.resourceType())) return route.fallback()
     const { pathname, searchParams } = new URL(request.url())
+    if (pathname === '/notifications/unread-count') return route.fulfill({ json: { unread: 0 } })
     if (pathname === '/profiles/me') return route.fulfill({ json: { id: ME, username: 'ana', name: 'Ana' } })
     if (pathname === '/collections') return route.fulfill({ json: searchParams.has('authorId') ? collections.filter((c) => c.authorId === ME) : collections })
     const one = pathname.match(/^\/collections\/(\d+)$/)

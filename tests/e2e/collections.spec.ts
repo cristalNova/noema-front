@@ -12,6 +12,7 @@ async function api(page: Page, pathname: string, handler: (route: Route) => void
 }
 async function setup(page: Page, collections: unknown[]) {
   await page.addInitScript((value) => localStorage.setItem('noema.access_token', value), token())
+  await api(page, '/notifications/unread-count', (route) => route.fulfill({ json: { unread: 0 } }))
   await api(page, '/profiles/me', (route) => route.fulfill({ json: profile }))
   await api(page, '/collections', (route) => {
     if (route.request().method() === 'GET') return route.fulfill({ json: collections })

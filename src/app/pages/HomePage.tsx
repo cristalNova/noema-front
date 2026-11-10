@@ -7,6 +7,17 @@ import { EssayCover } from '@/features/articles/components/EssayCover'
 import { HomeShelf } from './HomeBooks'
 import './HomePage.css'
 
+const DESTINATIONS = [
+  { to: '/communities', title: 'Explorar comunidades', description: 'Descubre espacios de lectura e ideas. Busca una comunidad y conoce sus detalles.' },
+  { to: '/app/articles', title: 'Mis ensayos', description: 'Retoma tus borradores, revisa lo publicado y organiza tus ensayos por estado.' },
+  { to: '/app/articles/new', title: 'Escribir un ensayo', description: 'Dale forma a tu próxima idea y guárdala como borrador para continuar después.' },
+  { to: '/app/collections', title: 'Mis colecciones', description: 'Reúne tus ensayos por tema o serie, edítalas cuando quieras y mantenlas en orden.' },
+  { to: '/tags', title: 'Explorar por temas', description: 'Encuentra ideas que te interesan y descubre los ensayos de cada tema.' },
+  { to: '/posts', title: 'Publicaciones', description: 'Sigue la conversación: lo que se comenta ahora entre quienes leen y escriben en Noema.' },
+  { to: '/app/plans', title: 'Mis planes', description: 'Crea planes para que tus lectores apoyen tu trabajo y accedan a tu contenido.' },
+  { to: '/app/notifications', title: 'Notificaciones', description: 'Nuevos seguidores, comentarios, reacciones y movimiento en tus comunidades.' },
+]
+
 export default function HomePage() {
   const { isAuthenticated } = useAuth()
   const { status, profile } = useMyProfile()
@@ -38,9 +49,9 @@ export default function HomePage() {
 
       <section className="home__destinations" aria-labelledby="home-explore">
         <h2 id="home-explore">Un lugar para cada idea.</h2><p className="home__section-description">Tu lectura y tu escritura, a tu manera.</p><div className="home__destination-grid">
-        <Link className="home__destination" to="/communities"><span className="home__number" aria-hidden="true">01</span><div><h3>Explorar comunidades</h3><p>Descubre espacios de lectura e ideas. Busca una comunidad y conoce sus detalles.</p></div><span aria-hidden="true">↗</span></Link>
-        <Link className="home__destination" to="/app/articles"><span className="home__number" aria-hidden="true">02</span><div><h3>Mis ensayos</h3><p>Retoma tus borradores, revisa lo publicado y organiza tus ensayos por estado.</p></div><span aria-hidden="true">↗</span></Link>
-        <Link className="home__destination" to="/app/articles/new"><span className="home__number" aria-hidden="true">03</span><div><h3>Escribir un ensayo</h3><p>Dale forma a tu próxima idea y guárdala como borrador para continuar después.</p></div><span aria-hidden="true">↗</span></Link>
+        {DESTINATIONS.map((destination, index) => (
+          <Link key={destination.to} className="home__destination" to={destination.to}><span className="home__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><div><h3>{destination.title}</h3><p>{destination.description}</p></div><span aria-hidden="true">↗</span></Link>
+        ))}
         </div>
       </section>
       {!isAuthenticated && <p className="home__access"><Link to="/login">Inicia sesión</Link> para acceder a tus ensayos, o <Link to="/register">crea tu cuenta</Link> para empezar.</p>}
