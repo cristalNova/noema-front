@@ -51,7 +51,9 @@ function getServerErrors(error: unknown, mode: Mode): FormErrors {
   if (!(error instanceof ApiError)) return { submit: error instanceof Error && error.message ? error.message : fallback }
   if (error.status === 409) return { name: 'Ya existe una comunidad con ese nombre' }
   if (error.status === 401) return { submit: 'Tu sesión no es válida. Inicia sesión de nuevo.' }
-  if (error.status === 403) return { submit: 'Solo el propietario puede editar esta comunidad.' }
+  if (error.status === 403) {
+    return { submit: error.messages.join(' ') || 'No tienes permisos para editar esta comunidad.' }
+  }
   if (error.status === 404) {
     return { submit: mode === 'edit' ? 'Esta comunidad ya no existe.' : 'Necesitas un perfil para crear una comunidad.' }
   }

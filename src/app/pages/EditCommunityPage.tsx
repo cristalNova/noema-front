@@ -9,6 +9,13 @@ import { ApiError, getErrorMessage } from '@/shared/api/apiError'
 const sameTags = (a: string[], b: string[]) =>
   a.length === b.length && [...a].map((tag) => tag.toLowerCase()).sort().join('\n') === [...b].map((tag) => tag.toLowerCase()).sort().join('\n')
 
+function sameDetails(community: CommunityDetail, values: CommunityFormValues) {
+  return community.name === values.name &&
+    community.topic === values.topic &&
+    (community.description ?? '') === values.description &&
+    community.isPremium === values.isPremium
+}
+
 export function EditCommunityPage() {
   const { id } = useParams()
   const communityId = Number(id)
@@ -47,7 +54,9 @@ function CommunityEditor({ communityId }: { communityId: number }) {
 
   async function save(values: CommunityFormValues) {
     // Se envía la descripción aunque esté vacía: así también se puede borrar.
-    await updateCommunity(communityId, { name: values.name, topic: values.topic, description: values.description, isPremium: values.isPremium })
+    if (!sameDetails(community!, values)) {
+      await updateCommunity(communityId, { name: values.name, topic: values.topic, description: values.description, isPremium: values.isPremium })
+    }
     if (!sameTags(values.tags, savedTags.current)) {
       try {
         savedTags.current = await replaceCommunityTags(communityId, values.tags)
@@ -55,7 +64,7 @@ function CommunityEditor({ communityId }: { communityId: number }) {
         throw new Error(`Los datos se guardaron, pero las etiquetas no: ${getErrorMessage(reason)} Vuelve a guardar para reintentarlo.`, { cause: reason })
       }
     }
-    navigate(backTo)
+    navigate(`${backTo}?updated=1`)
   }
 
   if (loading) return <main className="page-shell"><p className="status-message" role="status">Cargando comunidad…</p></main>

@@ -111,6 +111,7 @@ export function NavBar() {
                 {profile && <Link role="menuitem" className="navbar__menu-item" to={`/profiles/${profile.id}`} onClick={() => setMenuOpen(false)}>Mi perfil</Link>}
                 {profile && <Link role="menuitem" className="navbar__menu-item" to="/app/profile/edit" onClick={() => setMenuOpen(false)}>Editar perfil</Link>}
                 <Link role="menuitem" className="navbar__menu-item" to="/onboarding/interests" onClick={() => setMenuOpen(false)}>Mis intereses</Link>
+                {profile && <Link role="menuitem" className="navbar__menu-item" to="/communities/mine" onClick={() => setMenuOpen(false)}>Mis comunidades</Link>}
                 <Link role="menuitem" className="navbar__menu-item" to="/app/plans" onClick={() => setMenuOpen(false)}>
                   Mis planes
                 </Link>
@@ -136,4 +137,3 @@ export function NavBar() {
     </header>
   )
 }
-
