@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { deleteCommunity, listMyCommunities, type MyCommunityMembership } from '@/features/communities/api/communitiesApi'
 import { CommunityCard } from '@/features/communities/components/CommunityCard'
 import { DeleteCommunityDialog } from '@/features/communities/components/DeleteCommunityDialog'
+import { LeaveCommunityDialog } from '@/features/communities/components/LeaveCommunityDialog'
+import { useLeaveCommunity } from '@/features/communities/hooks/useLeaveCommunity'
 import { getErrorMessage } from '@/shared/api/apiError'
 import { Pagination } from '@/shared/components/Pagination'
 import './MyCommunitiesPage.css'
@@ -20,6 +22,8 @@ export function MyCommunitiesPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [deleteError, setDeleteError] = useState('')
   const [announcement, setAnnouncement] = useState('')
+  const leave = useLeaveCommunity()
+  const [leaving, setLeaving] = useState<MyCommunityMembership | null>(null)
 
   useEffect(() => {
     let active = true
@@ -68,6 +72,18 @@ export function MyCommunitiesPage() {
     }
   }
 
+  // Salir: el motivo de un rechazo del servidor (p. ej. ser propietario) se muestra dentro del diálogo.
+  async function confirmLeave(item: MyCommunityMembership): Promise<string | null> {
+    const id = item.community.id
+    const reason = await leave(id)
+    if (reason) return reason
+    setItems((current) => current.filter((entry) => entry.community.id !== id))
+    setTotal((current) => current - 1)
+    setAnnouncement(`Saliste de la comunidad ${item.community.name}.`)
+    if (items.length === 1 && page > 1) setPage((current) => current - 1)
+    return null
+  }
+
   return (
     <main className="page-shell my-communities">
       <header className="page-header">
@@ -100,6 +116,7 @@ export function MyCommunitiesPage() {
                 role={item.role}
                 deleting={deletingId === item.community.id}
                 onDelete={item.role === 'OWNER' ? () => openDelete(item) : undefined}
+                onLeave={item.role !== 'OWNER' ? () => setLeaving(item) : undefined}
               />
             ))}
           </div>
@@ -115,6 +132,13 @@ export function MyCommunitiesPage() {
             if (deletingId === null) setSelected(null)
           }}
           onConfirm={confirmDelete}
+        />
+      )}
+      {leaving && (
+        <LeaveCommunityDialog
+          communityName={leaving.community.name}
+          onClose={() => setLeaving(null)}
+          onConfirm={() => confirmLeave(leaving)}
         />
       )}
     </main>

@@ -7,6 +7,8 @@ interface CommunityCardProps {
   community: Community
   role?: CommunityRole
   onDelete?: () => void
+  /** Salir de la comunidad: se muestra solo a quien no es propietario (el backend no lo permite). */
+  onLeave?: () => void
   deleting?: boolean
 }
 
@@ -16,7 +18,7 @@ const ROLE_LABELS: Record<CommunityRole, string> = {
   OWNER: 'Propietario',
 }
 
-export function CommunityCard({ community, role, onDelete, deleting = false }: CommunityCardProps) {
+export function CommunityCard({ community, role, onDelete, onLeave, deleting = false }: CommunityCardProps) {
   return (
     <article className="community-card">
       <div className="community-card__topline">
@@ -37,6 +39,11 @@ export function CommunityCard({ community, role, onDelete, deleting = false }: C
         <Link className="button button--secondary" to={`/communities/${community.id}`}>
           Ver comunidad
         </Link>
+        {role && role !== 'OWNER' && onLeave && (
+          <button type="button" className="button button--secondary" aria-label={`Salir de ${community.name}`} onClick={onLeave}>
+            Salir
+          </button>
+        )}
         {role === 'OWNER' && onDelete && (
           <button type="button" className="button button--danger" onClick={onDelete} disabled={deleting}>
             {deleting ? 'Eliminando…' : 'Eliminar'}

@@ -38,7 +38,7 @@ export function CommunitiesPage() {
         <Link className="button button--primary communities-page__create-link" to="/communities/new">
           Crear comunidad
         </Link>
-        <Link className="button button--secondary communities-page__create-link" to="/app/communities">
+        <Link className="button button--secondary communities-page__create-link" to="/communities/mine">
           Mis comunidades
         </Link>
       </header>
