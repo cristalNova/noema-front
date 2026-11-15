@@ -119,13 +119,8 @@ function ArticleEditor({ articleId }: { articleId?: number }) {
                   </p>
                 )}
                 {fieldError('collectionId')}
-                {values.collectionId !== null && (
-                  <div className="draft-field draft-field--nested">
-                    <label htmlFor="collectionPosition">Posición en la colección <span className="draft-optional">Opcional</span></label>
-                    <input id="collectionPosition" name="collectionPosition" type="number" inputMode="numeric" min={1} step={1} value={values.collectionPosition ?? ''} onChange={(event) => editor.change('collectionPosition', event.target.value === '' ? null : Number(event.target.value))} aria-invalid={!!errors.collectionPosition} aria-describedby={`collectionPosition-hint${errors.collectionPosition ? ' collectionPosition-error' : ''}`} />
-                    <p className="draft-hint" id="collectionPosition-hint">1 es el primer lugar. Si la dejas vacía, el ensayo queda sin posición.</p>
-                    {fieldError('collectionPosition')}
-                  </div>
+                {values.collectionId !== null && (!editor.persistedId || values.collectionId !== editor.savedCollectionId) && (
+                  <p className="draft-hint">El ensayo se añadirá al final de la colección. Puedes cambiar el orden arrastrándolo desde «Editar colección».</p>
                 )}
               </div>
               <div className="draft-premium">

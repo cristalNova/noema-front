@@ -11,7 +11,7 @@ import { STATUS_LABELS } from '../model/myArticles'
 
 const EMPTY_DRAFT: DraftValues = {
   title: '', description: '', content: '', isPremium: false, communityId: null,
-  collectionId: null, collectionPosition: null, tags: [],
+  collectionId: null, tags: [],
 }
 
 function sameTags(a: string[], b: string[]) {
@@ -53,7 +53,6 @@ export function useDraftEditor(articleId?: number) {
         title: article.title, description: article.description ?? '', content: article.content,
         isPremium: article.isPremium, communityId: article.communityId,
         collectionId: article.collectionId ?? null,
-        collectionPosition: article.collectionId != null ? article.collectionPosition ?? null : null,
         tags: (article.articleTags ?? []).map(({ tag }) => tag).sort(),
       }
       setValues(loadedValues)
@@ -126,10 +125,10 @@ export function useDraftEditor(articleId?: number) {
     setStatusNotice('')
   }
 
-  // La posición solo tiene sentido dentro de una colección: al cambiarla o quitarla se reinicia.
+  // El servidor coloca el ensayo al final de la colección elegida; el orden se cambia al editar la colección.
   function changeCollection(collectionId: number | null) {
-    setValues((previous) => ({ ...previous, collectionId, collectionPosition: null }))
-    setErrors((previous) => ({ ...previous, collectionId: undefined, collectionPosition: undefined }))
+    setValues((previous) => ({ ...previous, collectionId }))
+    setErrors((previous) => ({ ...previous, collectionId: undefined }))
     setGeneralErrors([])
     setSaved(false)
     setStatusNotice('')
@@ -203,6 +202,7 @@ export function useDraftEditor(articleId?: number) {
 
   return {
     persistedId, hasUnsavedChanges, isChangingStatus, changeStatus, statusNotice,
+    savedCollectionId: lastSavedValues?.collectionId ?? null,
     articleStatus, isLoadingArticle, articleError,
     retryArticle: () => { setIsLoadingArticle(true); setArticleAttempt((value) => value + 1) },
     values, errors, generalErrors, isSaving, saved, change, changeCollection, save,

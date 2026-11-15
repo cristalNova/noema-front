@@ -1,0 +1,17 @@
+.collection-essay--sortable { grid-template-columns: 1.75rem 2.75rem minmax(0, 1fr) auto; gap: .85rem; background: var(--color-surface); }
+.collection-essay--sortable.collection-essay--hidden { background: #fbf8f2; }
+.collection-essay--dragging { opacity: .5; border-color: #8c4f2f; box-shadow: 0 6px 18px rgba(96, 67, 47, .18); }
+.collection-essay__grip { display: grid; place-items: center; width: 1.75rem; height: 2.5rem; border-radius: .5rem; color: var(--color-muted); cursor: grab; touch-action: none; user-select: none; }
+.collection-essay__grip:hover { background: #f0e8df; color: #60432f; }
+.collection-essay__grip:active { cursor: grabbing; }
+.collection-essay__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .5rem; }
+.collection-essay__notice { min-height: 1.4em; margin: 1rem 0 0; color: #3d542b; font-weight: 600; }
+.collection-essay__error { margin: .5rem 0 0; color: var(--color-danger); }
+.collection-essay--sortable :is(button, a, [data-drag-handle]):focus-visible { outline: 2px solid #8c4f2f; outline-offset: 3px; }
+@media (max-width: 600px) {
+  .collection-essay--sortable { grid-template-columns: 1.5rem 2.5rem minmax(0, 1fr); gap: .65rem; }
+  .collection-essay--sortable .collection-essay__actions { grid-column: 2 / -1; justify-content: flex-start; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .collection-essay--sortable { transition: box-shadow .15s ease, opacity .15s ease; }
+}

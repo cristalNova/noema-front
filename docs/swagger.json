@@ -2097,6 +2097,54 @@
         ]
       }
     },
+    "/collections/{id}/order": {
+      "put": {
+        "operationId": "CollectionsController_reorder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Algún artículo no pertenece a la colección o hay ids repetidos"
+          },
+          "403": {
+            "description": "La colección es de otro autor"
+          },
+          "404": {
+            "description": "Colección no encontrada"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Guardar el orden de los artículos de una colección propia",
+        "tags": [
+          "Colecciones"
+        ]
+      }
+    },
     "/communities/{communityId}/members": {
       "post": {
         "operationId": "MembershipsController_join",
@@ -5714,13 +5762,6 @@
             "type": "number",
             "nullable": true
           },
-          "collectionPosition": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 2147483647,
-            "nullable": true,
-            "description": "Posición del ensayo dentro de su colección. Requiere collectionId."
-          },
           "communityId": {
             "type": "number",
             "nullable": true
@@ -5751,13 +5792,6 @@
           "collectionId": {
             "type": "number",
             "nullable": true
-          },
-          "collectionPosition": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 2147483647,
-            "nullable": true,
-            "description": "Posición del ensayo dentro de su colección. Requiere collectionId."
           },
           "communityId": {
             "type": "number",
@@ -5807,6 +5841,30 @@
             "type": "string"
           }
         }
+      },
+      "ReorderCollectionDto": {
+        "type": "object",
+        "properties": {
+          "articleIds": {
+            "description": "Ids de los artículos de la colección en el orden deseado. Los que no se mencionen quedan al final, en su orden actual.",
+            "example": [
+              12,
+              7,
+              9
+            ],
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minItems": 1,
+            "maxItems": 1000,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "articleIds"
+        ]
       },
       "Membership": {
         "type": "object",

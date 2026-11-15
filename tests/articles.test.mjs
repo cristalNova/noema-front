@@ -107,9 +107,18 @@ test('los ensayos de una colección van por posición, sin posición al final y 
     { id: 6, collectionId: 5 },
     { id: 7, collectionId: null, collectionPosition: null },
   ]
-  const { positioned, unpositioned } = orderCollectionEssays(articles, 5)
-  assert.deepEqual(positioned.map((article) => article.id), [4, 1, 5])
-  assert.deepEqual(unpositioned.map((article) => article.id), [2, 6])
+  assert.deepEqual(orderCollectionEssays(articles, 5).map((article) => article.id), [4, 1, 5, 2, 6])
   assert.deepEqual(articles.map((article) => article.id), [1, 2, 3, 4, 5, 6, 7], 'no altera los datos originales')
-  assert.deepEqual(orderCollectionEssays(articles, 99), { positioned: [], unpositioned: [] })
+  assert.deepEqual(orderCollectionEssays(articles, 99), [])
+})
+
+test('moveItem mueve un elemento sin alterar la lista original', async () => {
+  const { moveItem } = await import(moduleUrl('../src/features/articles/model/collectionEssays.ts'))
+  const list = ['a', 'b', 'c', 'd']
+  assert.deepEqual(moveItem(list, 0, 2), ['b', 'c', 'a', 'd'])
+  assert.deepEqual(moveItem(list, 3, 1), ['a', 'd', 'b', 'c'])
+  assert.deepEqual(moveItem(list, 1, 1), list)
+  assert.deepEqual(moveItem(list, 0, 9), list, 'un destino fuera de rango no cambia nada')
+  assert.deepEqual(moveItem(list, -1, 2), list)
+  assert.deepEqual(list, ['a', 'b', 'c', 'd'])
 })

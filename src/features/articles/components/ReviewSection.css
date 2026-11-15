@@ -49,15 +49,29 @@
   font-weight: 600;
 }
 
-.reviews__note,
-.reviews__empty {
+.reviews__note {
   margin: 0.75rem 0 0;
   color: var(--color-muted);
   font-size: 0.9rem;
 }
 
 .reviews__empty {
+  padding: 1.75rem 1rem;
+  border: 1px dashed var(--color-line);
+  border-radius: 22px;
   text-align: center;
+}
+
+.reviews__empty h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+}
+
+.reviews__empty p {
+  margin: 0 auto 1.25rem;
+  max-width: 44ch;
+  color: var(--color-muted);
+  font-size: 0.9rem;
 }
 
 .reviews__list {
@@ -265,15 +279,139 @@
   white-space: pre-wrap;
 }
 
-.review__edit {
-  justify-self: start;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-accent);
-  font: inherit;
-  font-size: 0.875rem;
+/* Mi reseña: se distingue de las demás con un borde de acento y sus propias acciones. */
+.reviews__mine--own {
+  border: 1.5px solid var(--color-accent);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 5px var(--color-field);
+}
+
+.review--mine {
+  padding: 0.25rem 0;
+}
+
+.review__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.review__action {
+  min-height: 38px;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.85rem;
+}
+
+.review__action--danger {
+  background: #f6e3de;
+  color: #9c3d2c;
+}
+
+.review__action--danger:hover:not(:disabled) {
+  background: #9c3d2c;
+  color: #fffdf9;
+}
+
+.reviews__notice {
+  margin: 0 0 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  background: #e4ecd9;
+  color: #3d542b;
   font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
+}
+
+.reviews__notice:empty {
+  display: none;
+}
+
+.reviews__subheading {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.reviews__pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+/* Confirmación de eliminar */
+.review-dialog {
+  width: min(480px, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 2rem;
+  overflow-y: auto;
+  border: 1px solid var(--color-line);
+  border-radius: 24px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.review-dialog::backdrop {
+  background: rgb(34 33 43 / 55%);
+}
+
+.review-dialog h2 {
+  margin: 0 0 1rem;
+  font-size: 1.375rem;
+}
+
+.review-dialog p {
+  overflow-wrap: anywhere;
+}
+
+.review-dialog__preview {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: var(--color-field);
+}
+
+.review-dialog__preview p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  white-space: pre-wrap;
+}
+
+.review-dialog__error {
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  background: #fdecee;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
+
+.review-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.review-dialog__danger {
+  background: #9c3d2c;
+  color: #fffdf9;
+}
+
+.review-dialog :is(button, a):focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.reviews__mine--own .reviews__note {
+  margin: 0 0 1rem;
 }

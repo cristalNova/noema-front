@@ -3,14 +3,12 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useMyProfile } from '@/features/profiles'
 import { listMyArticles } from '@/features/articles/api/articlesApi'
 import { deleteCollection, getCollection, type CollectionOption } from '@/features/articles/api/collectionsApi'
-import { ArticleStatusBadge } from '@/features/articles/components/ArticleStatusBadge'
 import { DeleteCollectionDialog } from '@/features/articles/components/DeleteCollectionDialog'
+import { SortableEssayList } from '@/features/articles/components/SortableEssayList'
 import type { ArticleSummary } from '@/features/articles/model/article.types'
 import { orderCollectionEssays } from '@/features/articles/model/collectionEssays'
 import { ApiError, getErrorMessage } from '@/shared/api/apiError'
 import './CollectionsPage.css'
-
-const dateFormatter = new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' })
 
 export function CollectionDetailPage() {
   const { id } = useParams()
@@ -52,9 +50,9 @@ function CollectionDetail({ collectionId }: { collectionId: number }) {
     return () => controller.abort()
   }, [collectionId, attempt])
 
-  const { positioned, unpositioned } = useMemo(() => orderCollectionEssays(articles, collectionId), [articles, collectionId])
-  const total = positioned.length + unpositioned.length
-  const published = [...positioned, ...unpositioned].filter((article) => article.status === 'PUBLISHED').length
+  const ordered = useMemo(() => orderCollectionEssays(articles, collectionId), [articles, collectionId])
+  const total = ordered.length
+  const published = ordered.filter((article) => article.status === 'PUBLISHED').length
 
   const back = <Link className="back-link" to="/app/collections">← Mis colecciones</Link>
   if (loading) return <main className="page-shell collection-detail">{back}<p role="status" className="status-message">Cargando colección…</p></main>
@@ -118,44 +116,15 @@ function CollectionDetail({ collectionId }: { collectionId: number }) {
         {total === 0 ? (
           <div className="collections-page__empty">
             <h3>Esta colección aún no tiene ensayos.</h3>
-            <p>Elige esta colección al escribir o editar un ensayo y define en qué posición va.</p>
+            <p>Elige esta colección al escribir o editar un ensayo: se añadirá al final.</p>
             <Link className="button button--primary" to="/app/articles/new">Escribir un ensayo</Link>
           </div>
         ) : <>
-          <p className="collection-detail__legend">Este es el orden de la colección. Los lectores solo ven los ensayos publicados, en este mismo orden; los borradores y archivados quedan marcados.</p>
-          {positioned.length > 0 && <EssayList label="Ensayos en orden" articles={positioned} />}
-          {unpositioned.length > 0 && <>
-            <h3 className="collection-detail__subheading">Sin posición asignada</h3>
-            <p className="collection-detail__legend">Van al final, por antigüedad. Edita el ensayo para darles un lugar.</p>
-            <EssayList label="Ensayos sin posición" articles={unpositioned} />
-          </>}
+          <p className="collection-detail__legend">Agarra un ensayo de las tres rayitas (≡) y arrástralo para cambiar su lugar. El orden se guarda al soltar. Los lectores solo ven los ensayos publicados, en este mismo orden; los borradores y archivados quedan marcados.</p>
+          {/* key: si se recargan los ensayos, la lista parte de nuevo del orden del servidor. */}
+          <SortableEssayList key={ordered.map((article) => article.id).join(',')} collectionId={collectionId} essays={ordered} />
         </>}
       </section>
     </main>
-  )
-}
-
-function EssayList({ label, articles }: { label: string; articles: ArticleSummary[] }) {
-  return (
-    <ol className="collection-essays" aria-label={label}>
-      {articles.map((article) => (
-        <li key={article.id} className={`collection-essay${article.status === 'PUBLISHED' ? '' : ' collection-essay--hidden'}`}>
-          <span className={`collection-essay__position${article.collectionPosition == null ? ' collection-essay__position--none' : ''}`}>
-            {article.collectionPosition == null ? <span aria-label="Sin posición">–</span> : <><span className="collection-sr-only">Posición </span>{article.collectionPosition}</>}
-          </span>
-          <div className="collection-essay__body">
-            <h4><Link to={`/app/articles/${article.id}`}>{article.title}</Link></h4>
-            {article.description && <p>{article.description}</p>}
-            <div className="collection-essay__meta">
-              <ArticleStatusBadge status={article.status} />
-              {article.isPremium && <span className="premium-badge">Premium</span>}
-              <time dateTime={article.updatedAt}>Actualizado {dateFormatter.format(new Date(article.updatedAt))}</time>
-              {article.status !== 'PUBLISHED' && <span className="collection-essay__note">Los lectores aún no lo ven</span>}
-            </div>
-          </div>
-          <Link className="button button--secondary collection-essay__edit" to={`/app/articles/${article.id}/edit`} aria-label={`Editar “${article.title}”`}>Editar</Link>
-        </li>
-      ))}
-    </ol>
   )
 }

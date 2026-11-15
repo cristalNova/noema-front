@@ -37,6 +37,12 @@ export async function updateCollection(id: number, input: { title: string; descr
   return response.data
 }
 
+// PUT /collections/:id/order: 204. Recibe los ids de los ensayos en el orden deseado (posiciones 1..n).
+// 400 si alguno no pertenece a la colección o se repite; 403 si es de otro autor.
+export async function reorderCollectionEssays(id: number, articleIds: number[]): Promise<void> {
+  await httpClient.put(`/collections/${id}/order`, { articleIds })
+}
+
 // DELETE /collections/:id: 204. Los ensayos que contenía no se borran: quedan sin colección.
 export async function deleteCollection(id: number): Promise<void> {
   await httpClient.delete(`/collections/${id}`)

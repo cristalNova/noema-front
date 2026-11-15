@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useMyProfile } from '@/features/profiles'
 import { getErrorMessage, toApiError } from '@/shared/api/apiError'
-import { createReview, listReviews, updateReview } from '../api/reviewsApi'
+import { createReview, deleteReview, listReviews, updateReview } from '../api/reviewsApi'
 import type { Review, ReviewInput } from '../model/review.types'
 
 /**
@@ -62,6 +62,17 @@ export function useReviews(articleId: number) {
     }
   }
 
+  async function remove(review: Review): Promise<string | null> {
+    try {
+      await deleteReview(review.id)
+    } catch (reason) {
+      // Si ya no existía (otra pestaña, otro dispositivo), el resultado buscado se cumple igual.
+      if (toApiError(reason).status !== 404) return getErrorMessage(reason)
+    }
+    setReviews((previous) => (previous ?? []).filter((item) => item.id !== review.id))
+    return null
+  }
+
   return {
     reviews: reviews ?? [],
     isLoading: reviews === null && !loadError,
@@ -72,5 +83,6 @@ export function useReviews(articleId: number) {
     },
     create,
     update,
+    remove,
   }
 }
