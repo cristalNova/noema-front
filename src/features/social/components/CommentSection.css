@@ -191,6 +191,10 @@
   margin-top: 0.5rem;
 }
 
+.comment__reactions {
+  margin-top: 0.4rem;
+}
+
 .comment__actions {
   display: flex;
   flex-wrap: wrap;

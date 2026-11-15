@@ -1,4 +1,7 @@
 import { expect, test, type Page, type Route } from '@playwright/test'
+import { mockBackgroundApis } from './support'
+
+test.beforeEach(({ page }) => mockBackgroundApis(page))
 
 const monthly = { id: 9, authorId: null, communityId: 1, name: 'Acceso mensual', price: 5, currency: 'USD', billingPeriod: 'MONTHLY', isActive: true }
 const yearly = { id: 10, authorId: null, communityId: 1, name: 'Acceso anual', price: 480000, currency: 'COP', billingPeriod: 'YEARLY', isActive: true }

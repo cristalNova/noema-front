@@ -1,4 +1,7 @@
 import { expect, test, type Page, type Route } from '@playwright/test'
+import { mockBackgroundApis } from './support'
+
+test.beforeEach(({ page }) => mockBackgroundApis(page))
 
 const owner = {
   id: 1, ownerId: 7, name: 'Club de lectura', topic: 'Literatura', description: 'Lecturas.',

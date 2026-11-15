@@ -11,3 +11,6 @@
 .article-reader__locked .button { margin-top: 0; }
 .article-reader footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--color-line); font-size: 0.8rem; }
 .article-reader footer span { color: var(--color-muted); }
+.article-reader__reactions { display: grid; gap: 0.75rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--color-line); }
+.article-reader__reactions p { margin: 0; font-size: 0.9rem; font-weight: 600; }
+.article-reader__reactions + footer { margin-top: 1.5rem; padding-top: 0; border-top: 0; }

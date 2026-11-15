@@ -45,9 +45,11 @@
 .article-row-actions__status { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.4rem; }
 .article-action { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; border: 1px solid transparent; border-radius: var(--radius-pill); background: transparent; font: inherit; font-size: 0.8rem; font-weight: 700; text-decoration: none; white-space: nowrap; cursor: pointer; transition: background-color 0.15s, color 0.15s, border-color 0.15s; }
 .article-action:disabled { cursor: not-allowed; opacity: 0.45; }
-.article-action--edit { padding: 0.3rem 1.2rem; border-color: var(--color-ink); color: var(--color-ink); }
-.article-action--edit:hover { background: var(--color-ink); color: #fffdf9; }
-.article-action--delete { width: 34px; padding: 0; color: #9c3d2c; }
+.article-action--edit, .article-action--delete { width: 36px; min-height: 36px; padding: 0; }
+.article-action--edit svg, .article-action--delete svg { width: 18px; height: 18px; }
+.article-action--edit { color: var(--color-ink); }
+.article-action--edit:hover { background: #eadfd1; }
+.article-action--delete { color: #9c3d2c; }
 .article-action--delete:hover:not(:disabled) { background: #f6e3de; }
 .article-action--status { min-height: 30px; padding: 0.2rem 0.8rem; font-size: 0.76rem; font-weight: 600; }
 .article-action--to-published { border-color: #b9cda3; color: #3d542b; }

@@ -29,16 +29,34 @@ function ReviewCard({ review, mine = false, onEdit, onDelete }: { review: Review
             : <span className="review__avatar" aria-hidden="true">{initials(name)}</span>}
           <strong>{mine ? `${name} (tú)` : name}</strong>
         </Link>
-        <time className="review__date" dateTime={review.createdAt}>{dateFormatter.format(new Date(review.createdAt))}</time>
+        <div className="review__meta">
+          <time className="review__date" dateTime={review.createdAt}>{dateFormatter.format(new Date(review.createdAt))}</time>
+          {(onEdit || onDelete) && (
+            <div className="review__actions">
+              {onEdit && (
+                <button type="button" className="review__icon-button" aria-label="Editar mi reseña" title="Editar mi reseña" onClick={onEdit}>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                  </svg>
+                </button>
+              )}
+              {onDelete && (
+                <button type="button" className="review__icon-button review__icon-button--danger" aria-label="Eliminar mi reseña" title="Eliminar mi reseña" onClick={onDelete}>
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M3 6h18" />
+                    <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </header>
       <StarDisplay value={review.rating} />
       {review.reviewText && <p className="review__text">{review.reviewText}</p>}
-      {(onEdit || onDelete) && (
-        <div className="review__actions">
-          {onEdit && <button type="button" className="button button--secondary review__action" onClick={onEdit}>Editar mi reseña</button>}
-          {onDelete && <button type="button" className="button review__action review__action--danger" onClick={onDelete}>Eliminar mi reseña</button>}
-        </div>
-      )}
     </article>
   )
 }
@@ -149,7 +167,6 @@ function ReviewsContent({ articleId, authorId }: { articleId: number; authorId: 
         ) : (
           <div className="reviews__mine reviews__mine--own" ref={formBlock}>
             <h3 tabIndex={-1}>Tu reseña</h3>
-            <p className="reviews__note">Ya reseñaste este ensayo. Puedes editar tu reseña o eliminarla, pero no publicar otra.</p>
             <ReviewCard review={mine} mine onEdit={() => { setNotice(''); setEditing(true) }} onDelete={() => { setNotice(''); setDeleting(true) }} />
           </div>
         )

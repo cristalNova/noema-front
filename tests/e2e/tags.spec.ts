@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import { mockBackgroundApis } from './support'
+
+test.beforeEach(({ page }) => mockBackgroundApis(page))
 
 test('el catálogo muestra un estado vacío cuando aún no hay etiquetas', async ({ page }) => {
   await page.route('**/article-tags', (route) => route.fulfill({ json: [] }))

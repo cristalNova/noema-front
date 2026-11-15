@@ -7,6 +7,7 @@ import { ArticleByline } from '@/features/articles/components/ArticleByline'
 import { useArticleAttribution } from '@/features/articles/hooks/useArticleAttribution'
 import { ReviewSection } from '@/features/articles/components/ReviewSection'
 import { CommentSection } from '@/features/social/components/CommentSection'
+import { ReactionBar } from '@/features/social/components/ReactionBar'
 import type { Article } from '@/features/articles/model/article.types'
 import { ApiError, getErrorMessage } from '@/shared/api/apiError'
 import './ArticleDetailPage.css'
@@ -67,6 +68,7 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
           </header>
           <div className="article-reader__content">{article.content}</div>
           {article.locked && <aside className="article-reader__locked"><strong>Estás leyendo un adelanto premium.</strong><p>El contenido completo está disponible para quienes tienen una suscripción vigente al autor.</p><Link className="button button--primary" to={`/profiles/${article.authorId}/plans?essay=${id}`}>Suscribirme</Link></aside>}
+          {article.status === 'PUBLISHED' && <section className="article-reader__reactions" aria-label="Reacciones"><p>¿Qué te provocó este ensayo?</p><ReactionBar target="article" targetId={id} subject="Reacciones a este ensayo" showLabels /></section>}
           <footer><Link to={backTo}>Seguir explorando <span aria-hidden="true">↗</span></Link><span>Noema · Un espacio para las ideas</span></footer>
         </article>
         {/* El backend solo expone reseñas y comentarios de ensayos publicados. */}

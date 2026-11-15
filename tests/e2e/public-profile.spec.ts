@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import { mockBackgroundApis } from './support'
+
+test.beforeEach(({ page }) => mockBackgroundApis(page))
 
 const profile = { id: 7, username: 'ana', name: 'Ana Pérez', profilePhoto: 'https://example.test/ana.png', bio: 'Escritora de ciencia ficción.', website: 'https://example.test', socialLinks: { Instagram: 'https://instagram.com/ana' }, followersCount: 12, isVerified: false }
 

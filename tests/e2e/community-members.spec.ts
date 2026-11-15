@@ -1,4 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
+import { mockBackgroundApis } from './support'
+
+test.beforeEach(({ page }) => mockBackgroundApis(page))
 
 const community = {
   id: 1,

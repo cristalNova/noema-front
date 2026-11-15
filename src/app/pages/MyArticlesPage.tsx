@@ -62,7 +62,7 @@ export function MyArticlesPage() {
                     <td>
                       <div className="article-row-actions">
                         <div className="article-row-actions__main">
-                          <Link className="article-action article-action--edit" to={`/app/articles/${article.id}/edit`} aria-label={`Editar “${article.title}”`}>Editar</Link>
+                          <Link className="article-action article-action--edit" to={`/app/articles/${article.id}/edit`} aria-label={`Editar “${article.title}”`} title="Editar"><PencilIcon /></Link>
                           <button className="article-action article-action--delete" type="button" disabled={list.pendingId !== null} onClick={(event) => { trigger.current = event.currentTarget; setAction({ article, type: 'delete' }) }} aria-label={`Eliminar “${article.title}”`} title="Eliminar"><TrashIcon /></button>
                         </div>
                         <div className="article-row-actions__status">
@@ -81,6 +81,10 @@ export function MyArticlesPage() {
       {action && <ArticleActionDialog key={`${action.type}-${action.article.id}`} article={action.article} action={action.type} pending={list.pendingId !== null} onClose={closeDialog} onConfirm={(status) => list.mutate(action.article, status)} />}
     </main>
   )
+}
+
+function PencilIcon() {
+  return <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
 }
 
 function TrashIcon() {
