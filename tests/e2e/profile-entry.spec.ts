@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import { mockBackgroundApis } from './support'
+
+test.beforeEach(({ page }) => mockBackgroundApis(page))
 
 test('el ensayo permite abrir el perfil aunque la API omita el objeto author', async ({ page }) => {
   await page.route('**/articles/42', (route) => {

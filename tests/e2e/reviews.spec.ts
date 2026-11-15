@@ -1,4 +1,7 @@
 import { expect, test, type Page, type Route } from '@playwright/test'
+import { mockBackgroundApis } from './support'
+
+test.beforeEach(({ page }) => mockBackgroundApis(page))
 
 const me = { id: 8, userId: 8, username: 'lector', name: 'Lector Uno', isVerified: false, followersCount: 0, createdAt: '2026-01-01T00:00:00.000Z' }
 
@@ -66,7 +69,7 @@ test('al final del ensayo se ven las reseñas con su promedio y el formulario co
   // El texto es opcional: solo con calificación se publica.
   await stars(page, 3).check()
   await submit.click()
-  await expect(page.getByText('Ya reseñaste este ensayo')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Tu reseña' })).toBeVisible()
   expect(bodies).toEqual([{ articleId: 5, rating: 3 }])
   await expect(page.getByText('3 reseñas')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Publicar reseña' })).toHaveCount(0)
@@ -109,7 +112,7 @@ test('si ya reseñé, no se ofrece otra y se puede editar la existente', async (
   await page.goto('/articles/5')
 
   await expect(page.getByRole('button', { name: 'Publicar reseña' })).toHaveCount(0)
-  await expect(page.getByText('Ya reseñaste este ensayo')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Tu reseña' })).toBeVisible()
 
   await page.getByRole('button', { name: 'Editar mi reseña' }).click()
   await expect(stars(page, 2)).toBeChecked()

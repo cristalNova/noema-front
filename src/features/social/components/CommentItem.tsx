@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { Comment, CommentNode } from '../model/comment.types'
 import { wasEdited } from '../model/comments'
 import { CommentForm } from './CommentForm'
+import { ReactionBar } from './ReactionBar'
 
 const dateFormatter = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
 
@@ -66,6 +67,7 @@ export function CommentItem({ node, depth = 0, actions }: CommentItemProps) {
         ) : (
           <>
             <p className="comment__content">{comment.content}</p>
+            <div className="comment__reactions"><ReactionBar target="comment" targetId={comment.id} subject={`Reacciones al comentario de ${name}`} /></div>
             <div className="comment__actions">
               <button
                 type="button"

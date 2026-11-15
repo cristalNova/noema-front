@@ -1,4 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
+import { mockBackgroundApis } from './support'
+
+test.beforeEach(({ page }) => mockBackgroundApis(page))
 
 const author = { id: 7, username: 'ana', name: 'Ana Pérez', followersCount: 12, isVerified: false }
 const mine = { id: 2, username: 'samuel', name: 'Samuel', followersCount: 0, isVerified: false }

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { Post, PostAuthor } from '../model/post.types'
 import { POST_TYPE_LABELS, VISIBILITY_LABELS } from '../model/posts'
+import { ReactionBar } from './ReactionBar'
 import './PostCard.css'
 
 interface PostCardProps {
@@ -61,8 +62,8 @@ export function PostCard({ post, linkToDetail = true, showCommunity = true, acti
       {article && <p className="post-card__article">Sobre <Link to={`/articles/${article.id}`}>{article.title}</Link></p>}
 
       <footer className="post-card__footer">
+        <div className="post-card__reactions"><ReactionBar target="post" targetId={post.id} subject="Reacciones a esta publicación" /></div>
         <p className="post-card__stats">
-          <span>{count(post.likes, 'me gusta', 'me gusta')}</span>
           <span>{count(post.commentCount, 'respuesta', 'respuestas')}</span>
           <span>{count(post.repostCount, 'republicación', 'republicaciones')}</span>
         </p>
