@@ -25,6 +25,15 @@
 .collection-form-page__field textarea { resize: vertical; }
 .collection-form-page__field [aria-invalid="true"] { border-color: var(--color-danger); }
 .collection-form-page__field p, .collection-form-page__error { color: var(--color-danger); }
+.collection-form-page__actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
+.collection-form-page__actions a[aria-disabled="true"] { pointer-events: none; opacity: .5; }
+/* Acciones del autor sobre su colección y confirmación visual tras guardar. */
+.collection-detail__actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.collection-detail__actions .button { text-align: center; }
+.collection-detail__notice { margin: 0 0 1.25rem; padding: .75rem 1rem; border-radius: 12px; background: #e4ecd9; color: #3d542b; font-weight: 600; }
+.collection-delete-button { background: #9c3d2c; color: #fffdf9; }
+.collection-delete-link { background: #f6e3de; color: #9c3d2c; }
+.collection-delete-link:hover:not(:disabled) { background: #9c3d2c; color: #fffdf9; }
 /* Detalle de colección: un índice numerado, como la tabla de contenidos de un libro. */
 .collection-detail__description { white-space: pre-wrap; overflow-wrap: anywhere; }
 .collection-detail__legend { margin: 0 0 1.25rem; color: var(--color-muted); font-size: .9rem; }
@@ -48,5 +57,5 @@
   .collection-essay__position { width: 2.5rem; height: 2.5rem; }
   .collection-essay__edit { grid-column: 2; justify-self: start; }
 }
-:is(.collections-page, .collection-form-page, .collection-detail) :is(button, a, input, textarea):focus-visible { outline: 2px solid #8c4f2f; outline-offset: 3px; }
+:is(.collections-page, .collection-form-page, .collection-detail, .article-dialog) :is(button, a, input, textarea):focus-visible { outline: 2px solid #8c4f2f; outline-offset: 3px; }
 

@@ -31,3 +31,14 @@ export async function createCollection(input: { title: string; description: stri
   return response.data
 }
 
+// PATCH /collections/:id: solo su autor. 403 si es de otro, 404 si no existe.
+export async function updateCollection(id: number, input: { title: string; description: string }): Promise<CollectionOption> {
+  const response = await httpClient.patch<CollectionOption>(`/collections/${id}`, input)
+  return response.data
+}
+
+// DELETE /collections/:id: 204. Los ensayos que contenía no se borran: quedan sin colección.
+export async function deleteCollection(id: number): Promise<void> {
+  await httpClient.delete(`/collections/${id}`)
+}
+
