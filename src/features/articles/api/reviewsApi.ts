@@ -22,3 +22,8 @@ export async function updateReview(id: number, { rating, reviewText }: ReviewInp
   const { data } = await httpClient.patch<Review>(`/reviews/${id}`, { rating, reviewText })
   return data
 }
+
+/** DELETE /reviews/:id: 204. Solo su autor; 403 si es de otro perfil y 404 si ya no existe. */
+export async function deleteReview(id: number): Promise<void> {
+  await httpClient.delete(`/reviews/${id}`)
+}

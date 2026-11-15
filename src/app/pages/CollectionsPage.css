@@ -37,12 +37,10 @@
 /* Detalle de colección: un índice numerado, como la tabla de contenidos de un libro. */
 .collection-detail__description { white-space: pre-wrap; overflow-wrap: anywhere; }
 .collection-detail__legend { margin: 0 0 1.25rem; color: var(--color-muted); font-size: .9rem; }
-.collection-detail__subheading { margin: 2rem 0 .25rem; font-size: 1.05rem; }
 .collection-essays { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
 .collection-essay { display: grid; grid-template-columns: 3rem minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: 1px solid var(--color-line); border-radius: 22px; }
 .collection-essay--hidden { border-style: dashed; background: #fbf8f2; }
 .collection-essay__position { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; background: #f0e8df; color: #60432f; font-size: 1.05rem; font-weight: 700; }
-.collection-essay__position--none { border: 1px dashed #cfc3b5; background: transparent; color: var(--color-muted); }
 .collection-essay__body { min-width: 0; overflow-wrap: anywhere; }
 .collection-essay__body h4 { margin: 0; font-size: 1.05rem; line-height: 1.35; }
 .collection-essay__body h4 a { text-decoration: none; }

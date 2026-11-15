@@ -1,13 +1,16 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth, useRequireAuth } from '@/features/auth'
 import { useMyProfile } from '@/features/profiles'
 import { useReviews } from '../hooks/useReviews'
 import type { Review } from '../model/review.types'
 import { averageRating, findReviewBy } from '../model/reviews'
+import { DeleteReviewDialog } from './DeleteReviewDialog'
 import { ReviewForm } from './ReviewForm'
 import { StarDisplay } from './StarRating'
 import './ReviewSection.css'
+
+const PAGE_SIZE = 5
 
 const dateFormatter = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })
 
@@ -15,10 +18,10 @@ function initials(name: string) {
   return name.trim().split(/\s+/).slice(0, 2).map((part) => part[0] ?? '').join('').toUpperCase()
 }
 
-function ReviewCard({ review, mine = false, onEdit }: { review: Review; mine?: boolean; onEdit?: () => void }) {
+function ReviewCard({ review, mine = false, onEdit, onDelete }: { review: Review; mine?: boolean; onEdit?: () => void; onDelete?: () => void }) {
   const name = review.profile?.name ?? 'Usuario'
   return (
-    <article className="review">
+    <article className={mine ? 'review review--mine' : 'review'}>
       <header className="review__header">
         <Link className="review__author" to={`/profiles/${review.profileId}`}>
           {review.profile?.profilePhoto
@@ -30,7 +33,12 @@ function ReviewCard({ review, mine = false, onEdit }: { review: Review; mine?: b
       </header>
       <StarDisplay value={review.rating} />
       {review.reviewText && <p className="review__text">{review.reviewText}</p>}
-      {onEdit && <button type="button" className="review__edit" onClick={onEdit}>Editar mi reseña</button>}
+      {(onEdit || onDelete) && (
+        <div className="review__actions">
+          {onEdit && <button type="button" className="button button--secondary review__action" onClick={onEdit}>Editar mi reseña</button>}
+          {onDelete && <button type="button" className="button review__action review__action--danger" onClick={onDelete}>Eliminar mi reseña</button>}
+        </div>
+      )}
     </article>
   )
 }
@@ -41,13 +49,21 @@ function ReviewsContent({ articleId, authorId }: { articleId: number; authorId: 
   const requireAuth = useRequireAuth()
   const location = useLocation()
   const navigate = useNavigate()
-  const { reviews, isLoading, loadError, retry, create, update } = useReviews(articleId)
+  const { reviews, isLoading, loadError, retry, create, update, remove } = useReviews(articleId)
   const [editing, setEditing] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [pendingDelete, setPendingDelete] = useState(false)
+  const [notice, setNotice] = useState('')
+  const [page, setPage] = useState(1)
+  const formBlock = useRef<HTMLDivElement>(null)
 
   const myProfileId = profile?.id ?? null
   const mine = findReviewBy(reviews, myProfileId)
   const others = reviews.filter((review) => review !== mine)
   const average = averageRating(reviews)
+  const totalPages = Math.max(1, Math.ceil(others.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const visible = others.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
   const isOwnEssay = myProfileId !== null && myProfileId === authorId
   // Hasta saber si ya reseñé no se muestra el formulario: evitaría ofrecer una reseña duplicada.
   const canShowForm = !isLoading && !loadError
@@ -58,6 +74,26 @@ function ReviewsContent({ articleId, authorId }: { articleId: number; authorId: 
     if (profileStatus !== 'missing') return true
     navigate('/profile/new', { state: { from: location.pathname + location.search } })
     return false
+  }
+
+  async function confirmDelete(): Promise<string | null> {
+    if (!mine) return null
+    setPendingDelete(true)
+    const message = await remove(mine)
+    setPendingDelete(false)
+    if (message) return message
+    setDeleting(false)
+    setEditing(false)
+    setNotice('Se eliminó tu reseña.')
+    // La reseña (y el botón que abrió el diálogo) desaparecen: el foco pasa al formulario para escribir otra.
+    requestAnimationFrame(() => formBlock.current?.querySelector<HTMLElement>('h3')?.focus())
+    return null
+  }
+
+  function focusForm() {
+    const radio = formBlock.current?.querySelector<HTMLInputElement>('input[type="radio"]')
+    radio?.scrollIntoView({ block: 'center' })
+    radio?.focus()
   }
 
   return (
@@ -83,12 +119,14 @@ function ReviewsContent({ articleId, authorId }: { articleId: number; authorId: 
         </div>
       )}
 
+      <p className="reviews__notice" role="status">{notice}</p>
+
       {canShowForm && isOwnEssay && <p className="reviews__note">Este es tu ensayo: los demás lectores pueden calificarlo y reseñarlo.</p>}
 
       {canShowForm && !isOwnEssay && (mine ? (
         editing ? (
-          <div className="reviews__mine">
-            <h3>Editar mi reseña</h3>
+          <div className="reviews__mine reviews__mine--own" ref={formBlock}>
+            <h3 tabIndex={-1}>Editar mi reseña</h3>
             <ReviewForm
               key={mine.id}
               submitLabel="Guardar cambios"
@@ -100,32 +138,50 @@ function ReviewsContent({ articleId, authorId }: { articleId: number; authorId: 
               onSubmit={async (input) => {
                 const unchanged = input.rating === mine.rating && input.reviewText === (mine.reviewText ?? '')
                 const message = unchanged ? null : await update(mine, input)
-                if (!message) setEditing(false)
+                if (!message) {
+                  setEditing(false)
+                  setNotice(unchanged ? '' : 'Se guardaron los cambios en tu reseña.')
+                }
                 return message
               }}
             />
           </div>
         ) : (
-          <div className="reviews__mine">
-            <h3>Tu reseña</h3>
-            <p className="reviews__note">Ya reseñaste este ensayo. Puedes editar tu reseña, pero no publicar otra.</p>
-            <ReviewCard review={mine} mine onEdit={() => setEditing(true)} />
+          <div className="reviews__mine reviews__mine--own" ref={formBlock}>
+            <h3 tabIndex={-1}>Tu reseña</h3>
+            <p className="reviews__note">Ya reseñaste este ensayo. Puedes editar tu reseña o eliminarla, pero no publicar otra.</p>
+            <ReviewCard review={mine} mine onEdit={() => { setNotice(''); setEditing(true) }} onDelete={() => { setNotice(''); setDeleting(true) }} />
           </div>
         )
       ) : (
-        <div className="reviews__mine">
-          <h3>¿Qué te pareció?</h3>
-          <ReviewForm submitLabel="Publicar reseña" canInteract={ensureCanWrite} onSubmit={create} />
+        <div className="reviews__mine" ref={formBlock}>
+          <h3 tabIndex={-1}>¿Qué te pareció?</h3>
+          <ReviewForm submitLabel="Publicar reseña" canInteract={ensureCanWrite} onSubmit={async (input) => { const message = await create(input); if (!message) setNotice(''); return message }} />
           {!isAuthenticated && <p className="reviews__note">Para reseñar necesitas <Link to="/login" state={{ from: location.pathname + location.search }}>iniciar sesión</Link>.</p>}
         </div>
       ))}
 
-      {canShowForm && others.length === 0 && !mine && <p className="reviews__empty">Todavía no hay reseñas. Sé la primera persona en opinar.</p>}
-      {others.length > 0 && (
-        <ul className="reviews__list" aria-label="Reseñas de los lectores">
-          {others.map((review) => <li key={review.id}><ReviewCard review={review} /></li>)}
-        </ul>
+      {canShowForm && others.length === 0 && !mine && (
+        <div className="reviews__empty">
+          <h3>Este ensayo aún no tiene reseñas.</h3>
+          <p>{isOwnEssay ? 'Cuando alguien lo lea y lo califique, su opinión aparecerá aquí.' : 'Sé la primera persona en opinar: tu calificación ayuda a otros lectores a decidir qué leer.'}</p>
+          {!isOwnEssay && <button type="button" className="button button--primary" onClick={focusForm}>Escribir la primera reseña</button>}
+        </div>
       )}
+      {others.length > 0 && <>
+        {mine && <h3 className="reviews__subheading">Opiniones de otros lectores</h3>}
+        <ul className="reviews__list" aria-label="Reseñas de los lectores">
+          {visible.map((review) => <li key={review.id}><ReviewCard review={review} /></li>)}
+        </ul>
+        {totalPages > 1 && (
+          <nav className="reviews__pagination" aria-label="Paginación de reseñas">
+            <button type="button" className="button button--secondary" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>Anterior</button>
+            <span>Página {currentPage} de {totalPages}</span>
+            <button type="button" className="button button--secondary" disabled={currentPage === totalPages} onClick={() => setPage(currentPage + 1)}>Siguiente</button>
+          </nav>
+        )}
+      </>}
+      {deleting && mine && <DeleteReviewDialog review={mine} pending={pendingDelete} onClose={() => setDeleting(false)} onConfirm={confirmDelete} />}
     </section>
   )
 }

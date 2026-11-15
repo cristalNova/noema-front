@@ -28,6 +28,8 @@ async function mockApi(page: Page, path: string, handler: (route: Route, url: UR
 
 async function signIn(page: Page, hasProfile = true, profile = me) {
   await page.addInitScript((token) => localStorage.setItem('noema.access_token', token), tokenFor(String(profile.userId)))
+  // El NavBar consulta esto periódicamente: sin mock llega al backend real y su 401 cierra la sesión.
+  await mockApi(page, '**/notifications/unread-count', (route) => route.fulfill({ json: { unread: 0 } }))
   await mockApi(page, '**/profiles/me', (route) => hasProfile
     ? route.fulfill({ json: profile })
     : route.fulfill({ status: 404, json: { statusCode: 404, message: 'Perfil no encontrado' } }))
@@ -182,4 +184,82 @@ test('si otra pestaña ya reseñó, el 409 recarga y ofrece editar', async ({ pa
   await page.getByRole('button', { name: 'Publicar reseña' }).click()
   await expect(page.getByText('Desde otra pestaña')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Editar mi reseña' })).toBeVisible()
+})
+
+test('mi reseña se distingue y eliminarla pide confirmación y la quita sin recargar', async ({ page }) => {
+  const deleted: string[] = []
+  await signIn(page)
+  await mockEssay(page, [makeReview(1), makeReview(2, { profileId: me.id, profile: me, rating: 2, reviewText: 'Regular' })])
+  await mockApi(page, '**/reviews/2', (route) => {
+    deleted.push(route.request().method())
+    return route.fulfill({ status: 204 })
+  })
+  await page.goto('/articles/5')
+
+  const mine = page.locator('.reviews__mine--own')
+  await expect(mine).toContainText('Lector Uno (tú)')
+  await expect(mine.getByRole('button', { name: 'Editar mi reseña' })).toBeVisible()
+  await expect(page.getByText('2 reseñas')).toBeVisible()
+  // Las reseñas ajenas no tienen acciones.
+  await expect(page.getByRole('button', { name: 'Eliminar mi reseña' })).toHaveCount(1)
+
+  await mine.getByRole('button', { name: 'Eliminar mi reseña' }).click()
+  const dialog = page.getByRole('dialog', { name: '¿Eliminar tu reseña?' })
+  await expect(dialog).toContainText('Regular')
+  await dialog.getByRole('button', { name: 'Cancelar' }).click()
+  await expect(dialog).toBeHidden()
+  expect(deleted).toEqual([])
+  await expect(page.getByText('Regular')).toBeVisible()
+
+  await mine.getByRole('button', { name: 'Eliminar mi reseña' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Eliminar definitivamente' }).click()
+  expect(deleted).toEqual(['DELETE'])
+  await expect(page.getByRole('status').filter({ hasText: 'Se eliminó tu reseña.' })).toBeVisible()
+  await expect(page.getByText('Regular')).toHaveCount(0)
+  await expect(page.getByText('1 reseña')).toBeVisible()
+  await expect(page.getByText('Reseña 1', { exact: true })).toBeVisible()
+  // Sin la reseña vuelve el formulario para escribir otra.
+  await expect(page.getByRole('button', { name: 'Publicar reseña' })).toBeVisible()
+})
+
+test('si falla eliminar, el diálogo muestra el error y conserva la reseña', async ({ page }) => {
+  await signIn(page)
+  await mockEssay(page, [makeReview(2, { profileId: me.id, profile: me, rating: 2, reviewText: 'Regular' })])
+  await mockApi(page, '**/reviews/2', (route) => route.fulfill({ status: 403, json: { statusCode: 403, message: 'Esta reseña pertenece a otro perfil' } }))
+  await page.goto('/articles/5')
+
+  await page.getByRole('button', { name: 'Eliminar mi reseña' }).click()
+  const dialog = page.getByRole('dialog', { name: '¿Eliminar tu reseña?' })
+  await dialog.getByRole('button', { name: 'Eliminar definitivamente' }).click()
+  await expect(dialog.getByRole('alert')).toBeVisible()
+  await dialog.getByRole('button', { name: 'Cancelar' }).click()
+  await expect(page.getByText('Regular')).toBeVisible()
+})
+
+test('con muchas reseñas se paginan de 5 en 5', async ({ page }) => {
+  await signIn(page)
+  const many = Array.from({ length: 7 }, (_, index) => makeReview(index + 1, { profile: { id: 20 + index, username: `u${index}`, name: `Lector ${index + 1}` }, profileId: 20 + index }))
+  await mockEssay(page, many)
+  await page.goto('/articles/5')
+
+  const list = page.getByRole('list', { name: 'Reseñas de los lectores' })
+  await expect(list.getByRole('listitem')).toHaveCount(5)
+  await expect(list).toContainText('Lector 1')
+  await expect(list).not.toContainText('Lector 6')
+  await expect(page.getByText('Página 1 de 2')).toBeVisible()
+  await page.getByRole('button', { name: 'Anterior' }).isDisabled()
+  await page.getByRole('button', { name: 'Siguiente' }).click()
+  await expect(list.getByRole('listitem')).toHaveCount(2)
+  await expect(list).toContainText('Lector 7')
+  await expect(page.getByRole('button', { name: 'Siguiente' })).toBeDisabled()
+})
+
+test('sin reseñas se muestra un estado vacío que invita a escribir la primera', async ({ page }) => {
+  await signIn(page)
+  await mockEssay(page, [])
+  await page.goto('/articles/5')
+
+  await expect(page.getByRole('heading', { name: 'Este ensayo aún no tiene reseñas.' })).toBeVisible()
+  await page.getByRole('button', { name: 'Escribir la primera reseña' }).click()
+  await expect(stars(page, 1)).toBeFocused()
 })

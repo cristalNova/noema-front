@@ -23,6 +23,8 @@ interface Calls { articles: { method: string; body: Record<string, unknown> | nu
 async function setup(page: Page, options: { collections?: unknown[]; existing?: Record<string, unknown> } = {}) {
   const calls: Calls = { articles: [], tags: [] }
   await page.addInitScript((value) => localStorage.setItem('noema.access_token', value), token())
+  // El NavBar consulta este endpoint periódicamente: sin mock llega al backend real y su 401 cierra la sesión.
+  await api(page, (p) => p === '/notifications/unread-count', (route) => route.fulfill({ json: { unread: 0 } }))
   await api(page, (p) => p.endsWith('/profiles/me'), (route) => route.fulfill({ json: profile }))
   await api(page, (p) => p.endsWith('/communities/mine'), (route) => route.fulfill({ json: { data: [], total: 0, page: 1, limit: 100 } }))
   await api(page, (p) => p.endsWith('/collections'), (route) => route.fulfill({ json: options.collections ?? collections }))
@@ -44,7 +46,7 @@ async function setup(page: Page, options: { collections?: unknown[]; existing?: 
   return calls
 }
 
-test('asigna etiquetas con búsqueda y una colección con posición al guardar', async ({ page }) => {
+test('asigna etiquetas con búsqueda y una colección (sin pedir posición) al guardar', async ({ page }) => {
   const calls = await setup(page)
   await page.goto('/app/articles/new')
   await page.locator('#title').fill('Un ensayo ordenado')
@@ -67,15 +69,18 @@ test('asigna etiquetas con búsqueda y una colección con posición al guardar',
   await page.getByRole('button', { name: 'Quitar etiqueta ciencia' }).click()
   await expect(chips.getByRole('listitem')).toHaveCount(2)
 
-  // La posición solo aparece cuando hay una colección elegida.
+  // No hay campo de posición: el servidor lo coloca al final y se reordena desde «Editar colección».
   await expect(page.locator('#collectionPosition')).toHaveCount(0)
+  await expect(page.getByText('se añadirá al final de la colección')).toHaveCount(0)
   await page.locator('#collectionId').selectOption({ label: 'Serie A' })
-  await page.locator('#collectionPosition').fill('2')
+  await expect(page.locator('#collectionPosition')).toHaveCount(0)
+  await expect(page.getByText('se añadirá al final de la colección')).toBeVisible()
   await page.getByRole('button', { name: 'Guardar borrador' }).click()
 
   await expect(page.getByRole('button', { name: 'Cambios guardados' })).toBeVisible()
   expect(calls.articles).toHaveLength(1)
-  expect(calls.articles[0].body).toMatchObject({ title: 'Un ensayo ordenado', collectionId: 1, collectionPosition: 2 })
+  expect(calls.articles[0].body).toMatchObject({ title: 'Un ensayo ordenado', collectionId: 1 })
+  expect(calls.articles[0].body).not.toHaveProperty('collectionPosition')
   // Las etiquetas no van en el body del ensayo (el backend rechaza campos desconocidos).
   expect(calls.articles[0].body).not.toHaveProperty('tags')
   expect(calls.tags).toEqual([['filosofia', 'nueva idea']])
@@ -101,23 +106,14 @@ test('al editar carga etiquetas y colección y guarda solo los cambios de etique
   const chips = page.getByRole('list', { name: 'Etiquetas seleccionadas' })
   await expect(chips.getByRole('listitem')).toHaveText(['#arte×', '#ideas×'])
   await expect(page.locator('#collectionId')).toHaveValue('2')
-  await expect(page.locator('#collectionPosition')).toHaveValue('3')
+  await expect(page.locator('#collectionPosition')).toHaveCount(0)
+  // Ya estaba en esa colección: no se avisa de que se moverá al final.
+  await expect(page.getByText('se añadirá al final de la colección')).toHaveCount(0)
 
   await page.getByRole('button', { name: 'Quitar etiqueta arte' }).click()
   await page.getByRole('button', { name: 'Guardar cambios' }).click()
   await expect(page.getByRole('button', { name: 'Cambios guardados' })).toBeVisible()
-  expect(calls.articles[0]).toMatchObject({ method: 'PATCH', body: { collectionId: 2, collectionPosition: 3 } })
+  expect(calls.articles[0]).toMatchObject({ method: 'PATCH', body: { collectionId: 2 } })
+  expect(calls.articles[0].body).not.toHaveProperty('collectionPosition')
   expect(calls.tags).toEqual([['ideas']])
-})
-
-test('valida la posición antes de enviar', async ({ page }) => {
-  const calls = await setup(page)
-  await page.goto('/app/articles/new')
-  await page.locator('#title').fill('Un ensayo ordenado')
-  await page.locator('.draft-content').fill(content)
-  await page.locator('#collectionId').selectOption({ label: 'Serie B' })
-  await page.locator('#collectionPosition').fill('0')
-  await page.getByRole('button', { name: 'Guardar borrador' }).click()
-  await expect(page.getByRole('alert').filter({ hasText: 'al menos 1' })).toBeVisible()
-  expect(calls.articles).toHaveLength(0)
 })

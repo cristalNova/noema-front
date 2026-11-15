@@ -66,7 +66,7 @@ function EditCollection({ collectionId }: { collectionId: number }) {
       <header className="page-header">
         <p className="eyebrow">Noema · Espacio de escritura</p>
         <h1>Editar colección</h1>
-        <p>Actualiza el título y la descripción. Los ensayos de la colección no cambian.</p>
+        <p>Actualiza el título y la descripción. Los ensayos de la colección no cambian; su orden se cambia arrastrándolos en la página de la colección.</p>
       </header>
       <CollectionForm
         heading="Datos de la colección"

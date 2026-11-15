@@ -3,7 +3,6 @@ import type { DraftErrors, DraftField, DraftValues } from './article.types'
 
 export const MAX_TAGS = 10
 export const MAX_TAG_LENGTH = 50
-const MAX_COLLECTION_POSITION = 2147483647
 
 // Igual que el backend (trim + minúsculas) para que "NestJS" y "nestjs" sean la misma etiqueta.
 export function normalizeTag(raw: string): string {
@@ -18,12 +17,6 @@ export function validateDraft(input: DraftValues): DraftErrors {
   if (!input.content.trim()) errors.content = ['El contenido es obligatorio']
   if (input.tags.length > MAX_TAGS) errors.tags = [`Un ensayo admite máximo ${MAX_TAGS} etiquetas`]
   else if (input.tags.some((tag) => tag.length > MAX_TAG_LENGTH)) errors.tags = [`Cada etiqueta admite máximo ${MAX_TAG_LENGTH} caracteres`]
-  const position = input.collectionPosition
-  if (position !== null) {
-    if (input.collectionId === null) errors.collectionPosition = ['Elige una colección para definir la posición']
-    else if (!Number.isInteger(position) || position < 1) errors.collectionPosition = ['La posición debe ser un entero de al menos 1']
-    else if (position > MAX_COLLECTION_POSITION) errors.collectionPosition = ['La posición es demasiado grande']
-  }
   return errors
 }
 
@@ -33,14 +26,12 @@ export function getDraftErrors(error: unknown): { fields: DraftErrors; general: 
   const apiError = toApiError(error)
   const fields: DraftErrors = {}
   const general: string[] = []
-  // collectionPosition va antes que collectionId: su mensaje también menciona "colección".
   const patterns: [DraftField, RegExp][] = [
     ['title', /\btitle\b|título|titulo/i],
     ['description', /\bdescription\b|descripción|descripcion/i],
     ['content', /\bcontent\b|contenido/i],
     ['isPremium', /\bisPremium\b|premium/i],
     ['communityId', /\bcommunityId\b|comunidad/i],
-    ['collectionPosition', /\bcollectionPosition\b|posición|posicion/i],
     ['collectionId', /\bcollectionId\b|colección|coleccion/i],
     ['tags', /\btags?\b|etiqueta/i],
   ]

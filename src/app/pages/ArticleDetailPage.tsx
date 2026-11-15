@@ -62,7 +62,7 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
             {article.description && <p className="article-reader__description">{article.description}</p>}
             <ArticleByline author={authorOf(article)} community={communityOf(article)} />
             {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}><Link to={`/articles?tag=${encodeURIComponent(tag)}`}>#{tag}</Link></li>)}</ul>}
-            {article.collectionId != null && <p className="article-reader__collection">Colección: {article.collection?.title ?? `#${article.collectionId}`}{article.collectionPosition != null && ` · Posición ${article.collectionPosition}`}</p>}
+            {article.collectionId != null && <p className="article-reader__collection">Colección: {article.collection?.title ?? `#${article.collectionId}`}</p>}
             {owned && <Link className="button button--secondary" to={`/app/articles/${id}/edit`}>Editar ensayo</Link>}
           </header>
           <div className="article-reader__content">{article.content}</div>
