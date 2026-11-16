@@ -10,16 +10,64 @@
   padding: 40px 24px 32px;
 }
 
+.auth-layout__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  margin: 0 0 24px;
+}
+
 .auth-layout__brand {
   display: inline-block;
   text-decoration: none;
-  margin: 0 0 24px;
   font-family: var(--font-serif);
   font-size: 1.5rem;
 }
 
+/* Salida clara para quien no quiere iniciar sesión: vuelve al inicio sin perder nada. */
+.auth-layout__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px 0 12px;
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s, transform 0.12s;
+}
+
+.auth-layout__back:active {
+  transform: scale(0.97);
+}
+
+.auth-layout__back:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .auth-layout__back:hover {
+    background: var(--color-ink);
+    color: #fffdf9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-layout__back {
+    transition: none;
+  }
+}
+
 .auth-layout__hero h1 {
   margin: 0;
+  text-align: center;
+  text-wrap: balance;
   font-size: clamp(2.25rem, 9vw, 3rem);
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -46,4 +94,24 @@
 .auth-layout__alt a {
   color: var(--color-ink);
   font-weight: 600;
+}
+
+/* En pantallas amplias: una tarjeta completa y centrada, no una hoja pegada al borde inferior. */
+@media (min-width: 700px) {
+  .auth-layout {
+    justify-content: center;
+    max-width: 520px;
+    padding: 32px 24px;
+  }
+
+  .auth-layout__hero {
+    padding: 0 8px 28px;
+  }
+
+  .auth-layout__sheet {
+    flex: none;
+    padding: 36px 32px 32px;
+    border-radius: var(--radius-sheet);
+    box-shadow: 0 28px 60px -32px rgb(34 33 43 / 38%);
+  }
 }

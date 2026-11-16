@@ -8,6 +8,7 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout
+      backTo="/"
       heading="Crea tu cuenta y empieza a escribir"
       title="Regístrate"
       footer={

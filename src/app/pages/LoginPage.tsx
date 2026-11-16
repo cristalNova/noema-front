@@ -11,7 +11,8 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      heading="Qué bueno verte de nuevo"
+      backTo="/"
+      heading="¡Qué bueno verte de nuevo!"
       title="Inicia sesión"
       footer={
         <>
