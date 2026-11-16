@@ -27,6 +27,7 @@ import { TagsPage } from './pages/TagsPage'
 import { AuthorProfilePage } from './pages/AuthorProfilePage'
 import { MyPlansPage } from './pages/MyPlansPage'
 import { MyPostsPage } from './pages/MyPostsPage'
+import { NewPostPage } from './pages/NewPostPage'
 import { EditPlanPage, NewPlanPage } from './pages/PlanFormPage'
 import { PlansPage } from './pages/PlansPage'
 import { PostDetailPage } from './pages/PostDetailPage'
@@ -54,6 +55,7 @@ export const router = createBrowserRouter([
               { path: '/app/articles/:id/edit', element: <CreateDraftPage /> },
               { path: '/app/articles/:id', element: <ArticleDetailPage owned /> },
               { path: '/app/posts', element: <MyPostsPage /> },
+              { path: '/app/posts/new', element: <NewPostPage /> },
               { path: '/app/notifications', element: <NotificationsPage /> },
               { path: '/app/profile/edit', element: <EditProfilePage /> },
               { path: '/app/plans', element: <MyPlansPage /> },

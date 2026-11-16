@@ -114,25 +114,31 @@ test('con sesión se filtra por una de mis comunidades; sin sesión se explica p
   expect(seen.at(-1)).toBe('3')
 })
 
-test('el compositor valida el límite, aplica comunidad y publica sin recargar', async ({ page }) => {
+test('el icono de publicar lleva al formulario, que valida el límite, aplica comunidad y vuelve al feed con el post nuevo', async ({ page }) => {
   await signIn(page)
   await mockAuthors(page)
   await mockApi(page, '**/articles/mine**', (route) => route.fulfill({
     json: { data: [{ id: 12, title: 'Ensayo sobre ciencia', status: 'PUBLISHED' }], total: 1, page: 1, limit: 100 },
   }))
-  await mockApi(page, '**/posts?**', (route) => route.fulfill({
-    json: { data: [makePost(1)], total: 1, page: 1, limit: 20 },
-  }))
   let payload: Record<string, unknown> | null = null
+  const created = makePost(2, { owner: owner, ownerId: owner.id, content: 'Una idea nueva', communityId: 3, articleId: 12, commentCount: 0 })
+  // Tras publicar, el feed ya trae el post nuevo primero.
+  await mockApi(page, '**/posts?**', (route) => route.fulfill({
+    json: { data: payload ? [created, makePost(1)] : [makePost(1)], total: payload ? 2 : 1, page: 1, limit: 20 },
+  }))
   await mockApi(page, '**/posts', async (route) => {
     if (route.request().method() === 'POST') {
       payload = route.request().postDataJSON() as Record<string, unknown>
-      return route.fulfill({ json: makePost(2, { owner: owner, ownerId: owner.id, content: 'Una idea nueva', communityId: 3, articleId: 12 }) })
+      return route.fulfill({ json: created })
     }
-    return route.fulfill({ json: { data: [makePost(1)], total: 1, page: 1, limit: 20 } })
+    return route.fallback()
   })
 
   await page.goto('/posts')
+  // El feed ya no trae el formulario incrustado: solo el icono que lleva a él.
+  await expect(page.getByLabel('Contenido de la publicación')).toHaveCount(0)
+  await page.getByRole('link', { name: 'Publicar un post' }).click()
+  await expect(page).toHaveURL(/\/app\/posts\/new$/)
   const content = 'x'.repeat(2001)
   await page.getByLabel('Contenido de la publicación').fill(content)
   await expect(page.getByText('2001 / 2000')).toBeVisible()
@@ -142,6 +148,7 @@ test('el compositor valida el límite, aplica comunidad y publica sin recargar',
   await expect(page.getByLabel('Audiencia de publicación')).toHaveValue('COMMUNITY')
   await page.getByLabel('Ensayo asociado').selectOption('12')
   await page.getByRole('button', { name: 'Publicar' }).click()
+  await expect(page).toHaveURL(/\/posts$/)
   await expect(page.getByText('Una idea nueva', { exact: true })).toBeVisible()
   expect(payload).toEqual({ postType: 'ORIGINAL', content: 'Una idea nueva', visibility: 'COMMUNITY', articleId: 12, communityId: 3 })
 })

@@ -12,9 +12,13 @@ interface PostListProps {
   loadingMessage: string
   empty: ReactNode
   renderActions?: (post: Post) => ReactNode
+  /** Respuesta, repost o cita hechos desde una tarjeta de la lista. */
+  onPostCreated?: (created: Post) => void
+  /** Muestra bajo cada post sus primeras respuestas, con sangría. */
+  showThreads?: boolean
 }
 
-export function PostList({ list, label, loadingMessage, empty, renderActions }: PostListProps) {
+export function PostList({ list, label, loadingMessage, empty, renderActions, onPostCreated, showThreads = false }: PostListProps) {
   if (list.isLoading) return <p className="status-message" role="status">{loadingMessage}</p>
   if (list.error) {
     return (
@@ -31,7 +35,7 @@ export function PostList({ list, label, loadingMessage, empty, renderActions }: 
       <ul className="post-list" aria-label={label}>
         {list.posts.map((post) => (
           <li key={post.id}>
-            <PostCard post={post} actions={renderActions?.(post)} />
+            <PostCard post={post} actions={renderActions?.(post)} onCreated={onPostCreated} showThread={showThreads} />
           </li>
         ))}
       </ul>

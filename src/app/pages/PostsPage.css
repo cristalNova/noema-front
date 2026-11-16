@@ -27,6 +27,12 @@
   letter-spacing: -0.03em;
 }
 
+.posts-sheet__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
 .posts-sheet__heading span {
   color: var(--color-muted);
   font-size: 0.85rem;
