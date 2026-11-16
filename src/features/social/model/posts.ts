@@ -1,5 +1,8 @@
 import type { PostType, PostVisibility } from './post.types'
 
+/** Largo máximo del contenido de un post (lo valida el backend). */
+export const POST_MAX_LENGTH = 2000
+
 export const POST_TYPE_LABELS: Record<Exclude<PostType, 'ORIGINAL'>, string> = {
   REPLY: 'Respuesta',
   REPOST: 'Republicación',

@@ -3,14 +3,14 @@ import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import { listPosts } from '@/features/social/api/postsApi'
 import { PostFilters } from '@/features/social/components/PostFilters'
-import { PostComposer } from '@/features/social/components/PostComposer'
+import { NewPostLink } from '@/features/social/components/NewPostLink'
 import { PostList } from '@/features/social/components/PostList'
 import { PostsTabs } from '@/features/social/components/PostsTabs'
 import { usePagedPosts, type PostPageRequest } from '@/features/social/hooks/usePagedPosts'
 import { readPostFilters, type PostFilters as Filters } from '@/features/social/model/posts'
 import './PostsPage.css'
 
-function PostsFeed({ isAuthenticated }: { isAuthenticated: boolean }) {
+function PostsFeed() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { authorId, communityId } = readPostFilters(searchParams)
   const hasFilters = authorId !== undefined || communityId !== undefined
@@ -40,13 +40,18 @@ function PostsFeed({ isAuthenticated }: { isAuthenticated: boolean }) {
       <section className="posts-sheet" aria-labelledby="posts-feed-heading" aria-busy={list.isLoading}>
         <header className="posts-sheet__heading">
           <h2 id="posts-feed-heading">Feed</h2>
-          {!list.isLoading && !list.error && <span>{list.total} {list.total === 1 ? 'publicación' : 'publicaciones'}</span>}
+          <div className="posts-sheet__tools">
+            {!list.isLoading && !list.error && <span>{list.total} {list.total === 1 ? 'publicación' : 'publicaciones'}</span>}
+            <NewPostLink />
+          </div>
         </header>
         <PostFilters filters={{ authorId, communityId }} onChange={changeFilters} />
-        {isAuthenticated && <PostComposer onCreated={list.prepend} />}
         <PostList
           list={list}
           label="Feed de publicaciones"
+          showThreads
+          // Las respuestas no van al feed: se ven bajo su post, en el hilo. Los reposts y las citas sí.
+          onPostCreated={(created) => { if (created.postType !== 'REPLY') list.prepend(created) }}
           loadingMessage="Cargando publicaciones…"
           empty={hasFilters ? (
             <>
@@ -68,6 +73,6 @@ function PostsFeed({ isAuthenticated }: { isAuthenticated: boolean }) {
 
 /** Se remonta al cambiar la sesión: lo que el feed puede mostrar depende de quién lo consulta. */
 export function PostsFeedPage() {
-  const { session, isAuthenticated } = useAuth()
-  return <PostsFeed key={session?.user.id ?? 'visitor'} isAuthenticated={isAuthenticated} />
+  const { session } = useAuth()
+  return <PostsFeed key={session?.user.id ?? 'visitor'} />
 }

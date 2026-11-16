@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { NewPostLink } from '@/features/social/components/NewPostLink'
 import { PostDeleteDialog } from '@/features/social/components/PostDeleteDialog'
 import { PostList } from '@/features/social/components/PostList'
 import { PostsTabs } from '@/features/social/components/PostsTabs'
@@ -32,12 +33,17 @@ export function MyPostsPage() {
       <section className="posts-sheet" aria-labelledby="my-posts-heading" aria-busy={list.isLoading}>
         <header className="posts-sheet__heading">
           <h2 id="my-posts-heading">Tu actividad</h2>
-          {!list.isLoading && !list.error && <span>{list.total} {list.total === 1 ? 'publicación' : 'publicaciones'}</span>}
+          <div className="posts-sheet__tools">
+            {!list.isLoading && !list.error && <span>{list.total} {list.total === 1 ? 'publicación' : 'publicaciones'}</span>}
+            <NewPostLink />
+          </div>
         </header>
         <p className="posts-notice" role="status">{notice}</p>
         <PostList
           list={list}
           label="Mis publicaciones"
+          showThreads
+          onPostCreated={list.prepend}
           loadingMessage="Cargando tus publicaciones…"
           empty={(
             <>

@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '@/features/auth'
 import { listPostReplies } from '@/features/social/api/postsApi'
@@ -53,6 +53,8 @@ function Replies({ postId }: { postId: number }) {
 
 function PostDetail({ id }: { id: number }) {
   const { post, error, isUnavailable, isLoading, retry } = usePost(id)
+  // Al responder al post abierto se vuelve a pedir su lista de respuestas, para que la nueva aparezca sin recargar la página.
+  const [repliesVersion, setRepliesVersion] = useState(0)
 
   if (isUnavailable) return <PostUnavailable />
 
@@ -69,8 +71,8 @@ function PostDetail({ id }: { id: number }) {
       {post && (
         <>
           <h1 className="post-detail__title">Publicación de {post.owner.name}</h1>
-          <div className="post-detail__main"><PostCard post={post} linkToDetail={false} /></div>
-          <Replies postId={post.id} />
+          <div className="post-detail__main"><PostCard post={post} linkToDetail={false} onCreated={(created) => { if (created.postType === 'REPLY' && created.parentPostId === post.id) setRepliesVersion((value) => value + 1) }} /></div>
+          <Replies key={repliesVersion} postId={post.id} />
           <CommentSection target={{ kind: 'post', id: post.id }} />
         </>
       )}
