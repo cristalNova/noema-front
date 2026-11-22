@@ -8,12 +8,13 @@ import type { Page } from '@playwright/test'
  */
 export async function mockBackgroundApis(page: Page) {
   await page.route(
-    (url) => url.pathname === '/notifications/unread-count' || url.pathname.startsWith('/reactions/') || url.pathname.startsWith('/reviews/article/') || /^\/posts\/\d+(\/replies)?$/.test(url.pathname),
+    (url) => url.pathname === '/notifications/unread-count' || url.pathname === '/favorites' || url.pathname.startsWith('/reactions/') || url.pathname.startsWith('/reviews/article/') || /^\/posts\/\d+(\/replies)?$/.test(url.pathname),
     (route) => {
       const request = route.request()
       if (!['xhr', 'fetch'].includes(request.resourceType())) return route.fallback()
       const { pathname } = new URL(request.url())
       if (pathname === '/notifications/unread-count') return route.fulfill({ json: { unread: 0 } })
+      if (pathname === '/favorites') return route.fulfill({ json: { data: [], total: 0, page: 1, limit: Number(new URL(request.url()).searchParams.get('limit') ?? 10) } })
       if (pathname.startsWith('/reviews/')) return route.fulfill({ json: [] })
       if (pathname.endsWith('/replies')) return route.fulfill({ json: { data: [], total: 0, page: 1, limit: 3 } })
       if (pathname.startsWith('/posts/')) return route.fulfill({ status: 404, json: { statusCode: 404, message: 'Publicación no encontrada' } })
