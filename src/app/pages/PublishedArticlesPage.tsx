@@ -9,12 +9,14 @@ import { ArticleByline } from '../../features/articles/components/ArticleByline'
 import { AuthorFollowCard } from '@/features/profiles/components/AuthorFollowCard'
 import { FavoriteButton } from '@/features/reading/components/FavoriteButton'
 import { useFavorites } from '@/features/reading/hooks/useFavorites'
+import { useAuth } from '@/features/auth'
 import './PublishedArticlesPage.css'
 
 export function PublishedArticlesPage() {
   const list = useArticleExplorer()
   const options = useFilterOptions()
   const favorites = useFavorites()
+  const { isAuthenticated } = useAuth()
   // Reutiliza las listas de autores y comunidades que ya cargan los filtros.
   const { authorOf, communityOf } = useArticleAttribution(list.articles, {
     authors: options.authors.data, communities: options.communities.data,
@@ -38,7 +40,10 @@ export function PublishedArticlesPage() {
           <h1>Una idea lleva<br />a otra.</h1>
           <p>Ensayos para descubrir otras miradas. Abre uno y encuentra tu próxima lectura.</p>
         </div>
-        <Link className="button button--secondary" to="/app/articles">Mi espacio de escritura <span aria-hidden="true">↗</span></Link>
+        <div className="published-page__actions">
+          {isAuthenticated && <Link className="button button--secondary" to="/app/continue-reading">Continuar leyendo</Link>}
+          <Link className="button button--secondary" to="/app/articles">Mi espacio de escritura <span aria-hidden="true">↗</span></Link>
+        </div>
       </header>
       <section ref={library} className={`published-library${list.isLoading ? ' is-refreshing' : ''}`} aria-labelledby="published-heading" aria-busy={list.isLoading}>
         <header className="published-library__heading">

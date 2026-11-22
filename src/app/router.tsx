@@ -34,6 +34,7 @@ import { PostDetailPage } from './pages/PostDetailPage'
 import { PostsFeedPage } from './pages/PostsFeedPage'
 import { AuthorPlansPage } from './pages/AuthorPlansPage'
 import { MyFavoritesPage } from './pages/MyFavoritesPage'
+import { ContinueReadingPage } from './pages/ContinueReadingPage'
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
               { path: '/app/articles', element: <MyArticlesPage /> },
               { path: '/app/collections', element: <CollectionsPage /> },
               { path: '/app/favorites', element: <MyFavoritesPage /> },
+              { path: '/app/continue-reading', element: <ContinueReadingPage /> },
               { path: '/app/collections/new', element: <NewCollectionPage /> },
               { path: '/app/collections/:id', element: <CollectionDetailPage /> },
               { path: '/app/collections/:id/edit', element: <EditCollectionPage /> },

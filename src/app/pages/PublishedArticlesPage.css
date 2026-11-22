@@ -2,6 +2,7 @@
 .published-page__header .page-header { margin-bottom: 0; }
 .published-page__header h1 { letter-spacing: -0.055em; font-weight: 600; }
 .published-page__header .button { flex-shrink: 0; margin-bottom: 0.5rem; background: rgb(255 255 255 / 48%); }
+.published-page__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .6rem; }
 .published-library { padding: clamp(1.25rem, 4vw, 3rem); border-radius: var(--radius-sheet); background: var(--color-surface); }
 .published-library__heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-line); margin-bottom: 2rem; }
 .published-library__heading h2 { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; }
