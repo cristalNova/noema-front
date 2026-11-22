@@ -33,6 +33,7 @@ import { PlansPage } from './pages/PlansPage'
 import { PostDetailPage } from './pages/PostDetailPage'
 import { PostsFeedPage } from './pages/PostsFeedPage'
 import { AuthorPlansPage } from './pages/AuthorPlansPage'
+import { MyFavoritesPage } from './pages/MyFavoritesPage'
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
               { path: '/app/articles/new', element: <CreateDraftPage /> },
               { path: '/app/articles', element: <MyArticlesPage /> },
               { path: '/app/collections', element: <CollectionsPage /> },
+              { path: '/app/favorites', element: <MyFavoritesPage /> },
               { path: '/app/collections/new', element: <NewCollectionPage /> },
               { path: '/app/collections/:id', element: <CollectionDetailPage /> },
               { path: '/app/collections/:id/edit', element: <EditCollectionPage /> },

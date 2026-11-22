@@ -7,11 +7,14 @@ import { useFilterOptions } from '../../features/articles/hooks/useFilterOptions
 import { useArticleAttribution } from '../../features/articles/hooks/useArticleAttribution'
 import { ArticleByline } from '../../features/articles/components/ArticleByline'
 import { AuthorFollowCard } from '@/features/profiles/components/AuthorFollowCard'
+import { FavoriteButton } from '@/features/reading/components/FavoriteButton'
+import { useFavorites } from '@/features/reading/hooks/useFavorites'
 import './PublishedArticlesPage.css'
 
 export function PublishedArticlesPage() {
   const list = useArticleExplorer()
   const options = useFilterOptions()
+  const favorites = useFavorites()
   // Reutiliza las listas de autores y comunidades que ya cargan los filtros.
   const { authorOf, communityOf } = useArticleAttribution(list.articles, {
     authors: options.authors.data, communities: options.communities.data,
@@ -45,6 +48,7 @@ export function PublishedArticlesPage() {
         </header>
 
         <ArticleFilters filters={list.filters} options={options} onChange={list.setFilters} onClear={list.clearFilters} />
+        {favorites.error && <p role="alert">{favorites.error} <button type="button" onClick={favorites.retry}>Reintentar</button></p>}
 
         {status === 'loading' && <p className="status-message" role="status">Cargando ensayos publicados…</p>}
         {status === 'error' && <div className="status-message status-message--error" role="alert"><p>{list.error}</p><button type="button" className="button button--secondary" onClick={list.retry}>Reintentar</button></div>}
@@ -61,6 +65,7 @@ export function PublishedArticlesPage() {
             <Link className="published-essay__cover" to={`/articles/${article.id}`} aria-label={`Leer “${article.title}”`}><EssayCover article={article} /></Link>
             <div className="published-essay__meta"><span>{article.isPremium ? <span className="premium-badge">Premium</span> : 'Lectura abierta'}</span>{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' }).format(new Date(article.publishedAt))}</time>}</div>
             <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3>
+            <div className="published-essay__favorite"><FavoriteButton active={favorites.ids.has(article.id)} disabled={!favorites.ready || favorites.pending.has(article.id)} onToggle={() => void favorites.toggle(article.id)} /></div>
             <ArticleByline author={authorOf(article)} community={communityOf(article)} />
             <AuthorFollowCard authorId={article.authorId} />
             <p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>

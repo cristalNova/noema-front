@@ -116,6 +116,7 @@ export function NavBar() {
                   Mis planes
                 </Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/collections" onClick={() => setMenuOpen(false)}>Mis colecciones</Link>
+                <Link role="menuitem" className="navbar__menu-item" to="/app/favorites" onClick={() => setMenuOpen(false)}>Mis favoritos</Link>
                 <button type="button" role="menuitem" className="navbar__menu-item" onClick={handleLogout} disabled={loggingOut}>
                   Cerrar sesión
                 </button>
