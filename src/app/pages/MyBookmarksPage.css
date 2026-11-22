@@ -1,0 +1,13 @@
+.bookmarks-page { max-width: 1100px; }
+.bookmarks-page .page-header { margin-bottom: 2rem; }
+.bookmarks-page__sheet { padding: clamp(1.5rem, 5vw, 3rem); border-radius: var(--radius-sheet); background: var(--color-surface); }
+.bookmarks-page__list { margin: 0; padding: 0; list-style: none; }
+.bookmarks-page__list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid var(--color-line); }
+.bookmarks-page__entry { flex: 1 1 22rem; min-width: 0; }
+.bookmarks-page__origin { margin: 0 0 .8rem; color: var(--color-muted); font-size: .85rem; }
+.bookmarks-page__entry blockquote { margin: 0; padding-left: 1rem; border-left: 3px solid #c9ac47; font-family: var(--font-serif); font-size: 1.2rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bookmarks-page__note { margin: .8rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bookmarks-page__actions, .bookmarks-page__editor > div { display: flex; flex-wrap: wrap; gap: .6rem; }
+.bookmarks-page__editor { display: grid; gap: .5rem; margin-top: 1rem; }
+.bookmarks-page__editor textarea { width: min(100%, 35rem); padding: .7rem; border: 1px solid var(--color-line); border-radius: 10px; background: var(--color-paper); font: inherit; }
+.bookmarks-page__pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.5rem; }

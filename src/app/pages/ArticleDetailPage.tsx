@@ -13,6 +13,7 @@ import { ApiError, getErrorMessage } from '@/shared/api/apiError'
 import { FavoriteButton } from '@/features/reading/components/FavoriteButton'
 import { useFavorites } from '@/features/reading/hooks/useFavorites'
 import { useReadingProgress } from '@/features/reading/hooks/useReadingProgress'
+import { EssayBookmarks } from '@/features/reading/components/EssayBookmarks'
 import './ArticleDetailPage.css'
 
 export function ArticleDetailPage({ owned = false }: { owned?: boolean }) {
@@ -76,7 +77,7 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
             {owned && <Link className="button button--secondary" to={`/app/articles/${id}/edit`}>Editar ensayo</Link>}
           </header>
           {trackReading && <div className="article-reader__progress" aria-live="polite" aria-busy={!reading.ready}><label htmlFor="reading-progress">Progreso de lectura: {reading.percentage} %</label><progress id="reading-progress" max={100} value={reading.percentage} />{reading.percentage === 100 && <span>Ensayo completado</span>}{reading.error && <p role="alert">{reading.error} <button type="button" onClick={reading.retry}>Reintentar</button></p>}</div>}
-          <div className="article-reader__content" ref={contentRef}>{article.content}</div>
+          {trackReading ? <EssayBookmarks articleId={id} content={article.content} contentRef={contentRef} /> : <div className="article-reader__content" ref={contentRef}>{article.content}</div>}
           {article.locked && <aside className="article-reader__locked"><strong>Estás leyendo un adelanto premium.</strong><p>El contenido completo está disponible para quienes tienen una suscripción vigente al autor.</p><Link className="button button--primary" to={`/profiles/${article.authorId}/plans?essay=${id}`}>Suscribirme</Link></aside>}
           {article.status === 'PUBLISHED' && <section className="article-reader__reactions" aria-label="Reacciones"><p>¿Qué te provocó este ensayo?</p><ReactionBar target="article" targetId={id} subject="Reacciones a este ensayo" showLabels /></section>}
           <footer><Link to={backTo}>Seguir explorando <span aria-hidden="true">↗</span></Link><span>Noema · Un espacio para las ideas</span></footer>
