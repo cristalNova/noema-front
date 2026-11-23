@@ -116,6 +116,7 @@ export function NavBar() {
                   Mis planes
                 </Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/subscriptions" onClick={() => setMenuOpen(false)}>Mis suscripciones</Link>
+                <Link role="menuitem" className="navbar__menu-item" to="/app/payments" onClick={() => setMenuOpen(false)}>Historial de pagos</Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/collections" onClick={() => setMenuOpen(false)}>Mis colecciones</Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/favorites" onClick={() => setMenuOpen(false)}>Mis favoritos</Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/continue-reading" onClick={() => setMenuOpen(false)}>Continuar leyendo</Link>
