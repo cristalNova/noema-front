@@ -22,6 +22,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const enabled = userId !== null && status === 'ready'
 
   const [counted, setCounted] = useState<Counted | null>(null)
+  const [held, setHeld] = useState(0)
   // Sube con cada ajuste local: una respuesta del servidor pedida antes ya está desactualizada.
   const version = useRef(0)
 
@@ -73,12 +74,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     setCounted({ userId, count: 0 })
   }, [userId])
 
+  const hold = useCallback((delta: number) => setHeld((previous) => Math.max(0, previous + delta)), [])
+
   // Un conteo guardado de otro usuario (cierre de sesión y nuevo ingreso) no se muestra.
-  const unread = enabled && counted?.userId === userId ? counted.count : 0
+  const unread = enabled && counted?.userId === userId ? Math.max(0, counted.count - held) : 0
 
   const value = useMemo<UnreadContextValue>(
-    () => ({ unread, refresh, adjust, clear }),
-    [unread, refresh, adjust, clear],
+    () => ({ unread, refresh, adjust, clear, hold }),
+    [unread, refresh, adjust, clear, hold],
   )
 
   return <UnreadContext.Provider value={value}>{children}</UnreadContext.Provider>

@@ -9,11 +9,12 @@ interface NotificationItemProps {
   notification: AppNotification
   /** Se llama solo con notificaciones no leídas. */
   onMarkRead: (id: number) => void
+  onDelete: (notification: AppNotification, item: HTMLLIElement | null) => void
 }
 
 const dateFormat = new Intl.DateTimeFormat('es-CO', { dateStyle: 'long', timeStyle: 'short' })
 
-export function NotificationItem({ notification, onMarkRead }: NotificationItemProps) {
+export function NotificationItem({ notification, onMarkRead, onDelete }: NotificationItemProps) {
   const { id, actor, isRead, createdAt } = notification
   const { actorName, action, href } = describeNotification(notification)
   const item = useRef<HTMLLIElement>(null)
@@ -68,6 +69,10 @@ export function NotificationItem({ notification, onMarkRead }: NotificationItemP
               <span className="notification__sr"> la notificación de {actorName}</span>
             </button>
           )}
+          <button type="button" className="notification__delete" onClick={() => onDelete(notification, item.current)}>
+            Eliminar
+            <span className="notification__sr"> la notificación de {actorName}</span>
+          </button>
         </div>
       </div>
       {!isRead && <span className="notification__dot" aria-hidden="true" />}
