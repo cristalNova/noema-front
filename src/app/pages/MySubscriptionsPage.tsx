@@ -92,6 +92,7 @@ export function MySubscriptionsPage() {
                       <p className="subscription__price">
                         <strong>{formatPlanPrice(plan.price)}</strong> {plan.currency} / {BILLING_PERIOD_UNITS[plan.billingPeriod]}
                         {' · '}{ownerLink(subscription)}
+                        {' · '}<Link to={`/app/payments?subscription=${subscription.id}`}>Ver pagos</Link>
                       </p>
                       <dl className="subscription__dates">
                         <div><dt>Inicio</dt><dd><time dateTime={subscription.startDate}>{formatSubscriptionEnd(subscription.startDate)}</time></dd></div>
