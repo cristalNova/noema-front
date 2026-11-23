@@ -5,8 +5,6 @@ import type { AppNotification } from '../model/Notification'
 import type { NotificationDto } from '../model/notificationDto'
 import { toNotificationPage } from '../model/notificationMappers'
 
-// Pendiente (otras HU): DELETE /:id
-
 export const notificationsApi = {
   /** GET /notifications: las del usuario autenticado, de la más reciente a la más antigua. */
   async list(params: PaginationParams = {}, signal?: AbortSignal): Promise<Paginated<AppNotification>> {
@@ -35,5 +33,10 @@ export const notificationsApi = {
   async markAllAsRead(): Promise<number> {
     const { data } = await httpClient.post<{ updated: number }>('/notifications/read-all')
     return data.updated
+  },
+
+  /** DELETE /notifications/:id. Responde 404 si ya no existe o es de otra persona. */
+  async remove(id: number): Promise<void> {
+    await httpClient.delete(`/notifications/${id}`)
   },
 }

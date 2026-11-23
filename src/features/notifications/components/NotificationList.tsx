@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import { Pagination } from '@/shared/components/Pagination'
+import type { AppNotification } from '../model/Notification'
 import type { useNotifications } from '../hooks/useNotifications'
 import { NotificationItem } from './NotificationItem'
 import './NotificationList.css'
@@ -11,7 +13,26 @@ export function NotificationList({ list }: NotificationListProps) {
   const {
     notifications, total, limit, page, isLoading, error, setPage, reload,
     markAsRead, markAllAsRead, isMarkingAll, unread, markError, announcement,
+    remove, undo, undoable, isRefilling,
   } = list
+  const undoButton = useRef<HTMLButtonElement>(null)
+
+  /** El elemento eliminado desaparece: el foco pasa al siguiente, al anterior o a "Deshacer". */
+  function handleDelete(notification: AppNotification, item: HTMLLIElement | null) {
+    const target = (item?.nextElementSibling ?? item?.previousElementSibling) as HTMLElement | null
+    remove(notification)
+    requestAnimationFrame(() => {
+      if (target?.isConnected) target.focus()
+      else undoButton.current?.focus()
+    })
+  }
+
+  const undoToast = undoable && (
+    <div className="notification-undo" role="status">
+      <span>Notificación eliminada.</span>
+      <button ref={undoButton} type="button" onClick={undo}>Deshacer</button>
+    </div>
+  )
 
   if (isLoading) {
     return (
@@ -33,8 +54,18 @@ export function NotificationList({ list }: NotificationListProps) {
     )
   }
 
-  if (total === 0) {
+  if (isRefilling) {
     return (
+      <>
+        <p className="status-message" role="status">Cargando más notificaciones…</p>
+        {undoToast}
+      </>
+    )
+  }
+
+  if (total === 0 || notifications.length === 0) {
+    return (
+      <>
       <div className="notification-state">
         <h3>Todo al día.</h3>
         <p>
@@ -42,6 +73,8 @@ export function NotificationList({ list }: NotificationListProps) {
           aquí.
         </p>
       </div>
+      {undoToast}
+      </>
     )
   }
 
@@ -69,10 +102,11 @@ export function NotificationList({ list }: NotificationListProps) {
       </div>
       <ul className="notification-list" aria-label="Notificaciones">
         {notifications.map((notification) => (
-          <NotificationItem key={notification.id} notification={notification} onMarkRead={(id) => void markAsRead(id)} />
+          <NotificationItem key={notification.id} notification={notification} onMarkRead={(id) => void markAsRead(id)} onDelete={handleDelete} />
         ))}
       </ul>
       <Pagination page={page} total={total} limit={limit} label="Paginación de notificaciones" onPageChange={setPage} />
+      {undoToast}
     </>
   )
 }
