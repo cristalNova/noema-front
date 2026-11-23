@@ -26,6 +26,7 @@ import { ArticleDetailPage } from './pages/ArticleDetailPage'
 import { TagsPage } from './pages/TagsPage'
 import { AuthorProfilePage } from './pages/AuthorProfilePage'
 import { MyPlansPage } from './pages/MyPlansPage'
+import { MySubscriptionsPage } from './pages/MySubscriptionsPage'
 import { MyPostsPage } from './pages/MyPostsPage'
 import { NewPostPage } from './pages/NewPostPage'
 import { EditPlanPage, NewPlanPage } from './pages/PlanFormPage'
@@ -65,6 +66,7 @@ export const router = createBrowserRouter([
               { path: '/app/notifications', element: <NotificationsPage /> },
               { path: '/app/profile/edit', element: <EditProfilePage /> },
               { path: '/app/plans', element: <MyPlansPage /> },
+              { path: '/app/subscriptions', element: <MySubscriptionsPage /> },
               { path: '/app/plans/new', element: <NewPlanPage /> },
               { path: '/app/plans/:id/edit', element: <EditPlanPage /> },
             ],
