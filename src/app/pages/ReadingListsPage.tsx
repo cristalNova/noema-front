@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { createReadingList, deleteReadingList, listMyReadingLists, updateReadingList, type ReadingList, type ReadingListInput, type ReadingListStatus } from '@/features/reading/api/readingListsApi'
+import { createReadingList, deleteReadingList, getReadingList, listMyReadingLists, updateReadingList, type ReadingList, type ReadingListInput, type ReadingListStatus } from '@/features/reading/api/readingListsApi'
 import { DeleteReadingListDialog } from '@/features/reading/components/DeleteReadingListDialog'
 import { getErrorMessage } from '@/shared/api/apiError'
 import './ReadingListsPage.css'
@@ -9,6 +9,20 @@ const PAGE_SIZE = 8
 const EMPTY_FORM: ReadingListInput = { name: '', status: 'WANT_TO_READ', visibility: 'PRIVATE' }
 const statusLabels: Record<ReadingListStatus, string> = {
   WANT_TO_READ: 'Por leer', READING: 'Leyendo', READ: 'Leído', CUSTOM: 'Personalizada',
+}
+
+function ReadingListSummary({ list }: { list: ReadingList }) {
+  const [count, setCount] = useState<number | null>(list.items?.length ?? null)
+  useEffect(() => {
+    if (list.items) return
+    const controller = new AbortController()
+    getReadingList(list.id, controller.signal).then((detail) => {
+      if (!controller.signal.aborted) setCount(detail.items?.length ?? null)
+    }).catch(() => { /* La lista sigue accesible aunque falle el contador. */ })
+    return () => controller.abort()
+  }, [list.id, list.items])
+
+  return <p>{statusLabels[list.status] ?? list.status} · {list.visibility === 'PUBLIC' ? 'Pública' : 'Privada'}{count !== null && ` · ${count} ${count === 1 ? 'ensayo' : 'ensayos'}`}</p>
 }
 
 export function ReadingListsPage() {
@@ -118,7 +132,7 @@ export function ReadingListsPage() {
       {!loading && loadError && <div role="alert"><p>{loadError}</p><button className="button button--secondary" type="button" onClick={() => { setLoading(true); setAttempt((value) => value + 1) }}>Reintentar</button></div>}
       {!loading && !loadError && !lists.length && <div className="reading-lists-page__empty"><h2>Aún no tienes listas.</h2><p>Crea una para organizar lo que quieres leer, estás leyendo o ya leíste.</p>{!formOpen && <button className="button button--primary" type="button" disabled={pending} onClick={openCreate}>Crear lista</button>}</div>}
       {!loading && !loadError && lists.length > 0 && <><div className="reading-lists-page__summary"><h2>Tus listas</h2><span>{lists.length} {lists.length === 1 ? 'lista' : 'listas'}</span></div><ul className="reading-lists-page__list">{lists.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE).map((list) => <li key={list.id}>
-        <div><h3>{list.name}</h3><p>{statusLabels[list.status] ?? list.status} · {list.visibility === 'PUBLIC' ? 'Pública' : 'Privada'} · {list.items?.length ?? 0} {(list.items?.length ?? 0) === 1 ? 'ensayo' : 'ensayos'}</p></div>
+        <div><h3><Link to={`/app/reading-lists/${list.id}`}>{list.name}</Link></h3><ReadingListSummary list={list} /></div>
         <div className="reading-lists-page__actions"><button className="button button--secondary" type="button" disabled={pending} onClick={() => openEdit(list)} aria-label={`Editar ${list.name}`}>Editar</button><button className="button button--secondary reading-lists-page__delete" type="button" disabled={pending} onClick={() => setDeleting(list)} aria-label={`Eliminar ${list.name}`}>Eliminar</button></div>
       </li>)}</ul><nav className="reading-lists-page__pagination" aria-label="Paginación de listas"><button className="button button--secondary" type="button" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>Anterior</button><span>Página {currentPage} de {pages}</span><button className="button button--secondary" type="button" disabled={currentPage === pages} onClick={() => setPage(currentPage + 1)}>Siguiente</button></nav></>}
     </section>

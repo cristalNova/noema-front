@@ -9,6 +9,7 @@ import { ArticleByline } from '../../features/articles/components/ArticleByline'
 import { AuthorFollowCard } from '@/features/profiles/components/AuthorFollowCard'
 import { FavoriteButton } from '@/features/reading/components/FavoriteButton'
 import { useFavorites } from '@/features/reading/hooks/useFavorites'
+import { AddToReadingList } from '@/features/reading/components/AddToReadingList'
 import { useAuth } from '@/features/auth'
 import './PublishedArticlesPage.css'
 
@@ -70,7 +71,7 @@ export function PublishedArticlesPage() {
             <Link className="published-essay__cover" to={`/articles/${article.id}`} aria-label={`Leer “${article.title}”`}><EssayCover article={article} /></Link>
             <div className="published-essay__meta"><span>{article.isPremium ? <span className="premium-badge">Premium</span> : 'Lectura abierta'}</span>{article.publishedAt && <time dateTime={article.publishedAt}>{new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' }).format(new Date(article.publishedAt))}</time>}</div>
             <h3><Link to={`/articles/${article.id}`}>{article.title}</Link></h3>
-            <div className="published-essay__favorite"><FavoriteButton active={favorites.ids.has(article.id)} disabled={!favorites.ready || favorites.pending.has(article.id)} onToggle={() => void favorites.toggle(article.id)} /></div>
+            <div className="published-essay__favorite"><FavoriteButton active={favorites.ids.has(article.id)} disabled={!favorites.ready || favorites.pending.has(article.id)} onToggle={() => void favorites.toggle(article.id)} /><AddToReadingList articleId={article.id} /></div>
             <ArticleByline author={authorOf(article)} community={communityOf(article)} />
             <AuthorFollowCard authorId={article.authorId} />
             <p>{article.description || 'Una nueva mirada te espera en este ensayo.'}</p>

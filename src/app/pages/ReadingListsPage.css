@@ -14,6 +14,7 @@
 .reading-lists-page__list { margin: 0; padding: 0; list-style: none; }
 .reading-lists-page__list li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.3rem 0; border-bottom: 1px solid var(--color-line); overflow-wrap: anywhere; }
 .reading-lists-page__list h3 { margin: 0 0 .35rem; font-size: 1.1rem; }
+.reading-lists-page__list h3 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .reading-lists-page__delete { color: #9c3d2c; }
 .reading-lists-page__empty { padding: 1rem 0; }
 .reading-lists-page__empty h2 { margin: 0; }
