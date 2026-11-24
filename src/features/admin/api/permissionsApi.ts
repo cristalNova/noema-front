@@ -3,8 +3,7 @@ import { httpClient } from '@/shared/api'
 export interface AdminPermission {
   id: number
   permissionName: string
-  /** Solo viene en el listado; crear y editar devuelven el permiso sin roles. */
-  rolePermissions?: { roleId: number; permissionId: number; role: { id: number; roleName: string } }[]
+
 }
 
 /** GET /permissions (requiere manage_roles). Incluye los roles que usan cada permiso. */
