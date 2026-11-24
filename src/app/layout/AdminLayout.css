@@ -37,3 +37,24 @@
 .admin-facts dt { color: var(--color-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
 .admin-facts dd { margin: 0.15rem 0 0; }
 .admin-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+.admin-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--color-line); }
+.admin-section h3 { margin: 0 0 1rem; font-size: 1.05rem; font-weight: 600; }
+.admin-form { display: grid; gap: 1rem; max-width: 28rem; }
+.admin-form .button { justify-self: start; }
+.admin-form__error { margin: 0; color: var(--color-danger); font-size: 0.875rem; }
+.admin-form__notice { margin: 0; color: var(--color-success); font-size: 0.875rem; }
+.admin-form__notice:empty { display: none; }
+.admin-hint { margin: 0 0 1rem; color: var(--color-muted); font-size: 0.9rem; }
+.admin-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.admin-danger { background: var(--color-danger); color: var(--color-surface); }
+.admin-notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  background: #dcefe6;
+  color: var(--color-success);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.admin-notice:empty { display: none; }

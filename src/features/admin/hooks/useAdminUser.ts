@@ -26,10 +26,13 @@ export function useAdminUser(id: number) {
   }, [id, key])
 
   const current = settled?.key === key ? settled : null
+    /** Reemplaza el usuario en pantalla con la respuesta del servidor, sin volver a pedirlo. */
+  const replaceUser = (next: AdminUser) => setSettled({ key, user: next, error: '' })
   return {
     user: current?.user ?? null,
     isLoading: current === null,
     error: current?.error ?? '',
     retry: () => setAttempt((value) => value + 1),
+    replaceUser,
   }
 }

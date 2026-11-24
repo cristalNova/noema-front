@@ -1,14 +1,22 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAdminUsers } from '@/features/admin/hooks/useAdminUsers'
 import { formatCreatedAt } from '@/features/admin/model/users'
 import { Pagination } from '@/shared/components/Pagination'
 
+function savedNotice(state: unknown): string {
+  return state && typeof state === 'object' && 'notice' in state && typeof state.notice === 'string' ? state.notice : ''
+}
+
 export function AdminUsersPage() {
   const { users, total, page, limit, isLoading, error, setPage, retry } = useAdminUsers()
+
+  const location = useLocation()
+const notice = savedNotice(location.state)  
 
   return (
     <section className="admin-sheet" aria-labelledby="admin-users-heading" aria-busy={isLoading}>
       <header className="admin-sheet__heading">
+        <p className="admin-notice" role="status">{notice}</p>
         <h2 id="admin-users-heading">Usuarios</h2>
         {!isLoading && !error && <span>{total} {total === 1 ? 'usuario' : 'usuarios'}</span>}
       </header>
