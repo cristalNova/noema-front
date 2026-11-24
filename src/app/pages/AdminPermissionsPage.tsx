@@ -4,12 +4,12 @@ import { ConfirmDialog } from '@/features/admin/components/ConfirmDialog'
 import { PermissionForm } from '@/features/admin/components/PermissionForm'
 import { useAdminPermissions } from '@/features/admin/hooks/useAdminPermissions'
 import { describeAdminError } from '@/features/admin/model/adminErrors'
-import { isSystemPermission, rolesUsing } from '@/features/admin/model/permissionsCatalog'
+import { isSystemPermission, type PermissionRow } from '@/features/admin/model/permissionsCatalog'
 
 export function AdminPermissionsPage() {
   const { permissions, isLoading, error, reload } = useAdminPermissions()
   const [editing, setEditing] = useState<AdminPermission | null>(null)
-  const [toDelete, setToDelete] = useState<AdminPermission | null>(null)
+    const [toDelete, setToDelete] = useState<PermissionRow | null>(null)
   const [notice, setNotice] = useState('')
 
   function handleSaved(message: string) {
@@ -30,8 +30,7 @@ export function AdminPermissionsPage() {
       return describeAdminError(reason)
     }
   }
-
-  const deleteRoles = toDelete ? rolesUsing(toDelete) : []
+    const deleteRoles = toDelete?.roles ?? []
 
   return (
     <section className="admin-sheet" aria-labelledby="admin-permissions-heading" aria-busy={isLoading}>
@@ -80,7 +79,7 @@ export function AdminPermissionsPage() {
             </thead>
             <tbody>
               {permissions.map((permission) => {
-                const roles = rolesUsing(permission)
+                const roles = permission.roles
                 return (
                   <tr key={permission.id}>
                     <td><code>{permission.permissionName}</code></td>

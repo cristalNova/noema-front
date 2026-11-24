@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { listPermissions, type AdminPermission } from '../api/permissionsApi'
+import { listPermissions } from '../api/permissionsApi'
+import { listRoles } from '../api/rolesApi'
 import { describeAdminError } from '../model/adminErrors'
+import { withRoles, type PermissionRow } from '../model/permissionsCatalog'
 
 interface Settled {
-  permissions: AdminPermission[] | null
+  permissions: PermissionRow[] | null
   error: string
 }
 
@@ -13,9 +15,11 @@ export function useAdminPermissions() {
 
   useEffect(() => {
     const controller = new AbortController()
-    listPermissions(controller.signal)
-      .then((permissions) => {
-        if (!controller.signal.aborted) setSettled({ permissions, error: '' })
+    Promise.all([listPermissions(controller.signal), listRoles(controller.signal)])
+      .then(([permissions, roles]) => {
+        if (controller.signal.aborted) return
+        const rows = withRoles(permissions, roles).sort((a, b) => a.permissionName.localeCompare(b.permissionName))
+        setSettled({ permissions: rows, error: '' })
       })
       .catch((reason: unknown) => {
         if (!controller.signal.aborted) setSettled({ permissions: null, error: describeAdminError(reason) })
