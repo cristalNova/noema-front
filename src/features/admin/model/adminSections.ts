@@ -9,4 +9,6 @@ export interface AdminSection {
 /** Las siguientes HU agregan aquí Permisos y Roles (manage_roles) y Pagos (manage_payments). */
 export const ADMIN_SECTIONS: readonly AdminSection[] = [
   { path: '/admin/users', label: 'Usuarios', permission: PERMISSIONS.manageUsers },
+  { path: '/admin/permissions', label: 'Permisos', permission: PERMISSIONS.manageRoles },
+  
 ]

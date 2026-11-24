@@ -58,3 +58,16 @@
   font-weight: 600;
 }
 .admin-notice:empty { display: none; }
+
+.admin-form-section { margin-bottom: 1.75rem; }
+.admin-form-section h3 { margin: 0 0 1rem; font-size: 1.05rem; font-weight: 600; }
+
+.admin-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.admin-chips li { padding: 0.15rem 0.7rem; border-radius: var(--radius-pill); background: var(--color-field); font-size: 0.8rem; font-weight: 600; }
+.admin-muted { color: var(--color-muted); font-size: 0.9rem; }
+
+.admin-row-actions { display: flex; justify-content: flex-end; gap: 1rem; }
+.admin-link--button { padding: 0; border: 0; background: none; cursor: pointer; font: inherit; font-weight: 700; }
+.admin-link--danger { color: var(--color-danger); }
+
+.admin-warning { margin: 0; padding: 0.75rem 1rem; border-radius: 16px; background: #f6ead9; color: #8a4b12; font-size: 0.875rem; }
