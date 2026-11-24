@@ -45,6 +45,7 @@ import { AdminLayout } from './layout/AdminLayout'
 import { AdminIndexPage } from './pages/AdminIndexPage'
 import { AdminUsersPage } from './pages/AdminUsersPage'
 import { AdminUserDetailPage } from './pages/AdminUserDetailPage'
+import { AdminPermissionsPage } from './pages/AdminPermissionsPage'
 
 
 export const router = createBrowserRouter([
@@ -108,6 +109,12 @@ export const router = createBrowserRouter([
                     children: [
                       { path: 'users', element: <AdminUsersPage /> },
                       { path: 'users/:id', element: <AdminUserDetailPage /> },
+                    ],
+                  },
+                  {
+                    element: <RequirePermission anyOf={[PERMISSIONS.manageRoles]} />,
+                    children: [
+                      { path: 'permissions', element: <AdminPermissionsPage /> },
                     ],
                   },
                 ],
