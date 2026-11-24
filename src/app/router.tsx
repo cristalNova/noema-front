@@ -9,7 +9,7 @@ import { CollectionsPage } from './pages/CollectionsPage'
 import { NewCollectionPage } from './pages/NewCollectionPage'
 import { CollectionDetailPage } from './pages/CollectionDetailPage'
 import { EditCollectionPage } from './pages/EditCollectionPage'
-import { RequireAuth } from '@/features/auth'
+import { ADMIN_PERMISSIONS, PERMISSIONS, RequireAuth, RequirePermission } from '@/features/auth'
 import { RequireProfile } from '@/features/profiles'
 import { AppLayout } from './layout/AppLayout'
 import HomePage from './pages/HomePage'
@@ -41,6 +41,11 @@ import { ContinueReadingPage } from './pages/ContinueReadingPage'
 import { MyBookmarksPage } from './pages/MyBookmarksPage'
 import { ReadingListsPage } from './pages/ReadingListsPage'
 import { ReadingListDetailPage } from './pages/ReadingListDetailPage'
+import { AdminLayout } from './layout/AdminLayout'
+import { AdminIndexPage } from './pages/AdminIndexPage'
+import { AdminUsersPage } from './pages/AdminUsersPage'
+import { AdminUserDetailPage } from './pages/AdminUserDetailPage'
+
 
 export const router = createBrowserRouter([
   {
@@ -77,6 +82,36 @@ export const router = createBrowserRouter([
               { path: '/app/payments/:id', element: <PaymentDetailPage /> },
               { path: '/app/plans/new', element: <NewPlanPage /> },
               { path: '/app/plans/:id/edit', element: <EditPlanPage /> },
+            ],
+          },
+        ],
+      },
+      { path: '*', element: <NotFoundPage /> },
+    ],
+  },
+    {
+    path: '/admin',
+    element: <AppLayout />,
+    children: [
+      {
+        element: <RequireAuth />,
+        children: [
+          {
+            element: <RequirePermission anyOf={ADMIN_PERMISSIONS} />,
+            children: [
+              { index: true, element: <AdminIndexPage /> },
+              {
+                element: <AdminLayout />,
+                children: [
+                  {
+                    element: <RequirePermission anyOf={[PERMISSIONS.manageUsers]} />,
+                    children: [
+                      { path: 'users', element: <AdminUsersPage /> },
+                      { path: 'users/:id', element: <AdminUserDetailPage /> },
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],
