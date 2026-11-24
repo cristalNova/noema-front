@@ -14,6 +14,7 @@ import { FavoriteButton } from '@/features/reading/components/FavoriteButton'
 import { useFavorites } from '@/features/reading/hooks/useFavorites'
 import { useReadingProgress } from '@/features/reading/hooks/useReadingProgress'
 import { EssayBookmarks } from '@/features/reading/components/EssayBookmarks'
+import { AddToReadingList } from '@/features/reading/components/AddToReadingList'
 import './ArticleDetailPage.css'
 
 export function ArticleDetailPage({ owned = false }: { owned?: boolean }) {
@@ -71,7 +72,7 @@ function ArticleReader({ id, owned }: { id: number; owned: boolean }) {
             <h1>{article.title}</h1>
             {article.description && <p className="article-reader__description">{article.description}</p>}
             <ArticleByline author={authorOf(article)} community={communityOf(article)} />
-            {!owned && article.status === 'PUBLISHED' && <div className="article-reader__favorite"><FavoriteButton active={favorites.ids.has(id)} disabled={!favorites.ready || favorites.pending.has(id)} onToggle={() => void favorites.toggle(id)} />{favorites.error && <p role="alert">{favorites.error} <button type="button" onClick={favorites.retry}>Reintentar</button></p>}</div>}
+            {article.status === 'PUBLISHED' && <div className="article-reader__favorite">{!owned && <FavoriteButton active={favorites.ids.has(id)} disabled={!favorites.ready || favorites.pending.has(id)} onToggle={() => void favorites.toggle(id)} />}<AddToReadingList articleId={id} />{!owned && favorites.error && <p role="alert">{favorites.error} <button type="button" onClick={favorites.retry}>Reintentar</button></p>}</div>}
             {article.articleTags?.length > 0 && <ul className="tag-list" aria-label="Etiquetas">{article.articleTags.map(({ tag }) => <li key={tag}><Link to={`/articles?tag=${encodeURIComponent(tag)}`}>#{tag}</Link></li>)}</ul>}
             {article.collectionId != null && <p className="article-reader__collection">Colección: {article.collection?.title ?? `#${article.collectionId}`}</p>}
             {owned && <Link className="button button--secondary" to={`/app/articles/${id}/edit`}>Editar ensayo</Link>}

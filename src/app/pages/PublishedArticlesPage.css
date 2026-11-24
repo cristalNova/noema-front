@@ -32,5 +32,5 @@
 @media (prefers-reduced-motion: reduce) { .published-library.is-refreshing .published-list { transition: none; } }
 
 .published-essay__author-card { margin-top: .3rem; }
-.published-essay__favorite { margin: .65rem 0; }
+.published-essay__favorite { display: flex; flex-wrap: wrap; gap: .5rem; margin: .65rem 0; }
 .published-essay__favorite .button { padding: .5rem .8rem; font-size: .78rem; }

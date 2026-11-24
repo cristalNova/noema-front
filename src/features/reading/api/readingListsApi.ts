@@ -12,7 +12,13 @@ export interface PublicReadingList {
 export type ReadingListStatus = 'WANT_TO_READ' | 'READING' | 'READ' | 'CUSTOM'
 export type ReadingListVisibility = 'PUBLIC' | 'PRIVATE'
 export interface ReadingList extends PublicReadingList {
-  items: { articleId: number; orderIndex: number }[]
+  // GET /mine devuelve el resumen; GET /:id incluye los ensayos.
+  items?: ReadingListItem[]
+}
+export interface ReadingListItem {
+  articleId: number
+  orderIndex: number
+  article?: { id: number; title: string; description?: string }
 }
 export interface ReadingListInput {
   name: string
@@ -37,6 +43,23 @@ export async function updateReadingList(id: number, input: ReadingListInput): Pr
 
 export async function deleteReadingList(id: number): Promise<void> {
   await httpClient.delete(`/reading-lists/${id}`)
+}
+
+export async function getReadingList(id: number, signal?: AbortSignal): Promise<ReadingList> {
+  const response = await httpClient.get<ReadingList>(`/reading-lists/${id}`, { signal })
+  return response.data
+}
+
+export async function addReadingListItem(id: number, articleId: number): Promise<void> {
+  await httpClient.post(`/reading-lists/${id}/items`, { articleId })
+}
+
+export async function removeReadingListItem(id: number, articleId: number): Promise<void> {
+  await httpClient.delete(`/reading-lists/${id}/items/${articleId}`)
+}
+
+export async function reorderReadingListItems(id: number, articleIds: number[]): Promise<void> {
+  await httpClient.put(`/reading-lists/${id}/items/order`, { articleIds })
 }
 
 /** El servidor solo devuelve listas públicas en esta ruta. */
