@@ -71,3 +71,14 @@
 .admin-link--danger { color: var(--color-danger); }
 
 .admin-warning { margin: 0; padding: 0.75rem 1rem; border-radius: 16px; background: #f6ead9; color: #8a4b12; font-size: 0.875rem; }
+.admin-form--wide { max-width: 44rem; }
+
+.admin-fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.admin-fieldset legend { margin-bottom: 0.6rem; padding: 0; font-size: 0.875rem; font-weight: 600; }
+.admin-checklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.5rem; }
+.admin-check {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.55rem 0.9rem; border-radius: 16px;
+  background: var(--color-field); font-size: 0.9rem; cursor: pointer; overflow-wrap: anywhere;
+}
+.admin-check input { flex: none; width: 1.1rem; height: 1.1rem; accent-color: var(--color-accent); }
