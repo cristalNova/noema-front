@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '@/features/auth'
+import { ADMIN_PERMISSIONS, hasAnyPermission, useAuth } from '@/features/auth'
 import { useUnreadCount } from '@/features/notifications'
 import { useMyProfile } from '@/features/profiles'
 import { Logo } from '@/shared/components/Logo'
@@ -122,6 +122,9 @@ export function NavBar() {
                 <Link role="menuitem" className="navbar__menu-item" to="/app/continue-reading" onClick={() => setMenuOpen(false)}>Continuar leyendo</Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/bookmarks" onClick={() => setMenuOpen(false)}>Mis marcadores</Link>
                 <Link role="menuitem" className="navbar__menu-item" to="/app/reading-lists" onClick={() => setMenuOpen(false)}>Mis listas</Link>
+                                {hasAnyPermission(session.user, ADMIN_PERMISSIONS) && (
+                  <Link role="menuitem" className="navbar__menu-item" to="/admin" onClick={() => setMenuOpen(false)}>Administración</Link>
+                )}
                 <button type="button" role="menuitem" className="navbar__menu-item" onClick={handleLogout} disabled={loggingOut}>
                   Cerrar sesión
                 </button>

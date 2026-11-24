@@ -1,0 +1,39 @@
+.admin-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+.admin-nav a {
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-field);
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.admin-nav a.active { background: var(--color-accent); color: #fff; }
+
+.admin-sheet {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: var(--radius-sheet);
+  background: var(--color-surface);
+}
+.admin-sheet__heading {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 0.5rem 1rem; margin-bottom: 1.25rem; padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.admin-sheet__heading h2 { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; }
+.admin-sheet__heading span { color: var(--color-muted); font-size: 0.85rem; }
+
+.admin-table-wrap { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th, .admin-table td { padding: 0.85rem 0.75rem; text-align: left; border-bottom: 1px solid var(--color-line); }
+.admin-table th { color: var(--color-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.admin-table caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+.admin-status { display: inline-block; padding: 0.15rem 0.7rem; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 700; }
+.admin-status--active { background: #dcefe6; color: var(--color-success); }
+.admin-status--inactive { background: #f3dcdf; color: var(--color-danger); }
+.admin-link { color: var(--color-accent); font-weight: 700; }
+
+.admin-facts { display: grid; gap: 1rem; margin: 0; }
+.admin-facts dt { color: var(--color-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+.admin-facts dd { margin: 0.15rem 0 0; }
+.admin-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
