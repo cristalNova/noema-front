@@ -80,7 +80,7 @@ export function AdminPaymentsPage() {
             <div><dt>Fecha de pago</dt><dd>{formatPaidAt(found.payment.paidAt, true)}</dd></div>
           </dl>
 
-                    <div className="admin-actions">
+          <div className="admin-actions">
             <button
               type="button"
               className="button admin-danger"

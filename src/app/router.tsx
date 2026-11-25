@@ -91,7 +91,7 @@ export const router = createBrowserRouter([
       { path: '*', element: <NotFoundPage /> },
     ],
   },
-    {
+  {
     path: '/admin',
     element: <AppLayout />,
     children: [
@@ -119,12 +119,10 @@ export const router = createBrowserRouter([
                       { path: 'roles', element: <AdminRolesPage /> },
                     ],
                   },
-                    {
-                      element: <RequirePermission anyOf={[PERMISSIONS.managePayments]} />,
-                      children: [
-                        { path: 'payments', element: <AdminPaymentsPage /> },
-                      ],
-                    },
+                  {
+                    element: <RequirePermission anyOf={[PERMISSIONS.managePayments]} />,
+                    children: [{ path: 'payments', element: <AdminPaymentsPage /> }],
+                  },
                 ],
               },
             ],

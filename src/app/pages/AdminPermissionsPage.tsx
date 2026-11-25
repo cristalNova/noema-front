@@ -82,8 +82,8 @@ export function AdminPermissionsPage() {
                 const roles = permission.roles
                 return (
                   <tr key={permission.id}>
-                    <td><code>{permission.permissionName}</code></td>
-                    <td>
+                    <td data-label="Permiso" className="admin-table__primary"><code>{permission.permissionName}</code></td>
+                    <td data-label="Roles que lo incluyen">
                       {roles.length > 0 ? (
                         <ul className="admin-chips" aria-label={`Roles con ${permission.permissionName}`}>
                           {roles.map((roleName) => <li key={roleName}>{roleName}</li>)}

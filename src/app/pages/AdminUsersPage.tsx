@@ -11,15 +11,16 @@ export function AdminUsersPage() {
   const { users, total, page, limit, isLoading, error, setPage, retry } = useAdminUsers()
 
   const location = useLocation()
-const notice = savedNotice(location.state)  
+  const notice = savedNotice(location.state)
 
   return (
     <section className="admin-sheet" aria-labelledby="admin-users-heading" aria-busy={isLoading}>
       <header className="admin-sheet__heading">
-        <p className="admin-notice" role="status">{notice}</p>
         <h2 id="admin-users-heading">Usuarios</h2>
         {!isLoading && !error && <span>{total} {total === 1 ? 'usuario' : 'usuarios'}</span>}
       </header>
+
+      <p className="admin-notice" role="status">{notice}</p>
 
       {isLoading && <p className="status-message" role="status">Cargando usuarios…</p>}
       {error && (
@@ -46,13 +47,13 @@ const notice = savedNotice(location.state)
               <tbody>
                 {users.map((user) => (
                   <tr key={user.id}>
-                    <td>{user.email}</td>
-                    <td>
+                    <td data-label="Correo" className="admin-table__primary">{user.email}</td>
+                    <td data-label="Estado">
                       <span className={`admin-status admin-status--${user.isActive ? 'active' : 'inactive'}`}>
                         {user.isActive ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
-                    <td><time dateTime={user.createdAt}>{formatCreatedAt(user.createdAt)}</time></td>
+                    <td data-label="Creado"><time dateTime={user.createdAt}>{formatCreatedAt(user.createdAt)}</time></td>
                     <td>
                       <Link className="admin-link" to={`/admin/users/${user.id}`} aria-label={`Ver detalle de ${user.email}`}>
                         Ver detalle

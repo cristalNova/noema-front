@@ -19,23 +19,44 @@
   gap: 0.5rem 1rem; margin-bottom: 1.25rem; padding-bottom: 1rem;
   border-bottom: 1px solid var(--color-line);
 }
-.admin-sheet__heading h2 { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; }
+.admin-sheet__heading h2 { min-width: 0; margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; overflow-wrap: anywhere; }
 .admin-sheet__heading span { color: var(--color-muted); font-size: 0.85rem; }
 
-.admin-table-wrap { overflow-x: auto; }
+/* position: relative contiene los elementos absolutos (caption y .admin-sr-only); sin él escapan del scroll y ensanchan la página en móvil */
+.admin-table-wrap { position: relative; overflow-x: auto; }
 .admin-table { width: 100%; border-collapse: collapse; }
 .admin-table th, .admin-table td { padding: 0.85rem 0.75rem; text-align: left; border-bottom: 1px solid var(--color-line); }
 .admin-table th { color: var(--color-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .admin-table caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
+/* En pantallas angostas cada fila pasa a ser una tarjeta: así Estado y las acciones no quedan tras un scroll oculto. */
+@media (max-width: 640px) {
+  .admin-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+  .admin-table tr { padding: 0.9rem 0; border-bottom: 1px solid var(--color-line); }
+  .admin-table td { padding: 0.3rem 0; border: 0; overflow-wrap: anywhere; }
+  .admin-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .admin-table td.admin-table__primary { font-size: 1.02rem; }
+  .admin-row-actions { justify-content: flex-start; padding-top: 0.25rem; }
+}
+
 .admin-status { display: inline-block; padding: 0.15rem 0.7rem; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 700; }
 .admin-status--active { background: #dcefe6; color: var(--color-success); }
 .admin-status--inactive { background: #f3dcdf; color: var(--color-danger); }
-.admin-link { color: var(--color-accent); font-weight: 700; }
+.admin-link { color: var(--color-accent); font-weight: 700; white-space: nowrap; }
+.admin-table code { font-family: inherit; font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
 
 .admin-facts { display: grid; gap: 1rem; margin: 0; }
 .admin-facts dt { color: var(--color-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
-.admin-facts dd { margin: 0.15rem 0 0; }
+.admin-facts dd { margin: 0.15rem 0 0; overflow-wrap: anywhere; }
 .admin-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
 .admin-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--color-line); }
@@ -47,6 +68,7 @@
 .admin-form__notice:empty { display: none; }
 .admin-hint { margin: 0 0 1rem; color: var(--color-muted); font-size: 0.9rem; }
 .admin-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.admin-facts + .admin-actions { margin-top: 1.5rem; }
 .admin-danger { background: var(--color-danger); color: var(--color-surface); }
 .admin-notice {
   margin: 0 0 1rem;
