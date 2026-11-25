@@ -47,6 +47,7 @@ import { AdminUsersPage } from './pages/AdminUsersPage'
 import { AdminUserDetailPage } from './pages/AdminUserDetailPage'
 import { AdminPermissionsPage } from './pages/AdminPermissionsPage'
 import { AdminRolesPage } from './pages/AdminRolesPage'
+import { AdminPaymentsPage } from './pages/AdminPaymentsPage'
 
 export const router = createBrowserRouter([
   {
@@ -118,6 +119,12 @@ export const router = createBrowserRouter([
                       { path: 'roles', element: <AdminRolesPage /> },
                     ],
                   },
+                    {
+                      element: <RequirePermission anyOf={[PERMISSIONS.managePayments]} />,
+                      children: [
+                        { path: 'payments', element: <AdminPaymentsPage /> },
+                      ],
+                    },
                 ],
               },
             ],
