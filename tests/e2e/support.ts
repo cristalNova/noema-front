@@ -26,3 +26,24 @@ export async function mockBackgroundApis(page: Page) {
     },
   )
 }
+
+/**
+ * Llega a una sección propia como lo hace una persona: menú de la cuenta → "Mi perfil" → acceso de "Mi espacio".
+ * Simula solo lo que el perfil pide (el perfil, sus ensayos y sus listas); las demás rutas de cada test se respetan.
+ */
+export async function openAccountShortcut(page: Page, me: { id: number }, name: string) {
+  await page.route(
+    (url) => url.pathname === `/profiles/${me.id}` || url.pathname === `/reading-lists/profile/${me.id}` || (url.pathname === '/articles' && url.searchParams.get('authorId') === String(me.id)),
+    (route) => {
+      const request = route.request()
+      if (!['xhr', 'fetch'].includes(request.resourceType())) return route.fallback()
+      const { pathname } = new URL(request.url())
+      if (pathname === '/articles') return route.fulfill({ json: { data: [], total: 0, page: 1, limit: 10 } })
+      if (pathname.startsWith('/reading-lists/')) return route.fulfill({ json: [] })
+      return route.fulfill({ json: { id: me.id, username: 'lector', name: 'Lector Uno', isVerified: false, followersCount: 0 } })
+    },
+  )
+  await page.getByRole('button', { name: /^Cuenta de/ }).click()
+  await page.getByRole('menuitem', { name: 'Mi perfil' }).click()
+  await page.getByRole('link', { name }).click()
+}

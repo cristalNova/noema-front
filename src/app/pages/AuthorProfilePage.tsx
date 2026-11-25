@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ConnectionsDialog, profilesApi, type Profile } from '@/features/profiles'
+import { ConnectionsDialog, ProfileShortcuts, profilesApi, useMyProfile, type Profile } from '@/features/profiles'
 import { exploreArticles } from '@/features/articles/api/articlesApi'
 import { EMPTY_FILTERS, EXPLORE_PAGE_SIZE } from '@/features/articles/model/exploreFilters'
 import { EssayCover } from '@/features/articles/components/EssayCover'
@@ -48,6 +48,7 @@ function AuthorProfile({ id }: { id: number }) {
   const [attempt, setAttempt] = useState(0)
   const [settled, setSettled] = useState<Settled | null>(null)
   const [connectionsOpen, setConnectionsOpen] = useState(false)
+  const { profile: myProfile } = useMyProfile()
 
   useEffect(() => {
     const controller = new AbortController()
@@ -95,6 +96,7 @@ function AuthorProfile({ id }: { id: number }) {
         </ul>}
         <Link className="button button--primary author-profile__plans" to={`/profiles/${profile.id}/plans`}>Ver planes</Link>
       </header>}
+      {profile && myProfile?.id === profile.id && <ProfileShortcuts />}
       {profile && connectionsOpen && <ConnectionsDialog profileId={profile.id} profileName={profile.name} onClose={() => setConnectionsOpen(false)} />}
       {current === null && <p className="status-message" role="status">Cargando perfil…</p>}
       {current?.error && <div className="status-message status-message--error" role="alert"><p>{current.error}</p><button type="button" className="button button--secondary" onClick={() => setAttempt((value) => value + 1)}>Reintentar</button></div>}

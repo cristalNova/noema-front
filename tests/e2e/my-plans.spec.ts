@@ -1,5 +1,5 @@
 import { expect, test, type Page, type Route } from '@playwright/test'
-import { mockBackgroundApis } from './support'
+import { mockBackgroundApis, openAccountShortcut } from './support'
 
 test.beforeEach(({ page }) => mockBackgroundApis(page))
 
@@ -39,12 +39,11 @@ test('"Mis planes" exige sesión', async ({ page }) => {
   await expect(page).toHaveURL(/\/login$/)
 })
 
-test('se llega desde el menú de la cuenta y lista cada plan con su estado', async ({ page }) => {
+test('se llega desde «Mi espacio» en el perfil y lista cada plan con su estado', async ({ page }) => {
   await setup(page)
   await mockApi(page, '**/articles**', (route) => route.fulfill({ json: { data: [], total: 0, page: 1, limit: 10 } }))
   await page.goto('/')
-  await page.getByRole('button', { name: /^Cuenta de/ }).click()
-  await page.getByRole('menuitem', { name: 'Mis planes' }).click()
+  await openAccountShortcut(page, me, 'Mis planes')
   await expect(page).toHaveURL(/\/app\/plans$/)
 
   const author = planRow(page, 'Lector fiel')

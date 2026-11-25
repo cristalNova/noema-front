@@ -1,5 +1,5 @@
 import { expect, test, type Page, type Route } from '@playwright/test'
-import { mockBackgroundApis } from './support'
+import { mockBackgroundApis, openAccountShortcut } from './support'
 
 const me = { id: 8, userId: 8, username: 'lector', name: 'Lector Uno', isVerified: false, followersCount: 0, createdAt: '2026-01-01T00:00:00.000Z' }
 
@@ -66,11 +66,10 @@ test('el historial exige sesión', async ({ page }) => {
   await expect(page).toHaveURL(/\/login$/)
 })
 
-test('se llega desde el menú y lista monto, moneda, método, fecha y estado de cada pago', async ({ page }) => {
+test('se llega desde «Mi espacio» y lista monto, moneda, método, fecha y estado de cada pago', async ({ page }) => {
   await setup(page)
   await page.goto('/')
-  await page.getByRole('button', { name: /^Cuenta de/ }).click()
-  await page.getByRole('menuitem', { name: 'Historial de pagos' }).click()
+  await openAccountShortcut(page, me, 'Historial de pagos')
   await expect(page).toHaveURL(/\/app\/payments$/)
 
   await expect(rows(page)).toHaveCount(3)

@@ -110,19 +110,7 @@ export function NavBar() {
                 )}
                 {profile && <Link role="menuitem" className="navbar__menu-item" to={`/profiles/${profile.id}`} onClick={() => setMenuOpen(false)}>Mi perfil</Link>}
                 {profile && <Link role="menuitem" className="navbar__menu-item" to="/app/profile/edit" onClick={() => setMenuOpen(false)}>Editar perfil</Link>}
-                <Link role="menuitem" className="navbar__menu-item" to="/onboarding/interests" onClick={() => setMenuOpen(false)}>Mis intereses</Link>
-                {profile && <Link role="menuitem" className="navbar__menu-item" to="/communities/mine" onClick={() => setMenuOpen(false)}>Mis comunidades</Link>}
-                <Link role="menuitem" className="navbar__menu-item" to="/app/plans" onClick={() => setMenuOpen(false)}>
-                  Mis planes
-                </Link>
-                <Link role="menuitem" className="navbar__menu-item" to="/app/subscriptions" onClick={() => setMenuOpen(false)}>Mis suscripciones</Link>
-                <Link role="menuitem" className="navbar__menu-item" to="/app/payments" onClick={() => setMenuOpen(false)}>Historial de pagos</Link>
-                <Link role="menuitem" className="navbar__menu-item" to="/app/collections" onClick={() => setMenuOpen(false)}>Mis colecciones</Link>
-                <Link role="menuitem" className="navbar__menu-item" to="/app/favorites" onClick={() => setMenuOpen(false)}>Mis favoritos</Link>
-                <Link role="menuitem" className="navbar__menu-item" to="/app/continue-reading" onClick={() => setMenuOpen(false)}>Continuar leyendo</Link>
-                <Link role="menuitem" className="navbar__menu-item" to="/app/bookmarks" onClick={() => setMenuOpen(false)}>Mis marcadores</Link>
-                <Link role="menuitem" className="navbar__menu-item" to="/app/reading-lists" onClick={() => setMenuOpen(false)}>Mis listas</Link>
-                                {hasAnyPermission(session.user, ADMIN_PERMISSIONS) && (
+                {hasAnyPermission(session.user, ADMIN_PERMISSIONS) && (
                   <Link role="menuitem" className="navbar__menu-item" to="/admin" onClick={() => setMenuOpen(false)}>Administración</Link>
                 )}
                 <button type="button" role="menuitem" className="navbar__menu-item" onClick={handleLogout} disabled={loggingOut}>

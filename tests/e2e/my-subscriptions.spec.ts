@@ -1,5 +1,5 @@
 import { expect, test, type Page, type Route } from '@playwright/test'
-import { mockBackgroundApis } from './support'
+import { mockBackgroundApis, openAccountShortcut } from './support'
 
 const me = { id: 8, userId: 8, username: 'lector', name: 'Lector Uno', isVerified: false, followersCount: 0, createdAt: '2026-01-01T00:00:00.000Z' }
 
@@ -45,11 +45,10 @@ test('"Mis suscripciones" exige sesión', async ({ page }) => {
   await expect(page).toHaveURL(/\/login$/)
 })
 
-test('se llega desde el menú y lista plan, estado y fechas, con las acciones que corresponden', async ({ page }) => {
+test('se llega desde «Mi espacio» y lista plan, estado y fechas, con las acciones que corresponden', async ({ page }) => {
   await setup(page)
   await page.goto('/')
-  await page.getByRole('button', { name: /^Cuenta de/ }).click()
-  await page.getByRole('menuitem', { name: 'Mis suscripciones' }).click()
+  await openAccountShortcut(page, me, 'Mis suscripciones')
   await expect(page).toHaveURL(/\/app\/subscriptions$/)
 
   const activeRow = row(page, 'Club mensual')
