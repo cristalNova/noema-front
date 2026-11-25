@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { CommunityFilters } from '../../features/communities/components/CommunityFilters'
 import { CommunityList } from '../../features/communities/components/CommunityList'
-import { CommunityPagination } from '../../features/communities/components/CommunityPagination'
+import { Pagination } from '../../shared/components/Pagination'
 import { useCommunities } from '../../features/communities/hooks/useCommunities'
 import { getErrorMessage } from '../../shared/api/apiError'
 
@@ -34,6 +35,12 @@ export function CommunitiesPage() {
         <h1>Explora comunidades</h1>
         <p>Encuentra espacios para compartir tus intereses, lecturas e ideas.</p>
         <CommunityFilters value={searchInput} onChange={setSearchInput} onSubmit={submitSearch} />
+        <Link className="button button--primary communities-page__create-link" to="/communities/new">
+          Crear comunidad
+        </Link>
+        <Link className="button button--secondary communities-page__create-link" to="/communities/mine">
+          Mis comunidades
+        </Link>
       </header>
 
       {isLoading && <p className="status-message" role="status">Cargando comunidades…</p>}
@@ -50,7 +57,7 @@ export function CommunitiesPage() {
       )}
       {!error && communities.length > 0 && <CommunityList communities={communities} />}
       {!error && total > 0 && (
-        <CommunityPagination page={currentPage} total={total} limit={limit} onPageChange={setPage} />
+        <Pagination page={currentPage} total={total} limit={limit} label="Paginación de comunidades" onPageChange={setPage} />
       )}
     </main>
   )

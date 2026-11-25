@@ -1,0 +1,33 @@
+.new-post-link {
+  display: inline-grid;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-surface);
+  text-decoration: none;
+  transition: transform 0.12s, box-shadow 0.15s;
+}
+
+.new-post-link:active {
+  transform: scale(0.94);
+}
+
+.new-post-link:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .new-post-link:hover {
+    box-shadow: 0 6px 16px rgb(34 33 43 / 22%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .new-post-link {
+    transition: none;
+  }
+}

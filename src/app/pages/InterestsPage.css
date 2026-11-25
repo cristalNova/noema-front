@@ -1,0 +1,77 @@
+/* Ajustes exclusivos de la selección de intereses; conserva las reglas comunes de P2Pages. */
+.interests-page .page-header h1 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.interests-page .p2-sheet {
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  border-radius: 24px;
+}
+
+.interests-page .p2-sheet h2 {
+  margin-bottom: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.interests-page .p2-sheet h2:not(:first-child) {
+  margin-top: 2rem;
+}
+
+.interests-page .p2-sheet h2 .p2-muted {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.interests-page .p2-add {
+  margin: 1.75rem 0 2rem;
+}
+
+.interests-page .p2-add > div {
+  align-items: stretch;
+}
+
+.interests-page .p2-add input {
+  flex: 1 1 0;
+  width: auto;
+  min-height: 48px;
+  border-color: #cfc3b5;
+  border-radius: 0.5rem;
+  background: #fffdf9;
+}
+
+.interests-page .p2-add .button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  white-space: nowrap;
+}
+
+.interests-page .p2-tag {
+  background: #f0e8df;
+  border-color: #e1d6c9;
+  font-weight: 600;
+}
+
+.interests-page .p2-tag--active {
+  background: #e8e3f9;
+  border-color: var(--color-accent);
+  color: #342965;
+}
+
+@media (max-width: 700px) {
+  .interests-page .p2-add input {
+    width: 100%;
+  }
+
+  .interests-page .p2-add .button {
+    width: 100%;
+  }
+}

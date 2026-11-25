@@ -1,0 +1,56 @@
+.topics-page__paper {
+  padding: clamp(1.25rem, 4vw, 3rem);
+  border-radius: var(--radius-sheet);
+  background: var(--color-surface);
+}
+
+.topics-page__paper h2 {
+  margin: 0 0 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 1.35rem;
+  letter-spacing: -0.03em;
+}
+
+.topics-page__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.topics-page__tags a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  border: 1px solid #e1d6c9;
+  border-radius: var(--radius-pill);
+  background: #f0e8df;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.topics-page__tags a:hover {
+  border-color: var(--color-accent);
+  background: #e8e3f9;
+}
+
+.topics-page__tags small { color: var(--color-muted); white-space: nowrap; }
+.topics-page__empty { padding: 1.25rem 0 0.5rem; }
+.topics-page__empty h3 { margin: 0; font-size: 1.3rem; }
+.topics-page__empty p { color: var(--color-muted); }
+.published-library__topics { margin-left: auto; font-size: 0.85rem; font-weight: 600; }
+
+/* Las etiquetas de las tarjetas y del lector conservan su apariencia de chip. */
+.tag-list a { color: inherit; text-decoration: none; }
+.tag-list a:hover { text-decoration: underline; }
+
+@media (max-width: 540px) {
+  .topics-page__tags { gap: 0.55rem; }
+  .topics-page__tags a { flex-wrap: wrap; }
+}

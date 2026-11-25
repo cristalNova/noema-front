@@ -1,0 +1,29 @@
+.post-list {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-list__empty {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.post-list__empty h3 {
+  margin: 0 0 0.5rem;
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+
+.post-list__empty p {
+  margin: 0 0 1.25rem;
+}
+
+.post-list__empty p:last-child {
+  margin-bottom: 0;
+}

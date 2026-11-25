@@ -1,0 +1,98 @@
+.delete-profile {
+  width: min(480px, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 24px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  overflow-y: auto;
+}
+
+.delete-profile::backdrop {
+  background: rgb(34 33 43 / 55%);
+}
+
+.delete-profile__body {
+  display: grid;
+  gap: 12px;
+  padding: 28px 24px 24px;
+}
+
+.delete-profile h2 {
+  margin: 0;
+  font-size: 1.375rem;
+}
+
+.delete-profile p,
+.delete-profile ul {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.delete-profile ul {
+  padding-left: 1.25rem;
+  color: var(--color-muted);
+}
+
+.delete-profile__warning {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #fdecee;
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.delete-profile__confirm {
+  margin-top: 6px;
+  font-size: 0.875rem;
+}
+
+.delete-profile input {
+  min-height: 48px;
+  padding: 0 18px;
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-field);
+  color: var(--color-ink);
+  font: inherit;
+}
+
+.delete-profile__error {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #fdecee;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
+
+.delete-profile__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.delete-profile__btn {
+  min-height: 46px;
+  padding: 0 20px;
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-profile__btn--danger {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.delete-profile__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

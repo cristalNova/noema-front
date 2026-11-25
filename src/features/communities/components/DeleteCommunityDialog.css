@@ -1,0 +1,17 @@
+.delete-community {
+  width: min(480px, calc(100% - 2rem));
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 24px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.delete-community::backdrop { background: rgb(34 33 43 / 55%); }
+.delete-community__body { display: grid; gap: 14px; padding: 28px 24px 24px; }
+.delete-community h2, .delete-community p { margin: 0; overflow-wrap: anywhere; }
+.delete-community__warning, .delete-community__error { padding: 12px 14px; border-radius: 12px; }
+.delete-community__warning { background: #fdecee; color: var(--color-danger); font-weight: 700; }
+.delete-community__error { background: #fdecee; color: var(--color-danger); }
+.delete-community__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+.delete-community button:disabled { opacity: 0.55; cursor: not-allowed; }

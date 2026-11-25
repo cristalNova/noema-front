@@ -1,18 +1,22 @@
 import { httpClient } from '../../../shared/api'
 import type { Paginated } from '../../../shared/types/Paginated'
 import { toPageQuery } from '../../../shared/utils/pagination'
-import type { Community } from '../model/community.types'
+import type { Community, CommunityDetail, CreateCommunityDto, UpdateCommunityDto } from '../model/community.types'
+
+function normalizeCommunity<T extends Community>(community: T): T {
+  return { ...community, tags: community.tags ?? [] }
+}
 
 export interface CommunityListParams {
-  page?: number
-  limit?: number
-  topic?: string
-  tag?: string
-  search?: string
+  page?: number;
+  limit?: number;
+  topic?: string;
+  tag?: string;
+  search?: string;
 }
 
 export async function listCommunities(params: CommunityListParams = {}) {
-  const { page, limit } = toPageQuery(params)
+  const { page, limit } = toPageQuery(params);
   const response = await httpClient.get<Paginated<Community>>('/communities', {
     params: {
       page,
@@ -21,11 +25,96 @@ export async function listCommunities(params: CommunityListParams = {}) {
       ...(params.tag?.trim() ? { tag: params.tag.trim() } : {}),
       ...(params.search?.trim() ? { search: params.search.trim() } : {}),
     },
-  })
+  });
+  return { ...response.data, data: response.data.data.map(normalizeCommunity) };
+}
+
+export async function getCommunity(id: number, signal?: AbortSignal) {
+  const response = await httpClient.get<CommunityDetail>(`/communities/${id}`, { signal });
+  return normalizeCommunity(response.data);
+}
+
+export async function createCommunity(input: CreateCommunityDto): Promise<Community> {
+  const response = await httpClient.post<Community>('/communities', input)
+  return normalizeCommunity(response.data)
+}
+
+// PATCH /communities/:id: solo el propietario (403 para cualquier otro). 409 si el nombre ya existe.
+export async function updateCommunity(id: number, input: UpdateCommunityDto): Promise<CommunityDetail> {
+  const response = await httpClient.patch<CommunityDetail>(`/communities/${id}`, input)
+  return normalizeCommunity(response.data)
+}
+
+// PUT /communities/:id/tags: reemplaza todas las etiquetas (solo el propietario). Devuelve la lista normalizada.
+export async function replaceCommunityTags(id: number, tags: string[]): Promise<string[]> {
+  const response = await httpClient.put<string[]>(`/communities/${id}/tags`, { tags })
   return response.data
 }
 
-export async function getCommunity(id: number) {
-  const response = await httpClient.get<Community>(`/communities/${id}`)
-  return response.data
+export interface CommunityOption {
+  id: number
+  name: string
+}
+
+export interface MyCommunityMembership {
+  role: 'MEMBER' | 'MODERATOR' | 'OWNER'
+  community: Community
+}
+
+export async function listMyCommunities(params: { page?: number; limit?: number } = {}, signal?: AbortSignal) {
+  const { page, limit } = toPageQuery(params)
+  const response = await httpClient.get<Paginated<MyCommunityMembership>>('/communities/mine', {
+    params: { page, limit },
+    signal,
+  })
+  return {
+    ...response.data,
+    data: response.data.data.map((membership) => ({
+      ...membership,
+      community: normalizeCommunity(membership.community),
+    })),
+  }
+}
+
+export async function deleteCommunity(id: number): Promise<void> {
+  await httpClient.delete(`/communities/${id}`)
+}
+
+// GET /communities/mine devuelve membresías con la comunidad anidada, no comunidades.
+export async function listMyCommunityFilterOptions(signal?: AbortSignal): Promise<CommunityOption[]> {
+  const communities = new Map<number, CommunityOption>()
+  let page = 1
+  let received = 0
+  let total: number
+  do {
+    const response = await httpClient.get<Paginated<{ community?: Community }>>('/communities/mine', {
+      params: { page, limit: 100 }, signal,
+    })
+    for (const { community } of response.data.data) {
+      if (community) communities.set(community.id, { id: community.id, name: community.name })
+    }
+    received += response.data.data.length
+    total = response.data.total
+    if (response.data.data.length === 0) break
+    page += 1
+  } while (received < total)
+  return [...communities.values()]
+}
+
+export interface OwnedCommunity extends CommunityOption {
+  isPremium: boolean
+}
+
+/** Comunidades de las que el usuario es propietario: el resto de membresías no permiten crear planes. */
+export async function listMyOwnedCommunities(signal?: AbortSignal): Promise<OwnedCommunity[]> {
+  const communities: OwnedCommunity[] = []
+  for (let page = 1; ; page += 1) {
+    const { data } = await httpClient.get<Paginated<{ role?: string; community?: Community }>>('/communities/mine', {
+      params: { page, limit: 100 }, signal,
+    })
+    for (const { role, community } of data.data) {
+      if (role === 'OWNER' && community) communities.push({ id: community.id, name: community.name, isPremium: community.isPremium })
+    }
+    if (data.data.length === 0 || page * data.limit >= data.total) return communities
+  }
 }

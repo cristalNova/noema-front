@@ -1,0 +1,179 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1168px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.navbar__main { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+.navbar__main a { text-decoration: none; font-size: 0.8rem; padding: 8px 12px; border-radius: var(--radius-pill); white-space: nowrap; }
+.navbar__main a[aria-current="page"] { background: rgb(255 255 255 / 60%); font-weight: 600; }
+.navbar__icon:disabled { opacity: 0.45; cursor: default; }
+a.navbar__icon { position: relative; text-decoration: none; }
+
+/* Círculo verde relleno abajo a la derecha de la campana, con el número de no leídas. */
+.navbar__badge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-success);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--color-paper);
+}
+@media (max-width: 980px) { .navbar__main { order: 3; width: 100%; min-width: 0; flex-wrap: nowrap; overflow-x: auto; border-top: 1px solid rgb(20 20 43 / 12%); padding-top: 12px; scrollbar-width: thin; } .navbar__actions { margin-left: auto; } }
+@media (max-width: 380px) { .navbar { padding-inline: 16px; gap: 12px; } .navbar__actions { gap: 8px; font-size: 0.85rem; } .navbar__cta { padding: 8px 12px; } }
+@media (max-width: 560px) { .navbar__main { flex-wrap: wrap; justify-content: center; overflow: visible; } .navbar__main a { padding: 7px 10px; } }
+
+.navbar__brand {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  letter-spacing: -0.06em;
+  text-decoration: none;
+}
+
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.navbar__link:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.navbar__cta {
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.navbar__icon,
+.navbar__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.navbar__icon {
+  border: 0;
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.navbar__avatar {
+  overflow: hidden;
+  background: var(--color-ink);
+  color: #fff;
+  font-weight: 600;
+}
+
+.navbar__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.navbar__account { position: relative; }
+
+.navbar__account-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px 0 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.navbar__chevron { transition: transform 0.15s ease; }
+.navbar__account-trigger[aria-expanded="true"] .navbar__chevron { transform: rotate(180deg); }
+
+.navbar__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 10;
+  min-width: 220px;
+  max-height: min(70vh, 32rem);
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: 0 16px 32px -12px rgb(34 33 43 / 35%);
+}
+
+.navbar__menu-email {
+  margin: 0;
+  padding: 8px 12px 10px;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.navbar__menu-item {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+a.navbar__menu-item { text-decoration: none; }
+.navbar__menu-name { display: block; color: var(--color-ink); font-size: 0.875rem; }
+.navbar__menu-item:hover { background: var(--color-field); }
+.navbar__menu-item:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.navbar a:focus-visible,
+.navbar__link:focus-visible,
+.navbar__account-trigger:focus-visible,
+.navbar__menu-item:focus-visible,
+.navbar__icon:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}

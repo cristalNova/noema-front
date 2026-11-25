@@ -1,0 +1,24 @@
+.reading-lists-page { max-width: 1100px; }
+.reading-lists-page__header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
+.reading-lists-page__header .page-header { margin: 0; }
+.reading-lists-page__sheet { padding: clamp(1.25rem, 4vw, 3rem); border-radius: var(--radius-sheet); background: var(--color-surface); }
+.reading-lists-page__form { display: grid; gap: 1rem; margin-bottom: 2rem; padding: 1.5rem; border: 1px solid var(--color-line); border-radius: 20px; }
+.reading-lists-page__form h2, .reading-lists-page__summary h2 { margin: 0; font-size: 1.4rem; }
+.reading-lists-page__fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 1rem; }
+.reading-lists-page__fields label { display: grid; gap: .4rem; font-weight: 600; }
+.reading-lists-page__fields :is(input, select) { width: 100%; min-height: 42px; padding: .65rem; border: 1px solid var(--color-line); border-radius: 10px; background: var(--color-paper); color: var(--color-ink); font: inherit; }
+.reading-lists-page__hint, .reading-lists-page__list p { margin: 0; color: var(--color-muted); font-size: .9rem; }
+.reading-lists-page__actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+.reading-lists-page__summary { display: flex; justify-content: space-between; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-line); }
+.reading-lists-page__summary span { color: var(--color-muted); }
+.reading-lists-page__list { margin: 0; padding: 0; list-style: none; }
+.reading-lists-page__list li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.3rem 0; border-bottom: 1px solid var(--color-line); overflow-wrap: anywhere; }
+.reading-lists-page__list h3 { margin: 0 0 .35rem; font-size: 1.1rem; }
+.reading-lists-page__list h3 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.reading-lists-page__delete { color: #9c3d2c; }
+.reading-lists-page__empty { padding: 1rem 0; }
+.reading-lists-page__empty h2 { margin: 0; }
+.reading-lists-page__pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
+.reading-lists-page__notice { color: #3d542b; font-weight: 600; }
+.reading-lists-page__error { color: #a42d2d; }
+.reading-lists-page__footer { margin-top: 1.5rem; }

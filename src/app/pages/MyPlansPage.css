@@ -1,0 +1,198 @@
+.my-plans__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: 2rem;
+}
+
+.my-plans__header .page-header {
+  margin-bottom: 0;
+}
+
+.my-plans__header h1:focus {
+  outline: none;
+}
+
+.my-plans__sheet {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: var(--radius-sheet);
+  background: var(--color-surface);
+}
+
+.my-plans__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.my-plans__heading h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.my-plans__heading span {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.my-plans__notice {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+/* Sigue en el DOM vacía para que los lectores de pantalla anuncien el aviso al aparecer. */
+.my-plans__notice:empty {
+  margin: 0;
+}
+
+.my-plans__error {
+  margin: 0 0 1rem;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #fdecee;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
+
+.my-plans__empty {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.my-plans__empty h3 {
+  margin: 0 0 0.5rem;
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+
+.my-plans__empty p {
+  margin: 0;
+}
+
+.my-plans__list {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.my-plan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-line);
+  border-radius: 22px;
+  overflow-wrap: anywhere;
+}
+
+.my-plan--inactive {
+  background: var(--color-field);
+}
+
+.my-plan__info {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.my-plan__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.65rem;
+}
+
+.my-plan__title h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.my-plan__status {
+  padding: 0.1rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: #e9e5e2;
+  color: #625b56;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.my-plan__status--active {
+  background: #e4ecd9;
+  color: #3d542b;
+}
+
+.my-plan__price {
+  margin: 0.5rem 0 0.15rem;
+  font-size: 0.9rem;
+}
+
+.my-plan__price strong {
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.my-plan__meta {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.my-plan__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.my-plan__delete {
+  min-height: 44px;
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--color-danger);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.my-plan__delete:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.plan-form-page {
+  max-width: 720px;
+}
+
+.plan-form-page__sheet {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: var(--radius-sheet);
+  background: var(--color-surface);
+}
+
+.plan-form-page__sheet h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}

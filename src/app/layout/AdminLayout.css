@@ -1,0 +1,110 @@
+.admin-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+.admin-nav a {
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-field);
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.admin-nav a.active { background: var(--color-accent); color: #fff; }
+
+.admin-sheet {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: var(--radius-sheet);
+  background: var(--color-surface);
+}
+.admin-sheet__heading {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 0.5rem 1rem; margin-bottom: 1.25rem; padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.admin-sheet__heading h2 { min-width: 0; margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+.admin-sheet__heading span { color: var(--color-muted); font-size: 0.85rem; }
+
+/* position: relative contiene los elementos absolutos (caption y .admin-sr-only); sin él escapan del scroll y ensanchan la página en móvil */
+.admin-table-wrap { position: relative; overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th, .admin-table td { padding: 0.85rem 0.75rem; text-align: left; border-bottom: 1px solid var(--color-line); }
+.admin-table th { color: var(--color-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.admin-table caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* En pantallas angostas cada fila pasa a ser una tarjeta: así Estado y las acciones no quedan tras un scroll oculto. */
+@media (max-width: 640px) {
+  .admin-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+  .admin-table tr { padding: 0.9rem 0; border-bottom: 1px solid var(--color-line); }
+  .admin-table td { padding: 0.3rem 0; border: 0; overflow-wrap: anywhere; }
+  .admin-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .admin-table td.admin-table__primary { font-size: 1.02rem; }
+  .admin-row-actions { justify-content: flex-start; padding-top: 0.25rem; }
+}
+
+.admin-status { display: inline-block; padding: 0.15rem 0.7rem; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 700; }
+.admin-status--active { background: #dcefe6; color: var(--color-success); }
+.admin-status--inactive { background: #f3dcdf; color: var(--color-danger); }
+.admin-link { color: var(--color-accent); font-weight: 700; white-space: nowrap; }
+.admin-table code { font-family: inherit; font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
+
+.admin-facts { display: grid; gap: 1rem; margin: 0; }
+.admin-facts dt { color: var(--color-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+.admin-facts dd { margin: 0.15rem 0 0; overflow-wrap: anywhere; }
+.admin-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+.admin-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--color-line); }
+.admin-section h3 { margin: 0 0 1rem; font-size: 1.05rem; font-weight: 600; }
+.admin-form { display: grid; gap: 1rem; max-width: 28rem; }
+.admin-form .button { justify-self: start; }
+.admin-form__error { margin: 0; color: var(--color-danger); font-size: 0.875rem; }
+.admin-form__notice { margin: 0; color: var(--color-success); font-size: 0.875rem; }
+.admin-form__notice:empty { display: none; }
+.admin-hint { margin: 0 0 1rem; color: var(--color-muted); font-size: 0.9rem; }
+.admin-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.admin-facts + .admin-actions { margin-top: 1.5rem; }
+.admin-danger { background: var(--color-danger); color: var(--color-surface); }
+.admin-notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  background: #dcefe6;
+  color: var(--color-success);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.admin-notice:empty { display: none; }
+
+.admin-form-section { margin-bottom: 1.75rem; }
+.admin-form-section h3 { margin: 0 0 1rem; font-size: 1.05rem; font-weight: 600; }
+
+.admin-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.admin-chips li { padding: 0.15rem 0.7rem; border-radius: var(--radius-pill); background: var(--color-field); font-size: 0.8rem; font-weight: 600; }
+.admin-muted { color: var(--color-muted); font-size: 0.9rem; }
+
+.admin-row-actions { display: flex; justify-content: flex-end; gap: 1rem; }
+.admin-link--button { padding: 0; border: 0; background: none; cursor: pointer; font: inherit; font-weight: 700; }
+.admin-link--danger { color: var(--color-danger); }
+
+.admin-warning { margin: 0; padding: 0.75rem 1rem; border-radius: 16px; background: #f6ead9; color: #8a4b12; font-size: 0.875rem; }
+.admin-form--wide { max-width: 44rem; }
+
+.admin-fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.admin-fieldset legend { margin-bottom: 0.6rem; padding: 0; font-size: 0.875rem; font-weight: 600; }
+.admin-checklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.5rem; }
+.admin-check {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.55rem 0.9rem; border-radius: 16px;
+  background: var(--color-field); font-size: 0.9rem; cursor: pointer; overflow-wrap: anywhere;
+}
+.admin-check input { flex: none; width: 1.1rem; height: 1.1rem; accent-color: var(--color-accent); }
+
+.admin-search { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.75rem; max-width: 30rem; margin-bottom: 1.5rem; }
+.admin-search .field { flex: 1 1 12rem; }
+.admin-search .button { margin-top: 1.55rem; }

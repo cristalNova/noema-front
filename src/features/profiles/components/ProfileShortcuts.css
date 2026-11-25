@@ -1,0 +1,27 @@
+.profile-shortcuts { margin-bottom: 1.5rem; padding: clamp(1.5rem, 4vw, 3rem); border-radius: var(--radius-sheet); background: var(--color-surface); }
+.profile-shortcuts__heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-line); }
+.profile-shortcuts__heading h2 { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; }
+.profile-shortcuts__heading span { color: var(--color-muted); font-size: 0.85rem; }
+
+.profile-shortcuts__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.85rem; margin: 0; padding: 0; list-style: none; }
+.profile-shortcuts__tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.7rem;
+  height: 100%; min-height: 7.5rem; padding: 1.1rem 0.75rem;
+  border: 1px solid var(--color-line); border-radius: 22px; background: var(--color-paper);
+  color: var(--color-ink); text-align: center; text-decoration: none;
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+.profile-shortcuts__icon {
+  display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%;
+  background: var(--color-surface); color: var(--color-accent);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.profile-shortcuts__label { font-size: 0.9rem; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+
+@media (hover: hover) {
+  .profile-shortcuts__tile:hover { transform: translateY(-2px); border-color: var(--color-accent); background: #fff; }
+  .profile-shortcuts__tile:hover .profile-shortcuts__icon { background: var(--color-accent); color: #fff; }
+}
+.profile-shortcuts__tile:active { transform: scale(0.98); }
+@media (max-width: 500px) { .profile-shortcuts__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .profile-shortcuts__tile, .profile-shortcuts__icon { transition: none; } .profile-shortcuts__tile:hover { transform: none; } }

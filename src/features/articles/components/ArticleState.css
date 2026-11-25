@@ -1,0 +1,13 @@
+.article-state { display: inline-block; border-radius: 999px; padding: 0.25rem 0.6rem; font: 0.75rem system-ui, sans-serif; white-space: nowrap; }
+.article-state--draft { background: #f7e6a8; color: #6f4a16; }
+.article-state--published { background: #e4ecd9; color: #3d542b; }
+.article-state--archived { background: #e9e5e2; color: #625b56; }
+.article-status-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.article-status-actions .button { flex: 1 1 auto; }
+.article-dialog { width: min(480px, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); overflow-y: auto; color: #25211f; background: #fffdf9; border: 1px solid #cfc3b5; border-radius: 0.8rem; padding: 2rem; font: inherit; }
+.article-dialog::backdrop { background: rgb(37 33 31 / 45%); }
+.article-dialog h2 { margin-top: 0; }
+.article-dialog p { overflow-wrap: anywhere; }
+.article-dialog__title { font-weight: 700; }
+.article-dialog__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem; }
+.article-dialog :is(button, a):focus-visible { outline: 2px solid #8c4f2f; outline-offset: 3px; }

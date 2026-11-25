@@ -1,0 +1,6 @@
+.author-plans { max-width: 920px; }
+.author-plans__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; margin: 2rem 0 0; padding: 0; list-style: none; }
+.author-plans__plan { display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1.25rem; border: 1px solid #e1d6c9; border-radius: 0.7rem; background: #f7f3ed; }
+.author-plans__plan h2 { margin: 0; font-size: 1.25rem; overflow-wrap: anywhere; }
+.author-plans__plan p { margin: 0; color: #6b625b; }
+.author-plans__plan .button { margin-top: auto; }

@@ -14,6 +14,9 @@ export function setUnauthorizedHandler(handler: (() => void) | null): void {
   onUnauthorized = handler
 }
 
+// Un 401 aquí no significa "sesión vencida": son credenciales malas o un token ya revocado.
+const AUTH_ENDPOINTS = ['/auth/login', '/auth/logout']
+
 httpClient.interceptors.request.use((config) => {
   const token = tokenStorage.get()
   if (token) config.headers.Authorization = `Bearer ${token}`
@@ -24,9 +27,10 @@ httpClient.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
     const apiError = toApiError(error)
-    // Un 401 en /auth/login son credenciales inválidas, no una sesión vencida.
-    const isLogin = axios.isAxiosError(error) && error.config?.url === '/auth/login'
-    if (apiError.status === 401 && !isLogin) {
+    const url = axios.isAxiosError(error) ? (error.config?.url ?? '') : ''
+    const hadSession = tokenStorage.get() !== null
+
+    if (apiError.status === 401 && hadSession && !AUTH_ENDPOINTS.includes(url)) {
       tokenStorage.clear()
       onUnauthorized?.()
     }

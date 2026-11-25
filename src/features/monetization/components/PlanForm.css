@@ -1,0 +1,76 @@
+.plan-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.plan-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+}
+
+.plan-form .field__input {
+  width: 100%;
+  min-width: 0;
+}
+
+.plan-form .field__input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.plan-form select.field__input {
+  cursor: pointer;
+}
+
+.plan-form .field__msg {
+  display: block;
+}
+
+.plan-form__hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+}
+
+.plan-form__notice {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #eeedf6;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.plan-form__notice p {
+  margin: 0 0 0.75rem;
+}
+
+.plan-form__error {
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #fdecee;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.plan-form__error p {
+  margin: 0;
+}
+
+.plan-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .plan-form__row {
+    grid-template-columns: 1fr;
+  }
+}

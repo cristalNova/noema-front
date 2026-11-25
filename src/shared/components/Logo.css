@@ -1,0 +1,11 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
+.logo__mark {
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+}

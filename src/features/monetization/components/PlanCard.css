@@ -1,0 +1,71 @@
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-grid > li {
+  display: flex;
+  min-width: 0;
+}
+
+.plan-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.5rem;
+  border-radius: 22px;
+  background: #f3e9db;
+  overflow-wrap: anywhere;
+}
+
+.plan-grid > li:nth-child(3n + 2) .plan-card {
+  background: #ece9f6;
+}
+
+.plan-grid > li:nth-child(3n) .plan-card {
+  background: #e8eeea;
+}
+
+.plan-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.plan-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+  margin: 1.5rem 0 0.25rem;
+}
+
+.plan-card__price strong {
+  font-size: clamp(2.25rem, 5vw, 3rem);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.plan-card__price span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.plan-card__period {
+  margin: 0 0 1.5rem;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.plan-card__subscribe {
+  width: 100%;
+  margin-top: auto;
+}
